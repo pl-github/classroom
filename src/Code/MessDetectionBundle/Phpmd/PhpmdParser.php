@@ -5,23 +5,9 @@ namespace Code\MessDetectionBundle\Phpmd;
 use Code\MessDetectionBundle\Phpmd\Model\FileModel;
 use Code\MessDetectionBundle\Phpmd\Model\PmdModel;
 use Code\MessDetectionBundle\Phpmd\Model\ViolationModel;
-use Code\ProjectBundle\ClassnameService;
 
 class PhpmdParser
 {
-    /**
-     * @var ClassnameService
-     */
-    private $classnameService;
-
-    /**
-     * @param ClassnameService $classnameService
-     */
-    public function __construct(ClassnameService $classnameService)
-    {
-        $this->classnameService = $classnameService;
-    }
-
     /**
      * Parse phpmd file
      *

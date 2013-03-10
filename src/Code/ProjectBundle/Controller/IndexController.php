@@ -18,12 +18,15 @@ class IndexController extends Controller
     public function indexAction(Request $request)
     {
         $rootDir = $this->container->getParameter('kernel.root_dir');
+        $projectLoader = $this->container->get('code.project.loader');
 
-        $projectFiles = glob ($rootDir.'/data/*.serialized');
+        $projectFiles = glob ($rootDir . '/data/*/project.serialized');
         $projects = array();
         foreach ($projectFiles as $projectFile)
         {
-            $projects[] = unserialize(file_get_contents($projectFile));
+            preg_match('#/([^/]+)/project\.serialized$#', $projectFile, $match);
+            $projectId = $match[1];
+            $projects[] = $projectLoader->load($projectId);
         }
 
         return array('projects' => $projects);

@@ -17,7 +17,7 @@
         </service>
 
         <service id="code.copy_paste_detection.phpcpd.mapper" class="Code\CopyPasteDetectionBundle\Phpcpd\PhpcpdMapper">
-            <argument type="service" id="code.project.classnameservice" />
+            <argument type="service" id="code.project.classname_service" />
         </service>
 
         <service id="code.copy_paste_detection.service" class="Code\CopyPasteDetectionBundle\CopyPasteDetectionService">

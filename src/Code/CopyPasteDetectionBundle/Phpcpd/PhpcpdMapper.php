@@ -8,6 +8,7 @@ use Code\CopyPasteDetectionBundle\Phpcpd\Model\PmdCpdModel;
 use Code\ProjectBundle\ClassnameService;
 use Code\ProjectBundle\Model\ClassesModel;
 use Code\ProjectBundle\Model\ClassModel;
+use Code\ProjectBundle\Model\MetricModel;
 use Code\ProjectBundle\Model\SmellModel;
 
 class PhpcpdMapper
@@ -36,12 +37,16 @@ class PhpcpdMapper
 
         foreach ($pmdCpd->getDuplications() as $duplication) {
             /* @var $duplication DuplicationModel */
+
             $files = $duplication->getFiles();
+
             foreach ($files as $file) {
                 /* @var $file FileModel */
                 $classname = $this->classnameService->getClassnameForFile($file->getPath());
 
                 $class = new ClassModel($classname);
+
+                $class->addMetric(new MetricModel('duplication', $duplication->getLines()));
 
                 $smell = new SmellModel('copy_paste_detection', 'Similar code', $duplication->getCodefragment(), 1);
                 $class->addSmell($smell);

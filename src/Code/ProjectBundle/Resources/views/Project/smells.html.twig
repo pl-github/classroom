@@ -2,9 +2,9 @@
 
 {% for class in classes.classes %}
     {% if class.hasSmells() %}
-    <h3><a href="{{ url("code_class", {projectId: project.id, className: class.name}) }}">{{ class.name }}</a></h3>
         {% for smell in class.smells %}
-            <div>{{ smell.origin }}: {{ smell.text }}</div>
+            <h3><a href="{{ url("code_class", {projectId: project.id, className: class.name}) }}">{{ class.name }}</a></h3>
+            <div>{{ smell.origin }}: {{ smell.text }} ({{ smell.score }})</div>
         {% endfor %}
     {% endif %}
 {% endfor %}

@@ -6,23 +6,9 @@ use Code\MetricsBundle\Pdepend\Model\ClassModel;
 use Code\MetricsBundle\Pdepend\Model\MethodModel;
 use Code\MetricsBundle\Pdepend\Model\MetricsModel;
 use Code\MetricsBundle\Pdepend\Model\PackageModel;
-use Code\ProjectBundle\ClassnameService;
 
 class PdependParser
 {
-    /**
-     * @var ClassnameService
-     */
-    private $classnameService;
-
-    /**
-     * @param ClassnameService $classnameService
-     */
-    public function __construct(ClassnameService $classnameService)
-    {
-        $this->classnameService = $classnameService;
-    }
-
     /**
      * Parse pdepend metrics file
      *

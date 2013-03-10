@@ -12,7 +12,7 @@
             <argument type="service" id="code.project.tokenreflection.broker.backend.memory" />
         </service>
 
-        <service id="code.project.classnameservice" class="Code\ProjectBundle\ClassnameService">
+        <service id="code.project.classname_service" class="Code\ProjectBundle\ClassnameService">
             <argument type="service" id="code.project.tokenreflection.broker" />
         </service>
 

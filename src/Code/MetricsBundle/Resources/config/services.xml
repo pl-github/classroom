@@ -14,10 +14,10 @@
         </service>
 
         <service id="code.metrics.pdepend.parser" class="Code\MetricsBundle\Pdepend\PdependParser">
-            <argument type="service" id="code.project.classnameservice" />
         </service>
 
         <service id="code.metrics.pdepend.mapper" class="Code\MetricsBundle\Pdepend\PdependMapper">
+            <argument type="service" id="code.project.classname_service" />
         </service>
 
         <service id="code.metrics.service" class="Code\MetricsBundle\MetricsService">
