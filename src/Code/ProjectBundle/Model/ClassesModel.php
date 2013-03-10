@@ -42,6 +42,7 @@ class ClassesModel
      * Return class by name
      *
      * @param string $name
+     * @return ClassModel
      */
     public function getClass($name)
     {

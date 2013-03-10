@@ -43,11 +43,11 @@ class SerializeWriter implements WriterInterface
     private function ensureDirectoryWritable($directory)
     {
         if (!file_exists($directory) && !mkdir($directory, 0777, true)) {
-            throw new \Exception('Can\'t create data dir');
+            throw new \Exception('Can\'t create data dir "' . $directory . '"');
         }
 
         if (!is_writable($directory)) {
-            throw new \Exception('Data dir not writable');
+            throw new \Exception('Data dir "' . $directory . '" not writable');
         }
 
         return $directory;
