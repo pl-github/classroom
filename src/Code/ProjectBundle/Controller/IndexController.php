@@ -17,63 +17,15 @@ class IndexController extends Controller
      */
     public function indexAction(Request $request)
     {
-        $card = $request->query->get('card');
-
         $rootDir = $this->container->getParameter('kernel.root_dir');
 
-        $loader = $this->container->get('code.project.build.loader');
-        /* @var $reader SerializeLoader */
+        $projectFiles = glob ($rootDir.'/data/*.serialized');
+        $projects = array();
+        foreach ($projectFiles as $projectFile)
+        {
+            $projects[] = unserialize(file_get_contents($projectFile));
+        }
 
-        $project = new Project(1, 'code');
-        $version = (integer)file_get_contents($rootDir . '/data/' . $project->getId() . '.version');
-        $build = $loader->load($project, $version);
-
-        return array('card' => $card, 'project' => $project, 'build' => $build);
-    }
-
-    /**
-     * @Route("/stream", name="code_stream")
-     * @Template()
-     */
-    public function streamAction()
-    {
-        return array();
-    }
-
-    /**
-     * @Route("/smells", name="code_smells")
-     * @Template()
-     */
-    public function smellsAction()
-    {
-        $rootDir = $this->container->getParameter('kernel.root_dir');
-
-        $loader = $this->container->get('code.project.build.loader');
-        /* @var $reader SerializeLoader */
-
-        $project = new Project(1, 'code');
-        $version = (integer)file_get_contents($rootDir . '/data/' . $project->getId() . '.version');
-        $build = $loader->load($project, $version);
-        $classes = $build->getClasses();
-
-        return array('build' => $build, 'classes' => $classes);
-    }
-
-    /**
-     * @Route("/classes", name="code_classes")
-     * @Template()
-     */
-    public function classesAction()
-    {
-        $rootDir = $this->container->getParameter('kernel.root_dir');
-
-        $loader = $this->container->get('code.project.build.loader');
-        /* @var $reader SerializeLoader */
-
-        $project = new Project(1, 'code');
-        $version = (integer)file_get_contents($rootDir . '/data/' . $project->getId() . '.version');
-        $classes = $loader->load($project, $version)->getClasses();
-
-        return array('classes' => $classes);
+        return array('projects' => $projects);
     }
 }

@@ -7,24 +7,19 @@ use Symfony\Component\Process\Process;
 
 class PhpmdExecutor
 {
-    private $dataDir;
-
-    public function __construct($rootDir)
+    /**
+     * @param string $sourceDirectory
+     * @param string $workDirectory
+     * @return string
+     * @throws \Exception
+     */
+    public function execute($sourceDirectory, $workDirectory)
     {
-        $this->dataDir = $rootDir . '/data';
-
-        if (!file_exists($this->dataDir) && !mkdir($this->dataDir, 0777, true)) {
-            throw new \Exception('Can\'t create data dir');
-        }
-    }
-
-    public function execute($dir)
-    {
-        $phpmdFilename = $this->dataDir . '/phpmd.xml';
+        $phpmdFilename = $this->ensureDirectoryWritable($workDirectory) . '/phpmd.xml';
 
         $processBuilder = new ProcessBuilder();
         $processBuilder->add('phpmd')
-            ->add($dir)
+            ->add($sourceDirectory)
             ->add('xml')
             ->add('codesize,unusedcode,naming')
             ->add('--suffixes')->add('php')
@@ -43,5 +38,25 @@ class PhpmdExecutor
         }
 
         return $phpmdFilename;
+    }
+
+    /**
+     * Ensure directory exists and is writable
+     *
+     * @param string $directory
+     * @return string
+     * @throws \Exception
+     */
+    private function ensureDirectoryWritable($directory)
+    {
+        if (!file_exists($directory) && !mkdir($directory, 0777, true)) {
+            throw new \Exception('Can\'t create data dir');
+        }
+
+        if (!is_writable($directory)) {
+            throw new \Exception('Data dir not writable');
+        }
+
+        return $directory;
     }
 }

@@ -41,9 +41,9 @@ class CopyPasteDetectionService implements ServiceInterface
     /**
      * @inheritDoc
      */
-    public function run($directory)
+    public function run($directory, $workDirectory)
     {
-        $pmdFilename = $this->executor->execute($directory);
+        $pmdFilename = $this->executor->execute($directory, $workDirectory);
         $dupes = $this->parser->parse($pmdFilename);
         $classes = $this->mapper->map($dupes);
 

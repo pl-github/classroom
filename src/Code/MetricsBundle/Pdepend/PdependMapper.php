@@ -31,26 +31,31 @@ class PdependMapper
 
                 $class = new ClassModel($pdependPackage->getName() . '\\' . $pdependClass->getName());
 
-                $metrics = $pdependClass->getMetrics();
+                $classMetrics = $pdependClass->getMetrics();
 
-                $class->addMetric(new MetricModel('linesOfCode', $metrics['loc']));
-                $class->addMetric(new MetricModel('logicalLinesOfCode', $metrics['lloc']));
-                $class->addMetric(new MetricModel('executableLinesOfCode', $metrics['eloc']));
+                $class->addMetric(new MetricModel('linesOfCode', $classMetrics['loc']));
+                $class->addMetric(new MetricModel('logicalLinesOfCode', $classMetrics['lloc']));
+                $class->addMetric(new MetricModel('executableLinesOfCode', $classMetrics['eloc']));
 
-                $class->addMetric(new MetricModel('numberOfMethods', $metrics['nom']));
+                $class->addMetric(new MetricModel('numberOfMethods', $classMetrics['nom']));
 
-                $class->addMetric(new MetricModel('weightedMethodCount', $metrics['wmc']));
-                $class->addMetric(new MetricModel('inheritedWeightedMethodCount', $metrics['wmci']));
-                $class->addMetric(new MetricModel('nonPrivateWeightedMethodCount', $metrics['wmcnp']));
+                $class->addMetric(new MetricModel('weightedMethodCount', $classMetrics['wmc']));
+                $class->addMetric(new MetricModel('inheritedWeightedMethodCount', $classMetrics['wmci']));
+                $class->addMetric(new MetricModel('nonPrivateWeightedMethodCount', $classMetrics['wmcnp']));
 
                 $classes->addClass($class);
+
+                if ($classMetrics['wmc'] > 5) {
+                    $smell = new SmellModel('metrics', 'High overall complexity', '', 1);
+                    $class->addSmell($smell);
+                }
 
                 foreach ($pdependClass->getMethods() as $pdependMethod)
                 {
                     /* @var $pdependMethod PdependMethodModel */
-                    $metrics = $pdependMethod->getMetrics();
+                    $methodMetrics = $pdependMethod->getMetrics();
 
-                    if ($metrics['ccn'] > 5) {
+                    if ($methodMetrics['ccn'] > 5) {
                         $smell = new SmellModel('metrics', 'High method complexity', '', 1);
                         $class->addSmell($smell);
                     }

@@ -28,7 +28,7 @@ class SerializeWriter implements WriterInterface
         $project = $build->getProject();
         $projectId = $project->getId();
 
-        $directory = $this->ensureDirectoryWritable($this->dataDir . '/' . $projectId);
+        $directory = $this->ensureDirectoryWritable($this->dataDir . '/' . $projectId . '/build');
         $filename = $directory . '/' . $buildVersion . '.serialized';
         $data = serialize($build);
 

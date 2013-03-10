@@ -1,10 +1,10 @@
 <?php
 
-namespace Code\ProjectBundle\Build\VersionStrategy;
+namespace Code\ProjectBundle\Writer;
 
 use Code\ProjectBundle\Project;
 
-class IncrementalVersionStrategy implements VersionStrategyInterface
+class SerializeWriter implements WriterInterface
 {
     /**
      * @var string
@@ -22,21 +22,15 @@ class IncrementalVersionStrategy implements VersionStrategyInterface
     /**
      * @inheritDoc
      */
-    public function nextVersion(Project $project)
+    public function write(Project $project)
     {
         $projectId = $project->getId();
-        $versionFilename = $this->ensureDirectoryWritable($this->dataDir . '/' . $projectId) . '/version';
 
-        $version = 0;
-        if (file_exists($versionFilename)) {
-            $version = (integer)file_get_contents($versionFilename);
-        }
+        $directory = $this->ensureDirectoryWritable($this->dataDir . '/' . $projectId);
+        $filename = $directory . '/project.serialized';
+        $data = serialize($project);
 
-        $version++;
-
-        file_put_contents($versionFilename, $version);
-
-        return $version;
+        file_put_contents($filename, $data);
     }
 
     /**

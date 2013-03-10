@@ -1,29 +1,5 @@
-<h1>Project {{ project.name }}</h1>
+<h1>Projects</h1>
 
-<div>
-    <div>Breakdown</div>
-    {% for score, count in build.getBreakdown %}
-        <div>{{ score }}: {{ count }}</div>
-    {% endfor %}
-</div>
-
-<div>
-    <div>Hotspots</div>
-    {% for class, score in build.getHotspots %}
-        <div><a href="{{ url("code_class", {className: class}) }}">{{ class }}</a>: {{ score }}</div>
-    {% endfor %}
-</div>
-
-<h2>
-    <a href="{{ url("code_index", {card: "stream"}) }}">Stream</a> |
-    <a href="{{ url("code_index", {card: "classes"}) }}">Classes</a> |
-    <a href="{{ url("code_index", {card: "smells"}) }}">Smells</a>
-</h2>
-
-{% if not card or card == "stream" %}
-    {% render url("code_stream") %}
-{% elseif card == "classes" %}
-    {% render url("code_classes") %}
-{% elseif card == "smells" %}
-    {% render url("code_smells") %}
-{% endif %}
+{% for project in projects %}
+    <div><a href="{{ url("code_project", {projectId: project.id}) }}">{{ project.name }}</a></div>
+{% endfor %}

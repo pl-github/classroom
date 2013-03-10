@@ -2,6 +2,10 @@ code_index:
     resource: "@CodeProjectBundle/Controller/IndexController.php"
     type: annotation
 
+code_project:
+    resource: "@CodeProjectBundle/Controller/ProjectController.php"
+    type: annotation
+
 code_class:
     resource: "@CodeProjectBundle/Controller/ClassController.php"
     type: annotation

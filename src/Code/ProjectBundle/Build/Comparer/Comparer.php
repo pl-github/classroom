@@ -11,18 +11,30 @@ class Comparer implements ComparerInterface
      */
     public function compare(Build $from, Build $to)
     {
-        $diff = new Diff();
+        $changeSet = new ChangeSet($to);
 
         $fromClasses = $from->getClasses();
         $toClasses = $to->getClasses();
 
-        foreach ($fromClasses->getClasses() as $fromClass)
-        {
-            $classname = $fromClass->getName();
+        $classNames = array_unique(array_merge(array_keys($fromClasses->getClasses()), array_keys($toClasses->getClasses())));
 
-            $toClass = $toClasses->getClass($classname);
+        foreach ($classNames as $className)
+        {
+            $fromClass = $fromClasses->getClass($className);
+            /* @var $fromClass \Code\ProjectBundle\Model\ClassModel */
+
+            $toClass = $toClasses->getClass($className);
+            /* @var $toClass \Code\ProjectBundle\Model\ClassModel */
+
+            if (!$fromClass) {
+                $changeSet->addChange(new NewClassChange($toClass));
+            } elseif (!$toClass) {
+                $changeSet->addChange(new ClassRemovedChange($fromClass));
+            } elseif ($fromClass->getScore() != $toClass->getScore()) {
+                $changeSet->addChange(new ScoreChange($toClass, $fromClass->getScore(), $toClass->getScore()));
+            }
         }
 
-        return $diff;
+        return $changeSet;
     }
 }

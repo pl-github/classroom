@@ -1,8 +1,7 @@
 <?php
 
-namespace Code\ProjectBundle\Build\Loader;
+namespace Code\ProjectBundle\Loader;
 
-use Code\ProjectBundle\Build\Build;
 use Code\ProjectBundle\Project;
 
 class SerializeLoader implements LoaderInterface
@@ -23,16 +22,14 @@ class SerializeLoader implements LoaderInterface
     /**
      * @inheritDoc
      */
-    public function load(Project $project, $version)
+    public function load($projectId)
     {
-        $projectId = $project->getId();
-
-        $filename = $this->dataDir . '/' . $projectId . '/build/' . $version . '.serialized';
+        $filename = $this->dataDir . '/' . $projectId . '/project.serialized';
 
         $data = file_get_contents($filename);
 
-        $build = unserialize($data);
+        $project = unserialize($data);
 
-        return $build;
+        return $project;
     }
 }

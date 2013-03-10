@@ -7,27 +7,22 @@ use Symfony\Component\Process\Process;
 
 class PhpcpdExecutor
 {
-    private $dataDir;
-
-    public function __construct($rootDir)
+    /**
+     * @param string $sourceDirectory
+     * @param string $workDirectory
+     * @return string
+     * @throws \Exception
+     */
+    public function execute($sourceDirectory, $workDirectory)
     {
-        $this->dataDir = $rootDir . '/data';
-
-        if (!file_exists($this->dataDir) && !mkdir($this->dataDir, 0777, true)) {
-            throw new \Exception('Can\'t create data dir');
-        }
-    }
-
-    public function execute($dir)
-    {
-        $pmdFilename = $this->dataDir . '/cpd.pmd';
+        $pmdFilename = $this->ensureDirectoryWritable($workDirectory) . '/pmdcpd.xml';
 
         $processBuilder = new ProcessBuilder();
         $processBuilder->add('phpcpd')
             ->add('--log-pmd')
             ->add($pmdFilename)
             ->add('--quiet')
-            ->add($dir);
+            ->add($sourceDirectory);
 
         $process = $processBuilder->getProcess();
 
@@ -42,5 +37,25 @@ class PhpcpdExecutor
         }
 
         return $pmdFilename;
+    }
+
+    /**
+     * Ensure directory exists and is writable
+     *
+     * @param string $directory
+     * @return string
+     * @throws \Exception
+     */
+    private function ensureDirectoryWritable($directory)
+    {
+        if (!file_exists($directory) && !mkdir($directory, 0777, true)) {
+            throw new \Exception('Can\'t create data dir');
+        }
+
+        if (!is_writable($directory)) {
+            throw new \Exception('Data dir not writable');
+        }
+
+        return $directory;
     }
 }

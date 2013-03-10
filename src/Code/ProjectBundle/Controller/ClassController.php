@@ -2,27 +2,28 @@
 
 namespace Code\ProjectBundle\Controller;
 
-use Code\ProjectBundle\Build\Loader\SerializeLoader;
+use Code\ProjectBundle\Build\Loader\LoaderInterface as BuildLoaderInterface;
 use Code\ProjectBundle\Project;
+use Code\ProjectBundle\Loader\LoaderInterface as ProjectLoaderInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 /**
- * @Route("/class/{className}")
+ * @Route("/project/{projectId}/class/{className}")
  */
 class ClassController extends Controller
 {
-    private function getBuild()
+    private function getLatestBuild($projectId)
     {
-        $rootDir = $this->container->getParameter('kernel.root_dir');
+        $projectLoader = $this->container->get('code.project.loader');
+        /* @var $projectLoader ProjectLoaderInterface */
 
-        $loader = $this->container->get('code.project.build.loader');
-        /* @var $reader SerializeLoader */
+        $buildLoader = $this->container->get('code.project.build.loader');
+        /* @var $buildLoader SerializeBuildLoaderInterfaceLoader */
 
-        $project = new Project(1, 'code');
-        $version = (integer)file_get_contents($rootDir . '/data/' . $project->getId() . '.version');
-        $build = $loader->load($project, $version);
+        $project = $projectLoader->load($projectId);
+        $build = $buildLoader->load($project, $project->getLatestBuildVersion());
 
         return $build;
     }
@@ -31,22 +32,22 @@ class ClassController extends Controller
      * @Route("", name="code_class")
      * @Template()
      */
-    public function classAction($className)
+    public function classAction($projectId, $className)
     {
-        $build = $this->getBuild();
+        $build = $this->getLatestBuild($projectId);
         $classes = $build->getClasses();
         $class = $classes->getClass($className);
 
-        return array('class' => $class);
+        return array('project' => $build->getProject(), 'class' => $class);
     }
 
     /**
      * @Route("/metrics", name="code_class_metrics")
      * @Template()
      */
-    public function metricsAction($className)
+    public function metricsAction($projectId, $className)
     {
-        $build = $this->getBuild();
+        $build = $this->getLatestBuild($projectId);
         $classes = $build->getClasses();
         $class = $classes->getClass($className);
         $metrics = $class->getMetrics();
@@ -58,9 +59,9 @@ class ClassController extends Controller
      * @Route("/smells", name="code_class_smells")
      * @Template()
      */
-    public function smellsAction($className)
+    public function smellsAction($projectId, $className)
     {
-        $build = $this->getBuild();
+        $build = $this->getLatestBuild($projectId);
         $classes = $build->getClasses();
         $class = $classes->getClass($className);
         $smells = $class->getSmells();
@@ -72,9 +73,9 @@ class ClassController extends Controller
      * @Route("/duplications", name="code_project_duplications")
      * @Template()
      */
-    public function duplicationsAction($className)
+    public function duplicationsAction($projectId, $className)
     {
-        $build = $this->getBuild();
+        $build = $this->getLatestBuild($projectId);
         $classes = $build->getClasses();
         $class = $classes->getClass($className);
 
@@ -85,9 +86,9 @@ class ClassController extends Controller
      * @Route("/messes", name="code_project_messes")
      * @Template()
      */
-    public function messesAction($className)
+    public function messesAction($projectId, $className)
     {
-        $build = $this->getBuild();
+        $build = $this->getLatestBuild($projectId);
         $classes = $build->getClasses();
         $class = $classes->getClass($className);
 

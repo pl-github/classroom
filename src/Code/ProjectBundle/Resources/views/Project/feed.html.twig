@@ -1,0 +1,5 @@
+<h1>feed</h1>
+
+{% for item in feed.items %}
+    <div>{{ item.date.format('Y-m-d H:i:s') }} {{ item.text }}</div>
+{% endfor %}

@@ -7,8 +7,9 @@ interface ServiceInterface
     /**
      * Run service
      *
-     * @param string $directory
+     * @param string $sourceDirectory
+     * @param string $workDirectory
      * @return mixed
      */
-    public function run($directory);
+    public function run($sourceDirectory, $workDirectory);
 }

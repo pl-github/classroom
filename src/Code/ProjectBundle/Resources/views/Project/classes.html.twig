@@ -11,7 +11,7 @@
         </tr>
     {% for class in classes.classes %}
         <tr>
-            <td><a href="{{ url("code_class", {className: class.name}) }}">{{ class.name }}</a></td>
+            <td><a href="{{ url("code_class", {projectId: project.id, className: class.name}) }}">{{ class.name }}</a></td>
             <td>{{ class.score }}</td>
             <td>{{ class.metrics.weightedMethodCount.value }}</td>
             <td>{{ class.metrics.numberOfMethods.value }}</td>
