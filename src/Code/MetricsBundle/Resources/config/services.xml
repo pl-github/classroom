@@ -1,0 +1,29 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <parameters>
+        <parameter key="bla.blubb">ccc</parameter>
+    </parameters>
+
+    <services>
+        <service id="code.metrics.pdepend.executor" class="Code\MetricsBundle\Pdepend\PdependExecutor">
+            <argument>%kernel.root_dir%</argument>
+        </service>
+
+        <service id="code.metrics.pdepend.parser" class="Code\MetricsBundle\Pdepend\PdependParser">
+            <argument type="service" id="code.project.classnameservice" />
+        </service>
+
+        <service id="code.metrics.pdepend.mapper" class="Code\MetricsBundle\Pdepend\PdependMapper">
+        </service>
+
+        <service id="code.metrics.service" class="Code\MetricsBundle\MetricsService">
+            <argument type="service" id="code.metrics.pdepend.executor" />
+            <argument type="service" id="code.metrics.pdepend.parser" />
+            <argument type="service" id="code.metrics.pdepend.mapper" />
+        </service>
+    </services>
+</container>

@@ -1,0 +1,8 @@
+pdepend
+
+{% for class in metrics.classes %}
+    <h3>{{ class.name }}</h3>
+    {% for metric, value in class.payload.metrics %}
+        <div>{{ metric }}: {{ value }}</div>
+    {% endfor %}
+{% endfor %}

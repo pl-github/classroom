@@ -1,0 +1,22 @@
+<h1>classes</h1>
+
+<div>
+    <table>
+        <tr>
+            <td>Class</td>
+            <td>score</td>
+            <td>WMC</td>
+            <td>Methods</td>
+            <td>Smells</td>
+        </tr>
+    {% for class in classes.classes %}
+        <tr>
+            <td><a href="{{ url("code_class", {className: class.name}) }}">{{ class.name }}</a></td>
+            <td>{{ class.score }}</td>
+            <td>{{ class.metrics.weightedMethodCount.value }}</td>
+            <td>{{ class.metrics.numberOfMethods.value }}</td>
+            <td>{{ class.smells|length }}</td>
+        </tr>
+    {% endfor %}
+    </table>
+</div>

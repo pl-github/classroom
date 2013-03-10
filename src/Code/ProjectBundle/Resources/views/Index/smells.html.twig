@@ -1,0 +1,10 @@
+<h1>smells</h1>
+
+{% for class in classes.classes %}
+    {% if class.hasSmells() %}
+    <h3><a href="{{ url("code_class", {className: class.name}) }}">{{ class.name }}</a></h3>
+        {% for smell in class.smells %}
+            <div>{{ smell.origin }}: {{ smell.text }}</div>
+        {% endfor %}
+    {% endif %}
+{% endfor %}

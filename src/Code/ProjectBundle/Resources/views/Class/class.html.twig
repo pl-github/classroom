@@ -1,0 +1,7 @@
+<h1>Class {{ class.name }}</h1>
+<h2>Score: {{ class.score }}</h2>
+{% render url("code_class_metrics", { "className": class.name }) %}
+
+{% if class.smells %}
+{% render url("code_class_smells", { "className": class.name }) %}
+{% endif %}
