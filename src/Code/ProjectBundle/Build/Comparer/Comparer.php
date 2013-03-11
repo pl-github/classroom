@@ -4,6 +4,10 @@ namespace Code\ProjectBundle\Build\Comparer;
 
 use Code\AnalyzerBundle\Model\ClassModel;
 use Code\ProjectBundle\Build\Build;
+use Code\ProjectBundle\Change\ChangeSet;
+use Code\ProjectBundle\Change\NewClassChange;
+use Code\ProjectBundle\Change\ClassRemovedChange;
+use Code\ProjectBundle\Change\ScoreChange;
 
 class Comparer implements ComparerInterface
 {
@@ -28,11 +32,11 @@ class Comparer implements ComparerInterface
             /* @var $toClass ClassModel */
 
             if (!$fromClass) {
-                $changeSet->addChange(new NewClassChange($toClass));
+                $changeSet->addChange(new NewClassChange($toClass->getFullQualifiedName(), $toClass->getScore()));
             } elseif (!$toClass) {
-                $changeSet->addChange(new ClassRemovedChange($fromClass));
+                $changeSet->addChange(new ClassRemovedChange($fromClass->getFullQualifiedName()));
             } elseif ($fromClass->getScore() != $toClass->getScore()) {
-                $changeSet->addChange(new ScoreChange($toClass, $fromClass->getScore(), $toClass->getScore()));
+                $changeSet->addChange(new ScoreChange($toClass->getFullQualifiedName(), $fromClass->getScore(), $toClass->getScore()));
             }
         }
 

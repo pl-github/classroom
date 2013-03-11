@@ -32,7 +32,7 @@ class ClassController extends Controller
      * @Route("", name="code_class")
      * @Template()
      */
-    public function classAction($projectId, $className)
+    public function indexAction($projectId, $className)
     {
         $build = $this->getLatestBuild($projectId);
         $classes = $build->getClasses();

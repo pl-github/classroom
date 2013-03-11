@@ -1,31 +1,24 @@
 <?php
-/**
- * Created by JetBrains PhpStorm.
- * User: swentz
- * Date: 09.03.13
- * Time: 21:17
- * To change this template use File | Settings | File Templates.
- */
 
 namespace Code\MessDetectionBundle\Tests\Phpmd\PhpmdParser;
 
+use Code\AnalyzerBundle\Model\ClassesModel;
+use Code\AnalyzerBundle\Model\ClassModel;
 use Code\MessDetectionBundle\Phpmd\Model\PmdModel;
 use Code\MessDetectionBundle\Phpmd\Model\FileModel;
 use Code\MessDetectionBundle\Phpmd\Model\ViolationModel;
 use Code\MessDetectionBundle\Phpmd\PhpmdMapper;
-use Code\ProjectBundle\Model\ClassesModel;
-use Code\ProjectBundle\Model\ClassModel;
 use org\bovigo\vfs\vfsStream;
 
 class PhpcpdMapperTest extends \PHPUnit_Framework_TestCase
 {
     public function testMap()
     {
-        $classnameService = $this->getMockBuilder('Code\ProjectBundle\ClassnameService')
+        $reflectionServiceMock = $this->getMockBuilder('Code\AnalyzerBundle\ReflectionService')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $classnameService
+        $reflectionServiceMock
             ->expects($this->any())
             ->method('getClassnameForFile')
             ->will($this->returnArgument(0));
@@ -46,7 +39,7 @@ class PhpcpdMapperTest extends \PHPUnit_Framework_TestCase
             )
         );
 
-        $mapper = new PhpmdMapper($classnameService);
+        $mapper = new PhpmdMapper($reflectionServiceMock);
         $classes = $mapper->map($pmd);
 
         $this->assertEquals(2, count($classes->getClasses()));

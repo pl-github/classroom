@@ -3,11 +3,54 @@
     <head>
         <meta charset="UTF-8" />
         <title>{% block title %}Welcome!{% endblock %}</title>
-        {% block stylesheets %}{% endblock %}
+
+        {% block stylesheets %}
+            {% include "::styles.html.twig" %}
+            <style>
+                .classname {
+                    font-size: 14pt;
+                    color: blue;
+                }
+                .namespace {
+                    font-size: 10pt;
+                    color: gray;
+                }
+                .with-badge {
+                    margin-left: 30px;
+                }
+                .badge-score-0 {
+                    background-color: green;
+                }
+                .badge-score-1 {
+                    background-color: greenyellow;
+                }
+                .badge-score-2 {
+                    background-color: yellow;
+                    color: gray;
+                }
+                .badge-score-3 {
+                    background-color: orange;
+                }
+                .badge-score-4 {
+                    background-color: orangered;
+                }
+                .badge-score-5 {
+                    background-color: red;
+                }
+                .badge-score-6 {
+                    background-color: darkred;
+                }
+            </style>
+        {% endblock %}
+
         <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
     </head>
     <body>
-        {% block body %}{% endblock %}
-        {% block javascripts %}{% endblock %}
+        <div class="container">
+            {% block body %}{% endblock %}
+        </div>
+        {% block javascripts %}
+            {% include "::scripts.html.twig" %}
+        {% endblock %}
     </body>
 </html>

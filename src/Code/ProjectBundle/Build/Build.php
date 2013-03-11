@@ -25,9 +25,11 @@ class Build
     /**
      * @param Project $project
      */
-    public function __construct(Project $project)
+    public function __construct(Project $project, $version, ClassesModel $classes)
     {
         $this->project = $project;
+        $this->version = $version;
+        $this->classes = $classes;
     }
 
     /**
@@ -41,16 +43,6 @@ class Build
     }
 
     /**
-     * Set version
-     *
-     * @param mixed $version
-     */
-    public function setVersion($version)
-    {
-        $this->version = $version;
-    }
-
-    /**
      * Return version
      *
      * @return mixed string
@@ -58,16 +50,6 @@ class Build
     public function getVersion()
     {
         return $this->version;
-    }
-
-    /**
-     * Set classes
-     *
-     * @param ClassesModel $classes
-     */
-    public function setClasses(ClassesModel $classes)
-    {
-        $this->classes = $classes;
     }
 
     /**
@@ -109,15 +91,23 @@ class Build
      */
     public function getHotspots($length = 5)
     {
-        $map = array();
+        $hotspots = array();
+        $scores = array();
         foreach ($this->getClasses()->getClasses() as $class)
         {
-            $map[$class->getName()] = $class->getScore();
+            $scores[] = $class->getScore();
+            $hotspots[] = array(
+                'name' => $class->getName(),
+                'fullQualifiedName' => $class->getFullQualifiedName(),
+                'score' => $class->getScore()
+            );
         }
 
-        arsort($map);
-        $map = array_slice($map, 0, $length, true);
+        array_multisort($scores, $hotspots);
 
-        return $map;
+        $hotspots = array_slice($hotspots, -8);
+        $hotspots = array_reverse($hotspots);
+
+        return $hotspots;
     }
 }

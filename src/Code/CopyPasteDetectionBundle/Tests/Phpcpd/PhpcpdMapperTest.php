@@ -9,23 +9,23 @@
 
 namespace Code\CopyPasteDetectionBundle\Tests\Phpcpd\PhpcpdParser;
 
+use Code\AnalyzerBundle\Model\ClassesModel;
+use Code\AnalyzerBundle\Model\ClassModel;
 use Code\CopyPasteDetectionBundle\Phpcpd\Model\DuplicationModel;
 use Code\CopyPasteDetectionBundle\Phpcpd\Model\FileModel;
 use Code\CopyPasteDetectionBundle\Phpcpd\Model\PmdCpdModel;
 use Code\CopyPasteDetectionBundle\Phpcpd\PhpcpdMapper;
-use Code\ProjectBundle\Model\ClassesModel;
-use Code\ProjectBundle\Model\ClassModel;
 use org\bovigo\vfs\vfsStream;
 
 class PhpcpdMapperTest extends \PHPUnit_Framework_TestCase
 {
     public function testMap()
     {
-        $classnameService = $this->getMockBuilder('Code\ProjectBundle\ClassnameService')
+        $reflectionServiceMock = $this->getMockBuilder('Code\AnalyzerBundle\ReflectionService')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $classnameService
+        $reflectionServiceMock
             ->expects($this->any())
             ->method('getClassnameForFile')
             ->will($this->returnArgument(0));
@@ -38,11 +38,11 @@ class PhpcpdMapperTest extends \PHPUnit_Framework_TestCase
         $pmdCpd = new PmdCpdModel();
         $pmdCpd->addDuplication($duplication1);
 
-        $mapper = new PhpcpdMapper($classnameService);
+        $mapper = new PhpcpdMapper($reflectionServiceMock);
 
         $result = $mapper->map($pmdCpd);
 
-        $this->assertInstanceOf('Code\ProjectBundle\Model\ClassesModel', $result);
+        $this->assertInstanceOf('Code\AnalyzerBundle\Model\ClassesModel', $result);
         return $result;
     }
 
@@ -65,7 +65,7 @@ class PhpcpdMapperTest extends \PHPUnit_Framework_TestCase
     public function testClass1(array $classes)
     {
         $class = $classes['testPath1'];
-        $this->assertInstanceOf('Code\ProjectBundle\Model\ClassModel', $class);
+        $this->assertInstanceOf('Code\AnalyzerBundle\Model\ClassModel', $class);
 
         return $class;
     }
@@ -77,6 +77,6 @@ class PhpcpdMapperTest extends \PHPUnit_Framework_TestCase
     public function testClass2(array $classes)
     {
         $class = $classes['testPath2'];
-        $this->assertInstanceOf('Code\ProjectBundle\Model\ClassModel', $class);
+        $this->assertInstanceOf('Code\AnalyzerBundle\Model\ClassModel', $class);
     }
 }

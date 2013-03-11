@@ -1,33 +1,31 @@
-<h1>Project {{ project.name }}</h1>
+{% extends '::base.html.twig' %}
 
-{% if build %}
-<div>
-    <div>Breakdown</div>
-    {% for score, count in build.getBreakdown %}
-        <div>{{ score }}: {{ count }}</div>
-    {% endfor %}
-</div>
+{% block body %}
 
-<div>
-    <div>Hotspots</div>
-    {% for class, score in build.getHotspots %}
-        <div><a href="{{ url("code_class", {projectId: project.id, className: class}) }}">{{ class }}</a>: {{ score }}</div>
-    {% endfor %}
-</div>
-{% endif %}
+        <h1>Project {{ project.name }}</h1>
 
-<h2>
-    <a href="{{ url("code_project", {projectId: project.id, card: "feed"}) }}">Feed</a>
-    {% if build %}
-    | <a href="{{ url("code_project", {projectId: project.id, card: "classes"}) }}">Classes</a>
-    | <a href="{{ url("code_project", {projectId: project.id, card: "smells"}) }}">Smells</a>
-    {% endif %}
-</h2>
+    <ul class="nav nav-tabs" id="projectTabs">
+        <li class="active"><a href="#feed" data-toggle="tab">Feed</a></li>
+        <li><a href="#classes" data-toggle="tab">Classes</a></li>
+        <li><a href="#smells" data-toggle="tab">Smells</a></li>
+    </ul>
 
-{% if not card or card == "feed" %}
-    {% render url("code_project_feed", {projectId: project.id}) %}
-{% elseif card == "classes" %}
-    {% render url("code_project_classes", {projectId: project.id}) %}
-{% elseif card == "smells" %}
-    {% render url("code_project_smells", {projectId: project.id}) %}
-{% endif %}
+    </h2>
+
+    <div class="tab-content">
+        <div class="tab-pane active" id="feed">{% render url("code_project_feed", {projectId: project.id}) %}</div>
+        <div class="tab-pane" id="classes">{% render url("code_project_classes", {projectId: project.id}) %}</div>
+        <div class="tab-pane" id="smells">{% render url("code_project_smells", {projectId: project.id}) %}</div>
+    </div>
+
+
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        $(function () {
+            $('#projectTabs a:first').tab('show');
+        })
+    </script>
+{% endblock %}

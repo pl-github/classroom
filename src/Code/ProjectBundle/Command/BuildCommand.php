@@ -4,13 +4,18 @@ namespace Code\ProjectBundle\Command;
 
 use Code\ProjectBundle\Build\Build;
 use Code\ProjectBundle\Build\BuildGenerator;
+use Code\ProjectBundle\Build\Builder;
 use Code\ProjectBundle\Build\Comparer\Comparer;
 use Code\ProjectBundle\Build\Loader\LoaderInterface as BuildLoaderInterface;
 use Code\ProjectBundle\Build\Writer\WriterInterface as BuildWriterInterface;
+use Code\ProjectBundle\Change\Loader\LoaderInterface as ChangeLoaderInterface;
+use Code\ProjectBundle\Change\NewBuildChange;
+use Code\ProjectBundle\Change\Writer\WriterInterface as ChangeWriterInterface;
 use Code\ProjectBundle\Feed\Item;
 use Code\ProjectBundle\Project;
 use Code\ProjectBundle\Loader\LoaderInterface as ProjectLoaderInterface;
 use Code\ProjectBundle\Writer\WriterInterface as ProjectWriterInterface;
+use Code\RepositoryBundle\RepositoryFactory;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -45,40 +50,46 @@ class BuildCommand extends ContainerAwareCommand
         /* @var $projectLoader ProjectLoaderInterface */
         $projectWriter = $this->getContainer()->get('code.project.writer');
         /* @var $projectWriter ProjectWriterInterface */
-        $analyzer = $this->getContainer()->get('code.analyzer.chain_analyzer');
-        /* @var $analyzer \Code\AnalyzerBundle\ChainAnalyzer */
-        $buildGenerator = $this->getContainer()->get('code.project.build.generator');
-        /* @var $buildGenerator BuildGenerator */
+
+        $builder = $this->getContainer()->get('code.project.build.builder');
+        /* @var $builder Builder */
+
         $buildLoader = $this->getContainer()->get('code.project.build.loader');
         /* @var $buildLoader BuildLoaderInterface */
         $buildWriter = $this->getContainer()->get('code.project.build.writer');
         /* @var $buildWriter BuildWriterInterface */
+
         $comparer = $this->getContainer()->get('code.project.build.comparer');
         /* @var $comparer Comparer */
 
+        $changeLoader = $this->getContainer()->get('code.project.change.loader');
+        /* @var $changeLoader ChangeLoaderInterface */
+        $changeWriter = $this->getContainer()->get('code.project.change.writer');
+        /* @var $changeWriter ChangeWriterInterface */
+
         $project = $projectLoader->load($projectId);
-        $sourceDirectory = $project->getSourceDirectory();
-        $workDirectory = $rootDir . '/data/' . $project->getId() . '/work';
 
-        $classes = $analyzer->analyze($sourceDirectory, $workDirectory);
+        $build = $builder->build($project);
 
-        $build = $buildGenerator->createBuild($project);
-        $build->setClasses($classes);
-
-        $buildWriter->write($build);
-        $project->getFeed()->addItem(new Item('New build ' . $build->getVersion()));
         $project->setLatestBuildVersion($build->getVersion());
+
+        if (!file_exists($rootDir . '/data/' . $projectId . '/changes.serialized')) {
+            $changes = new \Code\ProjectBundle\Change\Changes();
+        } else {
+            $changes = $changeLoader->load($project);
+        }
+
+        $changes->addChange(new NewBuildChange($build->getVersion()));
 
         if ($project->getPreviousBuildVersion()) {
             $oldBuild = $buildLoader->load($project, $project->getPreviousBuildVersion());
             $changeSet = $comparer->compare($oldBuild, $build);
-
-            foreach ($changeSet->getChanges() as $change)
-            {
-                $project->getFeed()->addItem(new Item('Change detected in ' . $change->getClass()->getName() . ', ' . $change->getText()));
-            }
+            $changes->mergeChangeSet($changeSet);
         }
 
+        $changeWriter->write($changes, $project);
+
+        $buildWriter->write($build);
         $projectWriter->write($project);
     }
 }

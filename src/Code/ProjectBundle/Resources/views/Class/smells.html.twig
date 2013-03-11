@@ -1,10 +1,14 @@
-<div>
-
-    <h2>smells</h2>
-
-    {% for smell in smells %}
-        <div>{{ smell.origin }}: {{ smell.text }} ({{ smell.score }})</div>
-        <div><pre>{{ smell.codeFragment }}</pre></div>
-    {% endfor %}
-
+<div class="accordion">
+{% for smell in smells %}
+    <div class="accordion-group" id="smellsAccordion">
+        <div class="accordion-heading">
+            <a class="accordion-toggle" data-toggle="collapse" data-parent="#smellsAccordion" href="#{{ smell.id }}">
+                {{ smell.origin }}: {{ smell.text }} ({{ smell.score }})
+            </a>
+        </div>
+        <div id="{{ smell.id }}" class="accordion-body collapse">
+            <pre>{{ smell.codeFragment }}</pre>
+        </div>
+    </div>
+{% endfor %}
 </div>

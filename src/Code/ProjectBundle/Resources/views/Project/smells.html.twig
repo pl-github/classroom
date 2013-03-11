@@ -1,10 +1,11 @@
-<h1>smells</h1>
-
 {% for class in classes.classes %}
     {% if class.hasSmells() %}
+        <div class="classname"><span class="badge badge-score-{{ class.score }}">{{ class.score }}</span> <a href="{{ url("code_class", {projectId: project.id, className: class.fullQualifiedName}) }}">{{ class.name }}</a></div>
+        <div class="namespace with-badge">{{ class.namespace }}</div>
+        <ul>
         {% for smell in class.smells %}
-            <h3><a href="{{ url("code_class", {projectId: project.id, className: class.name}) }}">{{ class.name }}</a></h3>
-            <div>{{ smell.origin }}: {{ smell.text }} ({{ smell.score }})</div>
+            <li>{{ smell.origin }}: {{ smell.text }} ({{ smell.score }})</li>
         {% endfor %}
+        </ul>
     {% endif %}
 {% endfor %}

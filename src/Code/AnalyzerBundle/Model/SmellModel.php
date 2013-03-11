@@ -38,6 +38,16 @@ class SmellModel
         $this->score = $score;
     }
 
+    /**
+     * Return id
+     *
+     * @return string
+     */
+    public function getId()
+    {
+        return spl_object_hash($this);
+    }
+
     /*+
      * Return origin
      *

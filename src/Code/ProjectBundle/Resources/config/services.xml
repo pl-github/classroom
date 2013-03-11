@@ -16,12 +16,10 @@
             <argument>%kernel.root_dir%</argument>
         </service>
 
-        <service id="code.project.build.version_strategy" class="Code\ProjectBundle\Build\VersionStrategy\IncrementalVersionStrategy">
+        <service id="code.project.build.builder" class="Code\ProjectBundle\Build\Builder">
+            <argument type="service" id="code.analyzer.chain_analyzer" />
+            <argument type="service" id="code.repository.factory" />
             <argument>%kernel.root_dir%</argument>
-        </service>
-
-        <service id="code.project.build.generator" class="Code\ProjectBundle\Build\BuildGenerator">
-            <argument type="service" id="code.project.build.version_strategy" />
         </service>
 
         <service id="code.project.build.loader" class="Code\ProjectBundle\Build\Loader\SerializeLoader">
@@ -33,6 +31,14 @@
         </service>
 
         <service id="code.project.build.comparer" class="Code\ProjectBundle\Build\Comparer\Comparer">
+        </service>
+
+        <service id="code.project.change.loader" class="Code\ProjectBundle\Change\Loader\SerializeLoader">
+            <argument>%kernel.root_dir%</argument>
+        </service>
+
+        <service id="code.project.change.writer" class="Code\ProjectBundle\Change\Writer\SerializeWriter">
+            <argument>%kernel.root_dir%</argument>
         </service>
 
     </services>

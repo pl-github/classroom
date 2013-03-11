@@ -21,6 +21,7 @@ class AppKernel extends Kernel
             new JMS\SecurityExtraBundle\JMSSecurityExtraBundle(),
             new Code\ProjectBundle\CodeProjectBundle(),
             new Code\AnalyzerBundle\CodeAnalyzerBundle(),
+            new Code\RepositoryBundle\CodeRepositoryBundle(),
             new Code\CopyPasteDetectionBundle\CodeCopyPasteDetectionBundle(),
             new Code\MetricsBundle\CodeMetricsBundle(),
             new Code\MessDetectionBundle\CodeMessDetectionBundle(),

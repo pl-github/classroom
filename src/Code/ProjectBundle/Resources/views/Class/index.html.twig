@@ -1,0 +1,15 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+
+    <div class="classname" style="margin-top: 10px;"><span class="badge badge-score-{{ class.score }}">{{ class.score }}</span> {{ class.name }}</div>
+    <div class="namespace with-badge">{{ class.namespace }}</div>
+
+    {% render url("code_class_metrics", { projectId: project.id, className: class.fullQualifiedName }) %}
+
+    {% if class.smells %}
+        <h4>Smells</h4>
+    {% render url("code_class_smells", { projectId: project.id, className: class.fullQualifiedName }) %}
+    {% endif %}
+
+{% endblock %}

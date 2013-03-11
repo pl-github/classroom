@@ -1,0 +1,4 @@
+<div>
+    <span style="font-size: 10px;">{{ change.date.format('Y-m-d H:i:s') }}</span>
+    <a href="{{ url("code_class", {projectId: project.id, className: change.className}) }}"><span style="color: blue; font-weight: bold;">{{ change.className }}</span></a> has {% if change.fromScore > change.toScore %}<span style="color: green; font-weight: bold;">improved</span>{% else %}<span style="color: red; font-weight: bold;">degraded</span>{% endif %} from <span class="badge badge-score-{{ change.fromScore }}">{{ change.fromScore }}</span> to <span class="badge badge-score-{{ change.toScore }}">{{ change.toScore }}</span>
+</div>

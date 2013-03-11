@@ -3,6 +3,7 @@
 namespace Code\ProjectBundle\Controller;
 
 use Code\ProjectBundle\Build\Loader\LoaderInterface as BuilderLoaderInterface;
+use Code\ProjectBundle\Change\Loader\LoaderInterface as ChangeLoaderInterface;
 use Code\ProjectBundle\Project;
 use Code\ProjectBundle\Loader\LoaderInterface as ProjectLoaderInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -59,10 +60,15 @@ class ProjectController extends Controller
      */
     public function feedAction($projectId)
     {
-        $project = $this->getProject($projectId);
-        $feed = $project->getFeed();
+        $changeLoader = $this->container->get('code.project.change.loader');
+        /* @var $changeLoader ChangesLoaderInterface */
 
-        return array('project' => $project, 'feed' => $feed);
+        $project = $this->getProject($projectId);
+        $build = $this->getLatestBuild($project);
+        $changes = $changeLoader->load($project);
+        $changes = array_reverse($changes->getChanges());
+
+        return array('project' => $project, 'changes' => $changes, 'build' => $build);
     }
 
     /**

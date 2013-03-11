@@ -3,6 +3,7 @@
 namespace Code\ProjectBundle;
 
 use Code\ProjectBundle\Feed\Feed;
+use Code\RepositoryBundle\RepositoryConfig;
 
 class Project
 {
@@ -19,12 +20,12 @@ class Project
     /**
      * @var string
      */
-    protected $sourceDirectory;
+    protected $libDir;
 
     /**
-     * @var Feed
+     * @var RepositoryConfig
      */
-    protected $feed;
+    protected $repositoryConfig;
 
     /**
      * @var mixed
@@ -39,15 +40,15 @@ class Project
     /**
      * @param string $id
      * @param string $name
-     * @param string $sourceDirectory
+     * @param string $libDir
+     * @param RepositoryConfig $repositoryConfig
      */
-    public function __construct($id, $name, $sourceDirectory)
+    public function __construct($id, $name, $libDir, RepositoryConfig $repositoryConfig)
     {
         $this->id = $id;
         $this->name = $name;
-        $this->sourceDirectory = $sourceDirectory;
-
-        $this->feed = new Feed();
+        $this->libDir = $libDir;
+        $this->repositoryConfig = $repositoryConfig;
 
         $this->latestBuildVersion = null;
         $this->previousBuildVersion = null;
@@ -74,23 +75,23 @@ class Project
     }
 
     /**
-     * Return source directory
+     * Return library directory
      *
      * @return string
      */
-    public function getSourceDirectory()
+    public function getLibDir()
     {
-        return $this->sourceDirectory;
+        return $this->libDir;
     }
 
     /**
-     * Return feed
+     * Return repository config
      *
-     * @return Feed
+     * @return RepositoryConfig
      */
-    public function getFeed()
+    public function getRepositoryConfig()
     {
-        return $this->feed;
+        return $this->repositoryConfig;
     }
 
     /**

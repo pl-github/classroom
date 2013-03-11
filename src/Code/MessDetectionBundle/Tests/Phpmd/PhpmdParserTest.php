@@ -1,11 +1,4 @@
 <?php
-/**
- * Created by JetBrains PhpStorm.
- * User: swentz
- * Date: 09.03.13
- * Time: 21:17
- * To change this template use File | Settings | File Templates.
- */
 
 namespace Code\MessDetectionBundle\Tests\Phpmd\PhpmdParser;
 
@@ -18,17 +11,17 @@ class PhpcpdParserTest extends \PHPUnit_Framework_TestCase
     {
         $phpmdXml = <<<EOL
 <pmd version="1.4.1" timestamp="2013-03-10T14:53:42+01:00">
-  <file name="/opt/www/code/symfony/src/Code/CopyPasteDetectionBundle/DependencyInjection/CodeCopyPasteDetectionExtension.php">
-    <violation beginline="18" endline="18" rule="UnusedFormalParameter" ruleset="Unused Code Rules" externalInfoUrl="http://phpmd.org/rules/unusedcode.html#unusedformalparameter" priority="3">
-      Avoid unused parameters such as '\$configs'.
+  <file name="file1.php">
+    <violation beginline="1" endline="2" rule="rule1" ruleset="ruleset1" externalInfoUrl="externalInfoUrl1" priority="1">
+      text1
     </violation>
   </file>
-  <file name="/opt/www/code/symfony/src/Code/CopyPasteDetectionBundle/Phpcpd/PhpcpdParser.php">
-    <violation beginline="24" endline="24" rule="LongVariable" ruleset="Naming Rules" externalInfoUrl="http://phpmd.org/rules/naming.html#longvariable" priority="3">
-      Avoid excessively long variable names like \$duplicationAttributes. Keep variable name length under 20.
+  <file name="file2.php">
+    <violation beginline="3" endline="4" rule="rule2" ruleset="ruleset2" externalInfoUrl="externalInfoUrl2" priority="2">
+      text2
     </violation>
-    <violation beginline="32" endline="48" rule="LongVariable" ruleset="Naming Rules" externalInfoUrl="http://phpmd.org/rules/naming.html#longvariable" priority="3">
-      Avoid excessively long variable names like \$duplicationAttributes. Keep variable name length under 20.
+    <violation beginline="5" endline="6" rule="rule3" ruleset="ruleset3" externalInfoUrl="externalInfoUrl3" priority="3">
+      text3
     </violation>
   </file>
 </pmd>
@@ -43,25 +36,112 @@ EOL;
         $this->assertEquals('1.4.1', $pmdCpd->getVersion());
         $this->assertEquals('2013-03-10 14:53:42', $pmdCpd->getTimestamp()->format('Y-m-d H:i:s'));
 
-        $files = $pmdCpd->getFiles();
-        $this->assertEquals(2, count($files));
-
         return $pmdCpd;
     }
 
     /**
      * @depends testParse
      */
-    public function testFiles($pmdCpd)
+    public function testFilesFromPmdCpd($pmdCpd)
     {
         $files = $pmdCpd->getFiles();
+        $this->assertEquals(2, count($files));
 
+        return $files;
+    }
+
+    /**
+     * @depends testFilesFromPmdCpd
+     */
+    public function testFile1FromFiles(array $files)
+    {
         $file1 = $files[0];
-        $violations1 = $file1->getViolations();
-        $this->assertEquals(1, count($violations1));
 
+        $this->assertEquals('file1.php', $file1->getName());
+
+        return $file1;
+    }
+
+    /**
+     * @depends testFile1FromFiles
+     */
+    public function testViolationsFromFile1($file1)
+    {
+        $violations = $file1->getViolations();
+        $this->assertEquals(1, count($violations));
+
+        return $violations;
+    }
+
+    /**
+     * @depends testViolationsFromFile1
+     */
+    public function testViolation1($violations)
+    {
+        $violation = $violations[0];
+
+        $this->assertEquals('1', $violation->getBeginLine());
+        $this->assertEquals('2', $violation->getEndLine());
+        $this->assertEquals('rule1', $violation->getRule());
+        $this->assertEquals('ruleset1', $violation->getRuleset());
+        $this->assertEquals('externalInfoUrl1', $violation->getExternalInfoUrl());
+        $this->assertEquals('1', $violation->getPriority());
+        $this->assertEquals('text1', $violation->getText());
+    }
+
+    /**
+     * @depends testFilesFromPmdCpd
+     */
+    public function testFile2FromFiles(array $files)
+    {
         $file2 = $files[1];
-        $violations2 = $file2->getViolations();
-        $this->assertEquals(2, count($violations2));
+
+        $this->assertEquals('file2.php', $file2->getName());
+
+        return $file2;
+    }
+
+    /**
+     * @depends testFile2FromFiles
+     */
+    public function testViolationsFromFile2($file2)
+    {
+        $violations = $file2->getViolations();
+        $this->assertEquals(2, count($violations));
+
+        return $violations;
+    }
+
+    /**
+     * @depends testViolationsFromFile2
+     */
+    public function testViolation2($violations)
+    {
+        $violation = $violations[0];
+
+        $this->assertEquals('3', $violation->getBeginLine());
+        $this->assertEquals('4', $violation->getEndLine());
+        $this->assertEquals('rule2', $violation->getRule());
+        $this->assertEquals('ruleset2', $violation->getRuleset());
+        $this->assertEquals('externalInfoUrl2', $violation->getExternalInfoUrl());
+        $this->assertEquals('2', $violation->getPriority());
+        $this->assertEquals('text2', $violation->getText());
+    }
+
+
+    /**
+     * @depends testViolationsFromFile2
+     */
+    public function testViolation3($violations)
+    {
+        $violation = $violations[1];
+
+        $this->assertEquals('5', $violation->getBeginLine());
+        $this->assertEquals('6', $violation->getEndLine());
+        $this->assertEquals('rule3', $violation->getRule());
+        $this->assertEquals('ruleset3', $violation->getRuleset());
+        $this->assertEquals('externalInfoUrl3', $violation->getExternalInfoUrl());
+        $this->assertEquals('3', $violation->getPriority());
+        $this->assertEquals('text3', $violation->getText());
     }
 }

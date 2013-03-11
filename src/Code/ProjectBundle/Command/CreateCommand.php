@@ -5,6 +5,7 @@ namespace Code\ProjectBundle\Command;
 use Code\ProjectBundle\Feed\Item;
 use Code\ProjectBundle\Writer\WriterInterface;
 use Code\ProjectBundle\Project;
+use Code\RepositoryBundle\RepositoryConfig;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -24,7 +25,9 @@ class CreateCommand extends ContainerAwareCommand
             ->setDescription('Create project')
             ->addArgument('id')
             ->addArgument('name')
-            ->addArgument('sourceDir')
+            ->addArgument('libDir')
+            ->addArgument('type')
+            ->addArgument('url')
         ;
     }
 
@@ -35,10 +38,14 @@ class CreateCommand extends ContainerAwareCommand
     {
         $id = $input->getArgument('id');
         $name = $input->getArgument('name');
-        $sourceDir = $input->getArgument('sourceDir');
+        $libDir = $input->getArgument('libDir');
+        $type = $input->getArgument('type');
+        $url = $input->getArgument('url');
 
-        $project = new Project($id, $name, $sourceDir);
-        $project->getFeed()->addItem(new Item('Project "' . $name . '" created.', new \DateTime));
+        $repositoryConfig = new RepositoryConfig($type, $url);
+
+        $project = new Project($id, $name, $libDir, $repositoryConfig);
+        //$project->getFeed()->addItem(new Item('Project "' . $name . '" created.', new \DateTime));
 
         $writer = $this->getContainer()->get('code.project.writer');
         /* @var $writer WriterInterface */

@@ -28,7 +28,7 @@ class ClassesMergerTest extends \PHPUnit_Framework_TestCase
     public function testMergedClasses()
     {
         $classes1 = new ClassesModel();
-        $class1 = new ClassModel('class1');
+        $class1 = new ClassModel('class1', 'namespace1');
         $metric1 = new MetricModel('key1', 'value1');
         $class1->addMetric($metric1);
         $smell1 = new SmellModel('origin1', 'text1');
@@ -36,14 +36,30 @@ class ClassesMergerTest extends \PHPUnit_Framework_TestCase
         $classes1->addClass($class1);
 
         $classes2 = new ClassesModel();
-        $class2 = new ClassModel('class2');
+        $class2 = new ClassModel('class2', 'namespace2');
         $metric2 = new MetricModel('key2', 'value2');
         $class2->addMetric($metric2);
         $smell2 = new SmellModel('origin2', 'text2');
         $class2->addSmell($smell2);
         $classes2->addClass($class2);
 
-        $classes = $this->merger->merge($classes1, $classes2);
+        $classes3 = new ClassesModel();
+        $class3 = new ClassModel('class1', 'namespace1');
+        $metric3 = new MetricModel('key3', 'value3');
+        $class3->addMetric($metric3);
+        $smell3 = new SmellModel('origin3', 'text3');
+        $class3->addSmell($smell3);
+        $classes3->addClass($class3);
+
+        $classes4 = new ClassesModel();
+        $class4 = new ClassModel('class4', 'namespace1');
+        $metric4 = new MetricModel('key4', 'value4');
+        $class4->addMetric($metric4);
+        $smell4 = new SmellModel('origin4', 'text4');
+        $class4->addSmell($smell4);
+        $classes4->addClass($class4);
+
+        $classes = $this->merger->merge($classes1, $classes2, $classes3, $classes4);
 
         $this->assertEquals(2, count($classes->getClasses()));
 
@@ -152,6 +168,17 @@ class ClassesMergerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(3, count($classes->getClasses()));
     }
 
+    public function testMergeWithArray()
+    {
+        $classes1 = new ClassesModel(array(new ClassModel('class1')));
+        $classes2 = new ClassesModel(array(new ClassModel('class2')));
+        $classes3 = new ClassesModel(array(new ClassModel('class3')));
+
+        $classes = $this->merger->merge(array($classes1, $classes2, $classes3));
+
+        $this->assertEquals(3, count($classes->getClasses()));
+    }
+
     public function testMergeReusesAlreadyMergedClass()
     {
         $classes1 = new ClassesModel(array(new ClassModel('class1')));
@@ -163,13 +190,23 @@ class ClassesMergerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \Exception
+     * @expectedException \InvalidArgumentException
      */
-    public function testMergeThrowsExceptionOnWrongClass()
+    public function testMergeThrowsInvalidArgumentExceptionOnWrongClass()
     {
         $classes = new ClassesModel(array(new ClassModel('class1')));
         $class = new ClassModel('class2');
 
         $this->merger->merge($classes, $class);
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testMergeThrowsInvalidArgumentExceptionOnWrongArguments()
+    {
+        $classes1 = new ClassesModel(array(new ClassModel('class1')));
+
+        $this->merger->merge($classes1);
     }
 }

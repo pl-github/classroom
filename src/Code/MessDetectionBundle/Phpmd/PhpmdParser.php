@@ -32,23 +32,23 @@ class PhpmdParser implements ParserInterface
             foreach ($fileNode->violation as $violationNode)
             {
                 $violationAttributes = $violationNode->attributes();
-                $violationBeginLine = (integer)$violationAttributes['beginLine'];
-                $violationEndLine = (integer)$violationAttributes['endLine'];
+                $violationBeginLine = (string)$violationAttributes['beginline'];
+                $violationEndLine = (string)$violationAttributes['endline'];
                 $violationRule = (string)$violationAttributes['rule'];
                 $violationRuleset = (string)$violationAttributes['ruleset'];
                 $violationExternalInfoUrl = (string)$violationAttributes['externalInfoUrl'];
-                $violationPriority = (integer)$violationAttributes['priority'];
+                $violationPriority = (string)$violationAttributes['priority'];
 
                 $violationText = (string)$violationNode;
 
                 $violation = new ViolationModel(
-                    $violationBeginLine,
-                    $violationEndLine,
+                    (integer)$violationBeginLine,
+                    (integer)$violationEndLine,
                     $violationRule,
                     $violationRuleset,
                     $violationExternalInfoUrl,
-                    $violationPriority,
-                    $violationText
+                    (integer)$violationPriority,
+                    trim($violationText)
                 );
 
                 $file->addViolation($violation);

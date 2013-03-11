@@ -15,11 +15,11 @@ class PdependMapperTest extends \PHPUnit_Framework_TestCase
 {
     public function testMap()
     {
-        $classnameService = $this->getMockBuilder('Code\AnalyzerBundle\ClassnameService')
+        $reflectionService = $this->getMockBuilder('Code\AnalyzerBundle\ReflectionService')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $classnameService
+        $reflectionService
             ->expects($this->any())
             ->method('getClassnameForFile')
             ->will($this->returnArgument(0));
@@ -66,7 +66,7 @@ class PdependMapperTest extends \PHPUnit_Framework_TestCase
             )
         );
 
-        $mapper = new PdependMapper($classnameService);
+        $mapper = new PdependMapper($reflectionService);
         $classes = $mapper->map($pdepend);
 
         $this->assertEquals(2, count($classes->getClasses()));
@@ -84,7 +84,7 @@ class PdependMapperTest extends \PHPUnit_Framework_TestCase
         $class = $classes['package1\class1'];
         /* @var $class ClassModel */
 
-        $this->assertEquals('package1\class1', $class->getName());
+        $this->assertEquals('class1', $class->getName());
     }
 
     /**
@@ -97,6 +97,6 @@ class PdependMapperTest extends \PHPUnit_Framework_TestCase
         $class = $classes['package2\class2'];
         /* @var $class ClassModel */
 
-        $this->assertEquals('package2\class2', $class->getName());
+        $this->assertEquals('class2', $class->getName());
     }
 }

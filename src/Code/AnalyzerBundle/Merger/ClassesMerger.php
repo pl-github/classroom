@@ -13,9 +13,9 @@ class ClassesMerger
      * Merge classes models into new classes model
      * Input arguments can be either an array with ClassesModels, or multiple arguments.
      *
-     * @param ClassesModel $from
+     * @param mixed $from
+     * @throws \InvalidArgumentException
      * @return ClassesModel
-     * @thows \Exception
      */
     public function merge($from)
     {
@@ -26,7 +26,7 @@ class ClassesMerger
         } elseif (func_num_args() > 1) {
             $args = func_get_args();
         } else {
-            throw new \RuntimeException('Need multiple input arguments, or a single array.');
+            throw new \InvalidArgumentException('Need multiple input arguments, or a single array.');
         }
 
         foreach ($args as $from)
@@ -34,13 +34,13 @@ class ClassesMerger
             /* @var $from ClassesModel */
 
             if (!$from instanceof ClassesModel) {
-                throw new \Exception('Not a ClassesModel');
+                throw new \InvalidArgumentException('Not a ClassesModel');
             }
 
             foreach ($from->getClasses() as $class) {
                 /* @var $class ClassModel */
 
-                $className = $class->getName();
+                $className = $class->getFullQualifiedName();
 
                 if (!$mergedClasses->hasClass($className)) {
                     $intoClass = clone $class;

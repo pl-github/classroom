@@ -10,6 +10,11 @@ class ClassModel
     private $name;
 
     /**
+     * @var string
+     */
+    private $namespace;
+
+    /**
      * @var array
      */
     private $smells = array();
@@ -22,9 +27,10 @@ class ClassModel
     /**
      * @param string $name
      */
-    public function __construct($name, array $smells = array(), $metrics = array())
+    public function __construct($name, $namespace = '', array $smells = array(), $metrics = array())
     {
         $this->name = $name;
+        $this->namespace = $namespace;
         $this->smells = $smells;
         $this->metrics = $metrics;
     }
@@ -38,6 +44,16 @@ class ClassModel
         $this->metrics = array();
     }
 
+    /**
+     * Return id
+     *
+     * @return string
+     */
+    public function getId()
+    {
+        return spl_object_hash($this);
+    }
+
     /*+
      * Return name
      *
@@ -46,6 +62,33 @@ class ClassModel
     public function getName()
     {
         return $this->name;
+    }
+
+    /**
+     * Return namespace
+     *
+     * @return string
+     */
+    public function getNamespace()
+    {
+        return $this->namespace;
+    }
+
+    /**
+     * Return full qualified name
+     *
+     * @return string
+     */
+    public function getFullQualifiedName()
+    {
+        $name = $this->getName();
+        $namespace = $this->getNamespace();
+
+        if ($namespace) {
+            $name = $namespace . '\\' . $name;
+        }
+
+        return $name;
     }
 
     /**

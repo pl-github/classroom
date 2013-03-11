@@ -4,11 +4,11 @@ namespace Code\MetricsBundle\Pdepend;
 
 use Code\AnalyzerBundle\Analyzer\Mapper\MapperInterface;
 use Code\AnalyzerBundle\Analyzer\Model\ModelInterface;
-use Code\AnalyzerBundle\ClassnameService;
 use Code\AnalyzerBundle\Model\ClassesModel;
 use Code\AnalyzerBundle\Model\ClassModel;
 use Code\AnalyzerBundle\Model\MetricModel;
 use Code\AnalyzerBundle\Model\SmellModel;
+use Code\AnalyzerBundle\ReflectionService;
 use Code\MetricsBundle\Pdepend\Model\ClassModel as PdependClassModel;
 use Code\MetricsBundle\Pdepend\Model\MethodModel as PdependMethodModel;
 use Code\MetricsBundle\Pdepend\Model\MetricsModel as PdependMetricsModel;
@@ -17,16 +17,16 @@ use Code\MetricsBundle\Pdepend\Model\PackageModel as PdependPackageModel;
 class PdependMapper implements MapperInterface
 {
     /**
-     * @var ClassnameService
+     * @var ReflectionService
      */
-    private $classnameService;
+    private $reflectionService;
 
     /**
-     * @param ClassnameService $classnameService
+     * @param ReflectionService $reflectionService
      */
-    public function __construct(ClassnameService $classnameService)
+    public function __construct(ReflectionService $reflectionService)
     {
-        $this->classnameService = $classnameService;
+        $this->reflectionService = $reflectionService;
     }
 
     /**
@@ -39,11 +39,13 @@ class PdependMapper implements MapperInterface
         foreach ($pdependMetrics->getPackages() as $pdependPackage) {
             /* @var $pdependPackage PdependPackageModel */
 
+            $namespaceName = $pdependPackage->getName();
+
             foreach ($pdependPackage->getClasses() as $pdependClass) {
                 /* @var $pdependClass PdependClassModel */
 
-                $className = $pdependPackage->getName() . '\\' . $pdependClass->getName();
-                $class = new ClassModel($className);
+                $className = $pdependClass->getName();
+                $class = new ClassModel($className, $namespaceName);
 
                 $classMetrics = $pdependClass->getMetrics();
 
@@ -69,7 +71,7 @@ class PdependMapper implements MapperInterface
 
 
                 if ($classMetrics['wmc'] > 7) {
-                    $classSource = $this->classnameService->getClassSource($file, $className);
+                    $classSource = $this->reflectionService->getClassSource($file, $class->getFullQualifiedName());
 
                     $smell = new SmellModel('metrics', 'High overall complexity', $classSource, 1);
                     $class->addSmell($smell);
@@ -84,7 +86,7 @@ class PdependMapper implements MapperInterface
                     $methodMetrics = $pdependMethod->getMetrics();
 
                     if ($methodMetrics['ccn'] > 7) {
-                        $methodSource = $this->classnameService->getMethodSource($file, $className, $methodName);
+                        $methodSource = $this->reflectionService->getMethodSource($file, $class->getFullQualifiedName(), $methodName);
 
                         $smell = new SmellModel('metrics', 'Complex method ' . $methodName . '()', $methodSource, 1);
                         $class->addSmell($smell);

@@ -14,7 +14,19 @@ class ClassesModel
      */
     public function __construct(array $classes = array())
     {
-        $this->classes = $classes;
+        foreach ($classes as $class) {
+            $this->addClass($class);
+        }
+    }
+
+    /**
+     * Return id
+     *
+     * @return string
+     */
+    public function getId()
+    {
+        return spl_object_hash($this);
     }
 
     /**
@@ -33,7 +45,7 @@ class ClassesModel
      */
     public function addClass(ClassModel $class)
     {
-        $this->classes[$class->getName()] = $class;
+        $this->classes[$class->getFullQualifiedName()] = $class;
 
         return $this;
     }

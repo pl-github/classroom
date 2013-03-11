@@ -23,6 +23,16 @@ class MetricModel
         $this->value = $value;
     }
 
+    /**
+     * Return id
+     *
+     * @return string
+     */
+    public function getId()
+    {
+        return spl_object_hash($this);
+    }
+
     /*+
      * Return key
      *

@@ -17,7 +17,7 @@
         </service>
 
         <service id="code.mess_detection.phpmd.mapper" class="Code\MessDetectionBundle\Phpmd\PhpmdMapper">
-            <argument type="service" id="code.analyzer.classname_service" />
+            <argument type="service" id="code.analyzer.reflection_service" />
         </service>
 
         <service id="code.mess_detection.phpmd.analyzer" class="Code\AnalyzerBundle\Analyzer\Analyzer">
