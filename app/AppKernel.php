@@ -23,6 +23,8 @@ class AppKernel extends Kernel
             new Code\CopyPasteDetectionBundle\CodeCopyPasteDetectionBundle(),
             new Code\MetricsBundle\CodeMetricsBundle(),
             new Code\MessDetectionBundle\CodeMessDetectionBundle(),
+            new Code\UserBundle\CodeUserBundle(),
+            new FOS\UserBundle\FOSUserBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {
