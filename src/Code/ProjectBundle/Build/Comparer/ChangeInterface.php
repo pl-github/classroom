@@ -2,7 +2,7 @@
 
 namespace Code\ProjectBundle\Build\Comparer;
 
-use Code\ProjectBundle\Model\ClassModel;
+use Code\AnalyzerBundle\Model\ClassModel;
 
 interface ChangeInterface
 {

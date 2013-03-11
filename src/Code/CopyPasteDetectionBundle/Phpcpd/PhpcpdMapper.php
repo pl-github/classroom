@@ -2,16 +2,18 @@
 
 namespace Code\CopyPasteDetectionBundle\Phpcpd;
 
+use Code\AnalyzerBundle\Analyzer\Mapper\MapperInterface;
+use Code\AnalyzerBundle\Analyzer\Model\ModelInterface;
+use Code\AnalyzerBundle\ClassnameService;
+use Code\AnalyzerBundle\Model\ClassesModel;
+use Code\AnalyzerBundle\Model\ClassModel;
+use Code\AnalyzerBundle\Model\MetricModel;
+use Code\AnalyzerBundle\Model\SmellModel;
 use Code\CopyPasteDetectionBundle\Phpcpd\Model\DuplicationModel;
 use Code\CopyPasteDetectionBundle\Phpcpd\Model\FileModel;
 use Code\CopyPasteDetectionBundle\Phpcpd\Model\PmdCpdModel;
-use Code\ProjectBundle\ClassnameService;
-use Code\ProjectBundle\Model\ClassesModel;
-use Code\ProjectBundle\Model\ClassModel;
-use Code\ProjectBundle\Model\MetricModel;
-use Code\ProjectBundle\Model\SmellModel;
 
-class PhpcpdMapper
+class PhpcpdMapper implements MapperInterface
 {
     /**
      * @var ClassnameService
@@ -27,11 +29,9 @@ class PhpcpdMapper
     }
 
     /**
-     * Map phpcpd models to class models
-     * @param $duplications
-     * @return ResultCollection
+     * @inheritDoc
      */
-    public function map(PmdCpdModel $pmdCpd)
+    public function map(ModelInterface $pmdCpd)
     {
         $classes = new ClassesModel();
 

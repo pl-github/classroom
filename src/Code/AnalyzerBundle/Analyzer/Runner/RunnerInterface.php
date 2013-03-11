@@ -1,15 +1,16 @@
 <?php
 
-namespace Code\ProjectBundle;
+namespace Code\AnalyzerBundle\Analyzer\Runner;
 
-interface ServiceInterface
+interface RunnerInterface
 {
     /**
-     * Run service
+     * Parse phpcpd file
      *
      * @param string $sourceDirectory
      * @param string $workDirectory
-     * @return mixed
+     * @return Model
+     * @throws \Exception
      */
     public function run($sourceDirectory, $workDirectory);
 }

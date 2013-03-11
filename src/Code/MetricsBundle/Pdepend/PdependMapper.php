@@ -2,17 +2,19 @@
 
 namespace Code\MetricsBundle\Pdepend;
 
-use Code\ProjectBundle\Model\ClassesModel;
-use Code\ProjectBundle\Model\ClassModel;
-use Code\ProjectBundle\Model\MetricModel;
+use Code\AnalyzerBundle\Analyzer\Mapper\MapperInterface;
+use Code\AnalyzerBundle\Analyzer\Model\ModelInterface;
+use Code\AnalyzerBundle\ClassnameService;
+use Code\AnalyzerBundle\Model\ClassesModel;
+use Code\AnalyzerBundle\Model\ClassModel;
+use Code\AnalyzerBundle\Model\MetricModel;
+use Code\AnalyzerBundle\Model\SmellModel;
 use Code\MetricsBundle\Pdepend\Model\ClassModel as PdependClassModel;
 use Code\MetricsBundle\Pdepend\Model\MethodModel as PdependMethodModel;
 use Code\MetricsBundle\Pdepend\Model\MetricsModel as PdependMetricsModel;
 use Code\MetricsBundle\Pdepend\Model\PackageModel as PdependPackageModel;
-use Code\ProjectBundle\Model\SmellModel;
-use Code\ProjectBundle\ClassnameService;
 
-class PdependMapper
+class PdependMapper implements MapperInterface
 {
     /**
      * @var ClassnameService
@@ -28,12 +30,9 @@ class PdependMapper
     }
 
     /**
-     * Map pdepend models to class models
-     *
-     * @param PdependMetricsModel $pdependMetrics
-     * @return ClassesModel
+     * @inheritDoc
      */
-    public function map(PdependMetricsModel $pdependMetrics)
+    public function map(ModelInterface $pdependMetrics)
     {
         $classes = new ClassesModel();
 

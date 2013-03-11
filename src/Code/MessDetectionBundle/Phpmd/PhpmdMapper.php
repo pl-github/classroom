@@ -2,15 +2,17 @@
 
 namespace Code\MessDetectionBundle\Phpmd;
 
+use Code\AnalyzerBundle\Analyzer\Mapper\MapperInterface;
+use Code\AnalyzerBundle\Analyzer\Model\ModelInterface;
+use Code\AnalyzerBundle\ClassnameService;
+use Code\AnalyzerBundle\Model\ClassesModel;
+use Code\AnalyzerBundle\Model\ClassModel;
+use Code\AnalyzerBundle\Model\SmellModel;
 use Code\MessDetectionBundle\Phpmd\Model\FileModel;
 use Code\MessDetectionBundle\Phpmd\Model\PmdModel;
 use Code\MessDetectionBundle\Phpmd\Model\ViolationModel;
-use Code\ProjectBundle\Model\ClassesModel;
-use Code\ProjectBundle\Model\ClassModel;
-use Code\ProjectBundle\Model\SmellModel;
-use Code\ProjectBundle\ClassnameService;
 
-class PhpmdMapper
+class PhpmdMapper implements MapperInterface
 {
     /**
      * @var ClassnameService
@@ -26,12 +28,9 @@ class PhpmdMapper
     }
 
     /**
-     * Map pmd models to class models
-     *
-     * @param PmdModel $pmd
-     * @return ClassesModel
+     * @inheritDoc
      */
-    public function map(PmdModel $pmd)
+    public function map(ModelInterface $pmd)
     {
         $classes = new ClassesModel();
 
@@ -41,16 +40,16 @@ class PhpmdMapper
             $fileName = $file->getName();
             $className = $this->classnameService->getClassnameForFile($fileName);
 
+            $class = new ClassModel($className);
+
             foreach ($file->getViolations() as $violation) {
                 /* @var $violation ViolationModel */
 
-                $class = new ClassModel($className);
-
                 $smell = new SmellModel('mess_detection', $violation->getText(), '', 1);
                 $class->addSmell($smell);
-
-                $classes->addClass($class);
             }
+
+            $classes->addClass($class);
         }
 
         return $classes;

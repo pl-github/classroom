@@ -1,27 +1,33 @@
 <?php
 
-namespace Code\CopyPasteDetectionBundle\Phpcpd;
+namespace Code\MetricsBundle\Pdepend;
 
+use Code\AnalyzerBundle\Analyzer\Runner\RunnerInterface;
 use Symfony\Component\Process\ProcessBuilder;
 use Symfony\Component\Process\Process;
 
-class PhpcpdExecutor
+class PdependRunner implements RunnerInterface
 {
+    private $pdependExecutable;
+
     /**
-     * @param string $sourceDirectory
-     * @param string $workDirectory
-     * @return string
-     * @throws \Exception
+     * @param $pdependExecutable
      */
-    public function execute($sourceDirectory, $workDirectory)
+    public function __construct($pdependExecutable)
     {
-        $pmdFilename = $this->ensureDirectoryWritable($workDirectory) . '/pmdcpd.xml';
+        $this->pdependExecutable = $pdependExecutable;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function run($sourceDirectory, $workDirectory)
+    {
+        $summaryFilename = $this->ensureDirectoryWritable($workDirectory) . '/pdepend-summary.xml';
 
         $processBuilder = new ProcessBuilder();
-        $processBuilder->add('phpcpd')
-            ->add('--log-pmd')
-            ->add($pmdFilename)
-            ->add('--quiet')
+        $processBuilder->add($this->pdependExecutable)
+            ->add('--summary-xml=' . $summaryFilename)
             ->add($sourceDirectory);
 
         $process = $processBuilder->getProcess();
@@ -33,10 +39,10 @@ class PhpcpdExecutor
             echo 'RC: ' . $exitStatusCode.PHP_EOL;
             echo 'Output: ' . $process->getOutput().PHP_EOL;
             echo 'Error output: ' . $process->getErrorOutput().PHP_EOL;
-            throw new \Exception('phpcpd execution resulted in an error');
+            throw new \Exception('pdepend execution resulted in an error');
         }
 
-        return $pmdFilename;
+        return $summaryFilename;
     }
 
     /**

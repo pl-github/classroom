@@ -5,25 +5,26 @@
     xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <parameters>
-        <parameter key="bla.blubb">ccc</parameter>
+        <parameter key="code.metrics.pdepend.executable">pdepend</parameter>
     </parameters>
 
     <services>
-        <service id="code.metrics.pdepend.executor" class="Code\MetricsBundle\Pdepend\PdependExecutor">
-            <argument>%kernel.root_dir%</argument>
+        <service id="code.metrics.pdepend.runner" class="Code\MetricsBundle\Pdepend\PdependRunner">
+            <argument>%code.metrics.pdepend.executable%</argument>
         </service>
 
         <service id="code.metrics.pdepend.parser" class="Code\MetricsBundle\Pdepend\PdependParser">
         </service>
 
         <service id="code.metrics.pdepend.mapper" class="Code\MetricsBundle\Pdepend\PdependMapper">
-            <argument type="service" id="code.project.classname_service" />
+            <argument type="service" id="code.analyzer.classname_service" />
         </service>
 
-        <service id="code.metrics.service" class="Code\MetricsBundle\MetricsService">
-            <argument type="service" id="code.metrics.pdepend.executor" />
+        <service id="code.metrics.pdepend.analyzer" class="Code\AnalyzerBundle\Analyzer\Analyzer">
+            <argument type="service" id="code.metrics.pdepend.runner" />
             <argument type="service" id="code.metrics.pdepend.parser" />
             <argument type="service" id="code.metrics.pdepend.mapper" />
+            <tag name="code.analyzer" />
         </service>
     </services>
 </container>

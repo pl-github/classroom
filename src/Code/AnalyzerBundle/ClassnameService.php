@@ -1,6 +1,6 @@
 <?php
 
-namespace Code\ProjectBundle;
+namespace Code\AnalyzerBundle;
 
 use TokenReflection\Broker;
 

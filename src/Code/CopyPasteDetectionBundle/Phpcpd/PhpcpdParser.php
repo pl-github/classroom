@@ -2,17 +2,15 @@
 
 namespace Code\CopyPasteDetectionBundle\Phpcpd;
 
+use Code\AnalyzerBundle\Analyzer\Parser\ParserInterface;
 use Code\CopyPasteDetectionBundle\Phpcpd\Model\DuplicationModel;
 use Code\CopyPasteDetectionBundle\Phpcpd\Model\FileModel;
 use Code\CopyPasteDetectionBundle\Phpcpd\Model\PmdCpdModel;
 
-class PhpcpdParser
+class PhpcpdParser implements ParserInterface
 {
     /**
-     * Parse phpcpd file
-     *
-     * @param string $filename
-     * @return PmdCpdModel
+     * @inheritDoc
      */
     public function parse($filename)
     {

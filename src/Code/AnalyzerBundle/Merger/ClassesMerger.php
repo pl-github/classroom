@@ -1,25 +1,35 @@
 <?php
 
-namespace Code\ProjectBundle\Merger;
+namespace Code\AnalyzerBundle\Merger;
 
-use Code\ProjectBundle\Model\ClassesModel;
-use Code\ProjectBundle\Model\ClassModel;
-use Code\ProjectBundle\Model\MetricModel;
-use Code\ProjectBundle\Model\SmellModel;
+use Code\AnalyzerBundle\Model\ClassesModel;
+use Code\AnalyzerBundle\Model\ClassModel;
+use Code\AnalyzerBundle\Model\MetricModel;
+use Code\AnalyzerBundle\Model\SmellModel;
 
 class ClassesMerger
 {
     /**
      * Merge classes models into new classes model
+     * Input arguments can be either an array with ClassesModels, or multiple arguments.
+     *
      * @param ClassesModel $from
      * @return ClassesModel
      * @thows \Exception
      */
-    public function merge(ClassesModel $from)
+    public function merge($from)
     {
         $mergedClasses = new ClassesModel();
 
-        foreach (func_get_args() as $from)
+        if (func_num_args() == 1 && is_array(func_get_arg(0))) {
+            $args = func_get_arg(0);
+        } elseif (func_num_args() > 1) {
+            $args = func_get_args();
+        } else {
+            throw new \RuntimeException('Need multiple input arguments, or a single array.');
+        }
+
+        foreach ($args as $from)
         {
             /* @var $from ClassesModel */
 

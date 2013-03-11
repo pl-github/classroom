@@ -22,7 +22,7 @@ class ClassModel
     /**
      * @var array
      */
-    private $method = array();
+    private $methods = array();
 
     /**
      * @param string $name

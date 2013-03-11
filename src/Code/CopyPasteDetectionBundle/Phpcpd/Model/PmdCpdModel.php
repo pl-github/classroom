@@ -2,7 +2,9 @@
 
 namespace Code\CopyPasteDetectionBundle\Phpcpd\Model;
 
-class PmdCpdModel
+use Code\AnalyzerBundle\Analyzer\Model\ModelInterface;
+
+class PmdCpdModel implements ModelInterface
 {
     /**
      * @var array

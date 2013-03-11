@@ -2,6 +2,7 @@
 
 namespace Code\ProjectBundle\Build\Comparer;
 
+use Code\AnalyzerBundle\Model\ClassModel;
 use Code\ProjectBundle\Build\Build;
 
 class Comparer implements ComparerInterface
@@ -21,10 +22,10 @@ class Comparer implements ComparerInterface
         foreach ($classNames as $className)
         {
             $fromClass = $fromClasses->getClass($className);
-            /* @var $fromClass \Code\ProjectBundle\Model\ClassModel */
+            /* @var $fromClass ClassModel */
 
             $toClass = $toClasses->getClass($className);
-            /* @var $toClass \Code\ProjectBundle\Model\ClassModel */
+            /* @var $toClass ClassModel */
 
             if (!$fromClass) {
                 $changeSet->addChange(new NewClassChange($toClass));

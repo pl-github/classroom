@@ -5,17 +5,6 @@
     xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <services>
-        <service id="code.project.tokenreflection.broker.backend.memory" class="TokenReflection\Broker\Backend\Memory">
-        </service>
-
-        <service id="code.project.tokenreflection.broker" class="TokenReflection\Broker">
-            <argument type="service" id="code.project.tokenreflection.broker.backend.memory" />
-        </service>
-
-        <service id="code.project.classname_service" class="Code\ProjectBundle\ClassnameService">
-            <argument type="service" id="code.project.tokenreflection.broker" />
-        </service>
-
         <service id="code.project.merge.classes_merge" class="Code\ProjectBundle\Merger\ClassesMerger">
         </service>
 

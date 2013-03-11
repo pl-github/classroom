@@ -2,18 +2,16 @@
 
 namespace Code\MetricsBundle\Pdepend;
 
+use Code\AnalyzerBundle\Analyzer\Parser\ParserInterface;
 use Code\MetricsBundle\Pdepend\Model\ClassModel;
 use Code\MetricsBundle\Pdepend\Model\MethodModel;
 use Code\MetricsBundle\Pdepend\Model\MetricsModel;
 use Code\MetricsBundle\Pdepend\Model\PackageModel;
 
-class PdependParser
+class PdependParser implements ParserInterface
 {
     /**
-     * Parse pdepend metrics file
-     *
-     * @param string $filename
-     * @return MetricsModel
+     * @inheritDoc
      */
     public function parse($filename)
     {

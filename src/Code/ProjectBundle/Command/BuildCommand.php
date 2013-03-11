@@ -41,49 +41,35 @@ class BuildCommand extends ContainerAwareCommand
 
         $rootDir = $this->getContainer()->getParameter('kernel.root_dir');
 
-        $copyPasteDetectionService = $this->getContainer()->get('code.copy_paste_detection.service');
-        /* @var $service \Code\CopyPasteDetectionBundle\CopyPasteDetectionService */
-
-        $metricsService = $this->getContainer()->get('code.metrics.service');
-        /* @var $service \Code\MetricsBundle\MetricsService */
-
-        $messDetectionService = $this->getContainer()->get('code.mess_detection.service');
-        /* @var $service \Code\MessDetectionBundle\MessDetectionService */
-
         $projectLoader = $this->getContainer()->get('code.project.loader');
         /* @var $projectLoader ProjectLoaderInterface */
         $projectWriter = $this->getContainer()->get('code.project.writer');
         /* @var $projectWriter ProjectWriterInterface */
+        $analyzer = $this->getContainer()->get('code.analyzer.chain_analyzer');
+        /* @var $analyzer \Code\AnalyzerBundle\ChainAnalyzer */
+        $buildGenerator = $this->getContainer()->get('code.project.build.generator');
+        /* @var $buildGenerator BuildGenerator */
+        $buildLoader = $this->getContainer()->get('code.project.build.loader');
+        /* @var $buildLoader BuildLoaderInterface */
+        $buildWriter = $this->getContainer()->get('code.project.build.writer');
+        /* @var $buildWriter BuildWriterInterface */
+        $comparer = $this->getContainer()->get('code.project.build.comparer');
+        /* @var $comparer Comparer */
 
         $project = $projectLoader->load($projectId);
         $sourceDirectory = $project->getSourceDirectory();
         $workDirectory = $rootDir . '/data/' . $project->getId() . '/work';
 
-        $copyPasteClasses = $copyPasteDetectionService->run($sourceDirectory, $workDirectory);
-        $metricsClasses = $metricsService->run($sourceDirectory, $workDirectory);
-        $messClasses = $messDetectionService->run($sourceDirectory, $workDirectory);
-
-        $classesMerger = $this->getContainer()->get('code.project.merge.classes_merge');
-        $classes = $classesMerger->merge($copyPasteClasses, $metricsClasses, $messClasses);
-
-        $buildGenerator = $this->getContainer()->get('code.project.build.generator');
-        /* @var $buildGenerator BuildGenerator */
+        $classes = $analyzer->analyze($sourceDirectory, $workDirectory);
 
         $build = $buildGenerator->createBuild($project);
         $build->setClasses($classes);
-
-        $buildLoader = $this->getContainer()->get('code.project.build.loader');
-        /* @var $buildLoader BuildLoaderInterface */
-        $buildWriter = $this->getContainer()->get('code.project.build.writer');
-        /* @var $buildWriter BuildWriterInterface */
 
         $buildWriter->write($build);
         $project->getFeed()->addItem(new Item('New build ' . $build->getVersion()));
         $project->setLatestBuildVersion($build->getVersion());
 
         if ($project->getPreviousBuildVersion()) {
-            $comparer = $this->getContainer()->get('code.project.build.comparer');
-            /* @var $comparer Comparer */
             $oldBuild = $buildLoader->load($project, $project->getPreviousBuildVersion());
             $changeSet = $comparer->compare($oldBuild, $build);
 

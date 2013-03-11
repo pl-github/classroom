@@ -2,23 +2,31 @@
 
 namespace Code\MessDetectionBundle\Phpmd;
 
+use Code\AnalyzerBundle\Analyzer\Runner\RunnerInterface;
 use Symfony\Component\Process\ProcessBuilder;
 use Symfony\Component\Process\Process;
 
-class PhpmdExecutor
+class PhpmdRunner implements RunnerInterface
 {
+    private $phpmdExecutable;
+
     /**
-     * @param string $sourceDirectory
-     * @param string $workDirectory
-     * @return string
-     * @throws \Exception
+     * @param $phpcpdExecutable
      */
-    public function execute($sourceDirectory, $workDirectory)
+    public function __construct($phpmdExecutable)
+    {
+        $this->phpmdExecutable = $phpmdExecutable;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function run($sourceDirectory, $workDirectory)
     {
         $phpmdFilename = $this->ensureDirectoryWritable($workDirectory) . '/phpmd.xml';
 
         $processBuilder = new ProcessBuilder();
-        $processBuilder->add('phpmd')
+        $processBuilder->add($this->phpmdExecutable)
             ->add($sourceDirectory)
             ->add('xml')
             ->add('codesize,unusedcode,naming')

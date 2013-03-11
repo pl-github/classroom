@@ -1,12 +1,12 @@
 <?php
 
-namespace Code\ProjectBundle\Tests\Merger;
+namespace Code\AnalyzerBundle\Tests\Merger;
 
-use Code\ProjectBundle\Merger\ClassesMerger;
-use Code\ProjectBundle\Model\ClassesModel;
-use Code\ProjectBundle\Model\ClassModel;
-use Code\ProjectBundle\Model\MetricModel;
-use Code\ProjectBundle\Model\SmellModel;
+use Code\AnalyzerBundle\Merger\ClassesMerger;
+use Code\AnalyzerBundle\Model\ClassesModel;
+use Code\AnalyzerBundle\Model\ClassModel;
+use Code\AnalyzerBundle\Model\MetricModel;
+use Code\AnalyzerBundle\Model\SmellModel;
 
 class ClassesMergerTest extends \PHPUnit_Framework_TestCase
 {
@@ -170,6 +170,6 @@ class ClassesMergerTest extends \PHPUnit_Framework_TestCase
         $classes = new ClassesModel(array(new ClassModel('class1')));
         $class = new ClassModel('class2');
 
-        $classes = $this->merger->merge($classes, $class);
+        $this->merger->merge($classes, $class);
     }
 }

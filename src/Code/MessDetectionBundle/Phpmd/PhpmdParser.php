@@ -2,27 +2,25 @@
 
 namespace Code\MessDetectionBundle\Phpmd;
 
+use Code\AnalyzerBundle\Analyzer\Parser\ParserInterface;
 use Code\MessDetectionBundle\Phpmd\Model\FileModel;
 use Code\MessDetectionBundle\Phpmd\Model\PmdModel;
 use Code\MessDetectionBundle\Phpmd\Model\ViolationModel;
 
-class PhpmdParser
+class PhpmdParser implements ParserInterface
 {
     /**
-     * Parse phpmd file
-     *
-     * @param string $filename
-     * @return PmdModel
+     * @inheritDoc
      */
     public function parse($filename)
     {
         $xml = simplexml_load_file($filename);
 
         $pmdAttributes = $xml->attributes();
-        $pmdName = (string)$pmdAttributes['name'];
+        $pmdVersion = (string)$pmdAttributes['version'];
         $pmdTimestamp = new \DateTime($pmdAttributes['timestamp']);
 
-        $pmd = new PmdModel($pmdName, $pmdTimestamp);
+        $pmd = new PmdModel($pmdVersion, $pmdTimestamp);
 
         foreach ($xml->file as $fileNode)
         {

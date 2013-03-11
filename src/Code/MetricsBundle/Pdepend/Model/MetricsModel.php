@@ -2,7 +2,9 @@
 
 namespace Code\MetricsBundle\Pdepend\Model;
 
-class MetricsModel
+use Code\AnalyzerBundle\Analyzer\Model\ModelInterface;
+
+class MetricsModel implements ModelInterface
 {
     /**
      * @var string

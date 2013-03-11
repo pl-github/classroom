@@ -5,25 +5,26 @@
     xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <parameters>
-        <parameter key="bla.blubb">ccc</parameter>
+        <parameter key="code.mess_detection.phpmd.executable">phpmd</parameter>
     </parameters>
 
     <services>
-        <service id="code.mess_detection.phpmd.executor" class="Code\MessDetectionBundle\Phpmd\PhpmdExecutor">
-            <argument>%kernel.root_dir%</argument>
+        <service id="code.mess_detection.phpmd.runner" class="Code\MessDetectionBundle\Phpmd\PhpmdRunner">
+            <argument>%code.mess_detection.phpmd.executable%</argument>
         </service>
 
         <service id="code.mess_detection.phpmd.parser" class="Code\MessDetectionBundle\Phpmd\PhpmdParser">
         </service>
 
         <service id="code.mess_detection.phpmd.mapper" class="Code\MessDetectionBundle\Phpmd\PhpmdMapper">
-            <argument type="service" id="code.project.classname_service" />
+            <argument type="service" id="code.analyzer.classname_service" />
         </service>
 
-        <service id="code.mess_detection.service" class="Code\MessDetectionBundle\MessDetectionService">
-            <argument type="service" id="code.mess_detection.phpmd.executor" />
+        <service id="code.mess_detection.phpmd.analyzer" class="Code\AnalyzerBundle\Analyzer\Analyzer">
+            <argument type="service" id="code.mess_detection.phpmd.runner" />
             <argument type="service" id="code.mess_detection.phpmd.parser" />
             <argument type="service" id="code.mess_detection.phpmd.mapper" />
+            <tag name="code.analyzer" />
         </service>
     </services>
 </container>

@@ -2,8 +2,8 @@
 
 namespace Code\ProjectBundle\Build;
 
+use Code\AnalyzerBundle\Model\ClassesModel;
 use Code\ProjectBundle\Project;
-use Code\ProjectBundle\Model\ClassesModel;
 
 class Build
 {

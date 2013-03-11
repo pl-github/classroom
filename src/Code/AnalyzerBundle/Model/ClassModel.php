@@ -1,6 +1,6 @@
 <?php
 
-namespace Code\ProjectBundle\Model;
+namespace Code\AnalyzerBundle\Model;
 
 class ClassModel
 {

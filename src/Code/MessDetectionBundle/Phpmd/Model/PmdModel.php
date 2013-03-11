@@ -2,12 +2,14 @@
 
 namespace Code\MessDetectionBundle\Phpmd\Model;
 
-class PmdModel
+use Code\AnalyzerBundle\Analyzer\Model\ModelInterface;
+
+class PmdModel implements ModelInterface
 {
     /**
      * @var string
      */
-    private $name;
+    private $version;
 
     /**
      * @var \DateTime
@@ -20,25 +22,25 @@ class PmdModel
     private $files = array();
 
     /**
-     * @param string    $name
+     * @param string    $version
      * @param \DateTime $timestamp
      * @param array     $files
      */
-    public function __construct($name, \DateTime $timestamp, array $files = array())
+    public function __construct($version, \DateTime $timestamp, array $files = array())
     {
-        $this->name = $name;
+        $this->version = $version;
         $this->timestamp = $timestamp;
         $this->files = $files;
     }
 
     /**
-     * Return name
+     * Return version
      *
      * @return string
      */
-    public function getName()
+    public function getVersion()
     {
-        return $this->name;
+        return $this->version;
     }
 
     /**

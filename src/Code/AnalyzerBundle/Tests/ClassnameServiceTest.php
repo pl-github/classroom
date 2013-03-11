@@ -1,8 +1,8 @@
 <?php
 
-namespace Code\ProjectBundle\Tests;
+namespace Code\AnalyzerBundle\Tests;
 
-use Code\ProjectBundle\ClassnameService;
+use Code\AnalyzerBundle\ClassnameService;
 use TokenReflection\Broker;
 
 class ClassnameServiceTest extends \PHPUnit_Framework_TestCase

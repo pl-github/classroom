@@ -5,25 +5,26 @@
     xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <parameters>
-        <parameter key="bla.blubb">ccc</parameter>
+        <parameter key="code.copy_paste_detection.phpcpd.executable">phpcpd</parameter>
     </parameters>
 
     <services>
-        <service id="code.copy_paste_detection.phpcpd.executor" class="Code\CopyPasteDetectionBundle\Phpcpd\PhpcpdExecutor">
-            <argument>%kernel.root_dir%</argument>
+        <service id="code.copy_paste_detection.phpcpd.runner" class="Code\CopyPasteDetectionBundle\Phpcpd\PhpcpdRunner">
+            <argument>%code.copy_paste_detection.phpcpd.executable%</argument>
         </service>
 
         <service id="code.copy_paste_detection.phpcpd.parser" class="Code\CopyPasteDetectionBundle\Phpcpd\PhpcpdParser">
         </service>
 
         <service id="code.copy_paste_detection.phpcpd.mapper" class="Code\CopyPasteDetectionBundle\Phpcpd\PhpcpdMapper">
-            <argument type="service" id="code.project.classname_service" />
+            <argument type="service" id="code.analyzer.classname_service" />
         </service>
 
-        <service id="code.copy_paste_detection.service" class="Code\CopyPasteDetectionBundle\CopyPasteDetectionService">
-            <argument type="service" id="code.copy_paste_detection.phpcpd.executor" />
+        <service id="code.copy_paste_detection.phpcpd.analyzer" class="Code\AnalyzerBundle\Analyzer\Analyzer">
+            <argument type="service" id="code.copy_paste_detection.phpcpd.runner" />
             <argument type="service" id="code.copy_paste_detection.phpcpd.parser" />
             <argument type="service" id="code.copy_paste_detection.phpcpd.mapper" />
+            <tag name="code.analyzer" />
         </service>
     </services>
 </container>

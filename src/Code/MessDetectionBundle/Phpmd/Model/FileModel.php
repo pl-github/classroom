@@ -23,7 +23,7 @@ class FileModel
     public function __construct($name, array $violations = array())
     {
         $this->name = $name;
-        $this->violatins = $violations;
+        $this->violations = $violations;
     }
 
     /**
