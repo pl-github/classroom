@@ -33,8 +33,7 @@ class ChainAnalyzer implements AnalyzerInterface
     {
         $results = array();
 
-        foreach ($this->analyzers as $analyzer)
-        {
+        foreach ($this->analyzers as $analyzer) {
             /* @var $analyzer AnalyzerInterface */
             $results[] = $analyzer->analyze($sourceDirectory, $workDirectory);
         }

@@ -22,15 +22,13 @@ class PhpmdParser implements ParserInterface
 
         $pmd = new PmdModel($pmdVersion, $pmdTimestamp);
 
-        foreach ($xml->file as $fileNode)
-        {
+        foreach ($xml->file as $fileNode) {
             $fileAttributes = $fileNode->attributes();
             $fileName = (string)$fileAttributes['name'];
 
             $file = new FileModel($fileName);
 
-            foreach ($fileNode->violation as $violationNode)
-            {
+            foreach ($fileNode->violation as $violationNode) {
                 $violationAttributes = $violationNode->attributes();
                 $violationBeginLine = (string)$violationAttributes['beginline'];
                 $violationEndLine = (string)$violationAttributes['endline'];

@@ -29,8 +29,7 @@ class ClassesMerger
             throw new \InvalidArgumentException('Need multiple input arguments, or a single array.');
         }
 
-        foreach ($args as $from)
-        {
+        foreach ($args as $from) {
             /* @var $from ClassesModel */
 
             if (!$from instanceof ClassesModel) {

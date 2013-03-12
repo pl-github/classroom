@@ -33,8 +33,7 @@ class BuildCommand extends ContainerAwareCommand
         $this
             ->setName('code:project:build')
             ->setDescription('Build project')
-            ->addArgument('projectId')
-        ;
+            ->addArgument('projectId');
     }
 
     /**

@@ -27,15 +27,21 @@ class PhpcpdMapperTest extends \PHPUnit_Framework_TestCase
             '123',
             new \DateTime('2012-12-12 12:12:12'),
             array(
-                new FileModel('file1', array(
-                    new ViolationModel(0, 5, 'rule1', 'ruleset1', 'url1', 1, 'text1'),
-                    new ViolationModel(5, 15, 'rule2', 'ruleset2', 'url2', 2, 'text2')
-                )),
-                new FileModel('file2', array(
-                    new ViolationModel(20, 30, 'rule3', 'ruleset3', 'url3', 3, 'text3'),
-                    new ViolationModel(40, 100, 'rule4', 'ruleset4', 'url4', 4, 'text4'),
-                    new ViolationModel(150, 300, 'rule5', 'ruleset5', 'url5', 5, 'text5')
-                ))
+                new FileModel(
+                    'file1',
+                    array(
+                        new ViolationModel(0, 5, 'rule1', 'ruleset1', 'url1', 1, 'text1'),
+                        new ViolationModel(5, 15, 'rule2', 'ruleset2', 'url2', 2, 'text2')
+                    )
+                ),
+                new FileModel(
+                    'file2',
+                    array(
+                        new ViolationModel(20, 30, 'rule3', 'ruleset3', 'url3', 3, 'text3'),
+                        new ViolationModel(40, 100, 'rule4', 'ruleset4', 'url4', 4, 'text4'),
+                        new ViolationModel(150, 300, 'rule5', 'ruleset5', 'url5', 5, 'text5')
+                    )
+                )
             )
         );
 

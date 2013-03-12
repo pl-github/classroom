@@ -132,8 +132,7 @@ class ClassModel
     public function getScore()
     {
         $score = 0;
-        foreach ($this->smells as $smell)
-        {
+        foreach ($this->smells as $smell) {
             $score += $smell->getScore();
         }
 

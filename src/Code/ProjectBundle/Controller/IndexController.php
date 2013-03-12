@@ -20,10 +20,9 @@ class IndexController extends Controller
         $rootDir = $this->container->getParameter('kernel.root_dir');
         $projectLoader = $this->container->get('code.project.loader');
 
-        $projectFiles = glob ($rootDir . '/data/*/project.serialized');
+        $projectFiles = glob($rootDir . '/data/*/project.serialized');
         $projects = array();
-        foreach ($projectFiles as $projectFile)
-        {
+        foreach ($projectFiles as $projectFile) {
             preg_match('#/([^/]+)/project\.serialized$#', $projectFile, $match);
             $projectId = $match[1];
             $projects[] = $projectLoader->load($projectId);

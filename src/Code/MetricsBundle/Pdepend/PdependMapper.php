@@ -77,8 +77,7 @@ class PdependMapper implements MapperInterface
                     $class->addSmell($smell);
                 }
 
-                foreach ($pdependClass->getMethods() as $pdependMethod)
-                {
+                foreach ($pdependClass->getMethods() as $pdependMethod) {
                     /* @var $pdependMethod PdependMethodModel */
 
                     $methodName = $pdependMethod->getName();
@@ -86,7 +85,11 @@ class PdependMapper implements MapperInterface
                     $methodMetrics = $pdependMethod->getMetrics();
 
                     if ($methodMetrics['ccn'] > 7) {
-                        $methodSource = $this->reflectionService->getMethodSource($file, $class->getFullQualifiedName(), $methodName);
+                        $methodSource = $this->reflectionService->getMethodSource(
+                            $file,
+                            $class->getFullQualifiedName(),
+                            $methodName
+                        );
 
                         $smell = new SmellModel('metrics', 'Complex method ' . $methodName . '()', $methodSource, 1);
                         $class->addSmell($smell);

@@ -27,8 +27,7 @@ class CreateCommand extends ContainerAwareCommand
             ->addArgument('name')
             ->addArgument('libDir')
             ->addArgument('type')
-            ->addArgument('url')
-        ;
+            ->addArgument('url');
     }
 
     /**

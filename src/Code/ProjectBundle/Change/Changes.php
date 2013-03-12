@@ -48,8 +48,7 @@ class Changes
      */
     public function mergeChangeSet(ChangeSet $changeSet)
     {
-        foreach ($changeSet->getChanges() as $change)
-        {
+        foreach ($changeSet->getChanges() as $change) {
             $this->addChange($change);
         }
 

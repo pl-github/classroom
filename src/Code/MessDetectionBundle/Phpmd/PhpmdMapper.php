@@ -46,7 +46,11 @@ class PhpmdMapper implements MapperInterface
             foreach ($file->getViolations() as $violation) {
                 /* @var $violation ViolationModel */
 
-                $source = $this->reflectionService->getSourceExtract($fileName, $violation->getBeginLine(), $violation->getEndLine());
+                $source = $this->reflectionService->getSourceExtract(
+                    $fileName,
+                    $violation->getBeginLine(),
+                    $violation->getEndLine()
+                );
 
                 $smell = new SmellModel('mess_detection', $violation->getText(), $source, 1);
                 $class->addSmell($smell);

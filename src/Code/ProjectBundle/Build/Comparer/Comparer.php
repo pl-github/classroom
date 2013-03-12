@@ -21,10 +21,14 @@ class Comparer implements ComparerInterface
         $fromClasses = $from->getClasses();
         $toClasses = $to->getClasses();
 
-        $classNames = array_unique(array_merge(array_keys($fromClasses->getClasses()), array_keys($toClasses->getClasses())));
+        $classNames = array_unique(
+            array_merge(
+                array_keys($fromClasses->getClasses()),
+                array_keys($toClasses->getClasses())
+            )
+        );
 
-        foreach ($classNames as $className)
-        {
+        foreach ($classNames as $className) {
             $fromClass = $fromClasses->getClass($className);
             /* @var $fromClass ClassModel */
 
@@ -32,11 +36,18 @@ class Comparer implements ComparerInterface
             /* @var $toClass ClassModel */
 
             if (!$fromClass) {
-                $changeSet->addChange(new NewClassChange($toClass->getFullQualifiedName(), $toClass->getScore()));
+                $change = new NewClassChange($toClass->getFullQualifiedName(), $toClass->getScore());
+                $changeSet->addChange($change);
             } elseif (!$toClass) {
-                $changeSet->addChange(new ClassRemovedChange($fromClass->getFullQualifiedName()));
+                $change = new ClassRemovedChange($fromClass->getFullQualifiedName());
+                $changeSet->addChange($change);
             } elseif ($fromClass->getScore() != $toClass->getScore()) {
-                $changeSet->addChange(new ScoreChange($toClass->getFullQualifiedName(), $fromClass->getScore(), $toClass->getScore()));
+                $change = new ScoreChange(
+                    $toClass->getFullQualifiedName(),
+                    $fromClass->getScore(),
+                    $toClass->getScore()
+                );
+                $changeSet->addChange($change);
             }
         }
 

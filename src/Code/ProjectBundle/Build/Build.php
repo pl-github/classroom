@@ -70,8 +70,7 @@ class Build
     public function getBreakdown()
     {
         $breakdown = array();
-        foreach ($this->getClasses()->getClasses() as $class)
-        {
+        foreach ($this->getClasses()->getClasses() as $class) {
             if (!isset($breakdown[$class->getScore()])) {
                 $breakdown[$class->getScore()] = 0;
             }
@@ -89,12 +88,11 @@ class Build
      * @param integer $length
      * @return array
      */
-    public function getHotspots($length = 5)
+    public function getHotspots($length = 8)
     {
         $hotspots = array();
         $scores = array();
-        foreach ($this->getClasses()->getClasses() as $class)
-        {
+        foreach ($this->getClasses()->getClasses() as $class) {
             $scores[] = $class->getScore();
             $hotspots[] = array(
                 'name' => $class->getName(),
@@ -105,7 +103,7 @@ class Build
 
         array_multisort($scores, $hotspots);
 
-        $hotspots = array_slice($hotspots, -8);
+        $hotspots = array_slice($hotspots, -$length);
         $hotspots = array_reverse($hotspots);
 
         return $hotspots;

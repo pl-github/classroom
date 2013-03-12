@@ -94,5 +94,4 @@ class ClassController extends Controller
 
         return array('class' => $class);
     }
-
 }

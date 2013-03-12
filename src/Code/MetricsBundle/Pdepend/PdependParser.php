@@ -28,8 +28,7 @@ class PdependParser implements ParserInterface
 
         $metrics = new MetricsModel($generated, $pdepend, $metricsMetrics);
 
-        foreach ($xml->package as $packageNode)
-        {
+        foreach ($xml->package as $packageNode) {
             $packageAttributes = $packageNode->attributes();
             $packageMetrics = array();
             foreach ($packageAttributes as $packageAttributeKey => $packageAttributeValue) {
@@ -40,8 +39,7 @@ class PdependParser implements ParserInterface
 
             $package = new PackageModel($packageName, $packageMetrics);
 
-            foreach ($packageNode->class as $classNode)
-            {
+            foreach ($packageNode->class as $classNode) {
                 $classAttributes = $classNode->attributes();
                 $classMetrics = array();
                 foreach ($classAttributes as $classAttributeKey => $classAttributeValue) {
@@ -57,8 +55,7 @@ class PdependParser implements ParserInterface
 
                 $package->addClass($class);
 
-                foreach ($classNode->method as $methodNode)
-                {
+                foreach ($classNode->method as $methodNode) {
                     $methodAttributes = $methodNode->attributes();
                     $methodMetrics = array();
                     foreach ($methodAttributes as $methodAttributeKey => $methodAttributeValue) {

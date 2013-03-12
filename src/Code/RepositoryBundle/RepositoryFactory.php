@@ -22,20 +22,17 @@ class RepositoryFactory
             case 'local':
                 $repository = new LocalRepository($repositoryConfig, $projectDirectory);
                 break;
-
             case 'git':
                 switch ($type) {
                     case 'git':
                         $driver = new GitDriver($repositoryConfig);
                         break;
-
                     default:
                         throw new \RuntimeException('Unknown driver type ' . $type);
                 }
 
                 $repository = new VcsRepository($repositoryConfig, $driver, $projectDirectory);
                 break;
-
             default:
                 throw new \RuntimeException('Unknown repository type ' . $type);
         }

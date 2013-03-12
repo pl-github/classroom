@@ -48,7 +48,11 @@ class GitDriver implements DriverInterface
         $processBuilder2 = new ProcessBuilder();
         $processBuilder2->add('git')->add('rev-parse')->add('HEAD');
 
-        $process = new Process($processBuilder1->getProcess()->getCommandLine() . '; ' . $processBuilder2->getProcess()->getCommandLine());
+        $process = new Process(
+            $processBuilder1->getProcess()->getCommandLine()
+            . '; '
+            . $processBuilder2->getProcess()->getCommandLine()
+        );
 
         echo $process->getCommandLine().PHP_EOL;
         $process->run();
@@ -58,5 +62,4 @@ class GitDriver implements DriverInterface
 
         return $commit;
     }
-
 }

@@ -17,8 +17,7 @@ class PhpcpdParser implements ParserInterface
         $xml = simplexml_load_file($filename);
 
         $duplications = new PmdCpdModel();
-        foreach ($xml->duplication as $duplicationNode)
-        {
+        foreach ($xml->duplication as $duplicationNode) {
             $duplicationAttributes = $duplicationNode->attributes();
 
             $lines = (string)$duplicationAttributes['lines'];
@@ -28,8 +27,7 @@ class PhpcpdParser implements ParserInterface
 
             $duplication = new DuplicationModel($lines, $tokens, $codefragment);
 
-            foreach ($duplicationNode->file as $fileNode)
-            {
+            foreach ($duplicationNode->file as $fileNode) {
                 $fileAttributes = $fileNode->attributes();
 
                 $path = (string)$fileAttributes['path'];
