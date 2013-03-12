@@ -68,3 +68,18 @@ fos_user:
     db_driver: orm
     firewall_name: main
     user_class: Code\UserBundle\Entity\User
+
+hwi_oauth:
+    connect: ~
+    firewall_name: main
+    fosub:
+        username_iterations: 30
+        properties:
+            # these properties will be used/redefined later in the custom FOSUBUserProvider service.
+            github: githubId
+    resource_owners:
+        github:
+            type:          github
+            client_id:     "8359f252ef384107cf55"
+            client_secret: "4767ff8b6ccbb47ba9270cdea42d37e5be81cdf7"
+            scope:         "user,repo"

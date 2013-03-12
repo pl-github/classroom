@@ -25,6 +25,7 @@ class AppKernel extends Kernel
             new Code\MessDetectionBundle\CodeMessDetectionBundle(),
             new Code\UserBundle\CodeUserBundle(),
             new FOS\UserBundle\FOSUserBundle(),
+            new HWI\Bundle\OAuthBundle\HWIOAuthBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {

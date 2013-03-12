@@ -17,8 +17,27 @@ class User extends BaseUser
      */
     protected $id;
 
+    /**
+     * @var string
+     *
+     * @ORM\Column(type="string", name="github_id")
+     */
+    protected $githubId;
+
     public function __construct()
     {
         parent::__construct();
+    }
+
+    public function getGithubId()
+    {
+        return $this->githubId;
+    }
+
+    public function setGithubId($githubId)
+    {
+        $this->githubId = $githubId;
+
+        return $this;
     }
 }
