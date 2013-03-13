@@ -1,24 +1,24 @@
 <?php
 
-namespace Code\CopyPasteDetectionBundle\Phpcpd;
+namespace Code\CodeStyleBundle\Phpcs;
 
 use Code\AnalyzerBundle\Analyzer\Runner\RunnerInterface;
 use Symfony\Component\Process\ProcessBuilder;
 use Symfony\Component\Process\Process;
 
-class PhpcpdRunner implements RunnerInterface
+class PhpcsRunner implements RunnerInterface
 {
     /**
      * @var string
      */
-    private $phpcpdExecutable;
+    private $phpcsExecutable;
 
     /**
-     * @param string $phpcpdExecutable
+     * @param string $phpcsExecutable
      */
-    public function __construct($phpcpdExecutable)
+    public function __construct($phpcsExecutable)
     {
-        $this->phpcpdExecutable = $phpcpdExecutable;
+        $this->phpcsExecutable = $phpcsExecutable;
     }
 
     /**
@@ -26,14 +26,15 @@ class PhpcpdRunner implements RunnerInterface
      */
     public function run($sourceDirectory, $workDirectory)
     {
-        $pmdFilename = $this->ensureDirectoryWritable($workDirectory) . '/pmdcpd.xml';
+        $phpcsFilename = $this->ensureDirectoryWritable($workDirectory) . '/phpcs.xml';
 
         $processBuilder = new ProcessBuilder();
         $processBuilder
-            ->add($this->phpcpdExecutable)
-            ->add('--log-pmd')
-            ->add($pmdFilename)
-            ->add('--quiet')
+            ->add($this->phpcsExecutable)
+            ->add('--extensions=php')
+            ->add('--standard=PSR1')
+            ->add('--standard=PSR2')
+            ->add('--report-xml=' . $phpcsFilename)
             ->add($sourceDirectory);
 
         $process = $processBuilder->getProcess();
@@ -45,10 +46,10 @@ class PhpcpdRunner implements RunnerInterface
             echo 'RC: ' . $exitStatusCode.PHP_EOL;
             echo 'Output: ' . $process->getOutput().PHP_EOL;
             echo 'Error output: ' . $process->getErrorOutput().PHP_EOL;
-            throw new \Exception('phpcpd execution resulted in an error');
+            throw new \Exception('phpcs execution resulted in an error');
         }
 
-        return $pmdFilename;
+        return $phpcsFilename;
     }
 
     /**
