@@ -28,13 +28,17 @@
                 .range(["green", "greenyellow", "yellow", "orange", "orangered", "red", "darkred"]);
                 
             arc = d3.svg.arc()
-                .outerRadius(radius - 10)
-                .innerRadius(radius - 25);
+                .outerRadius(radius)
+                .innerRadius(radius - 20);
+                
+            var arcOver = d3.svg.arc()
+                    .outerRadius(radius + 5)
+                    .innerRadius(radius - 20);
                 
             pie = d3.layout.pie()
                 .sort(null)
                 .value(function(d) { return d; });
-                
+
             svg = d3.select(".graph-breakdown").append("svg")
                 .attr("width", width)
                 .attr("height", height)
@@ -44,12 +48,21 @@
             var g = svg.selectAll(".arc")
                 .data(pie(data))
                 .enter().append("g")
-                    .attr("class", "arc");
+                    .attr("class", "arc")
+                    .on("mouseover", function(d) {
+                        d3.select(this).select('path').transition()
+                           .duration(350)
+                           .attr("d", arcOver);
+                    })
+                    .on("mouseout", function(d) {
+                        d3.select(this).select('path').transition()
+                           .duration(350)
+                           .attr("d", arc);
+                    });
                     
-            g.append("path")
+            var path = g.append("path")
                 .attr("d", arc)
                 .style("fill", function(d, index) { return color(index); });
-                    
         });
     </script>
     
