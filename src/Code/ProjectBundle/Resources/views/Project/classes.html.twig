@@ -14,8 +14,8 @@
                 <div class="namespace">{{ class.namespace }}</div>
             </td>
             <td><span class="badge badge-score-{{ class.score }}">{{ class.score }}</span></td>
-            <td>{% if class.metrics|length %}{{ class.metrics.complexity.value }}{% else %}0{% endif %}</td>
-            <td>{% if class.metrics|length %}{{ class.metrics.methods.value }}{% else %}0{% endif %}</td>
+            <td>{% if class.metrics.complexity is defined %}{{ class.metrics.complexity.value }}{% else %}0{% endif %}</td>
+            <td>{% if class.metrics.methods is defined %}{{ class.metrics.methods.value }}{% else %}0{% endif %}</td>
             <td>{{ class.smells|length }}</td>
         </tr>
     {% endfor %}

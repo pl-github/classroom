@@ -61,7 +61,7 @@ class ClassesMergerTest extends \PHPUnit_Framework_TestCase
 
         $classes = $this->merger->merge($classes1, $classes2, $classes3, $classes4);
 
-        $this->assertEquals(2, count($classes->getClasses()));
+        $this->assertEquals(3, count($classes->getClasses()));
 
         return $classes;
     }
@@ -71,7 +71,7 @@ class ClassesMergerTest extends \PHPUnit_Framework_TestCase
      */
     public function testMergedClass1(ClassesModel $classes)
     {
-        $class = $classes->getClass('class1');
+        $class = $classes->getClass('namespace1\class1');
 
         $this->assertEquals('class1', $class->getName());
 
@@ -85,7 +85,7 @@ class ClassesMergerTest extends \PHPUnit_Framework_TestCase
     {
         $metrics = $class->getMetrics();
 
-        $this->assertEquals(1, count($metrics));
+        $this->assertEquals(2, count($metrics));
 
         $metric = current($metrics);
 
@@ -102,7 +102,7 @@ class ClassesMergerTest extends \PHPUnit_Framework_TestCase
     {
         $smells = $class->getSmells();
 
-        $this->assertEquals(1, count($smells));
+        $this->assertEquals(2, count($smells));
 
         $smell = current($smells);
 
@@ -117,7 +117,7 @@ class ClassesMergerTest extends \PHPUnit_Framework_TestCase
      */
     public function testMergedClass2(ClassesModel $classes)
     {
-        $class = $classes->getClass('class2');
+        $class = $classes->getClass('namespace2\class2');
 
         $this->assertEquals('class2', $class->getName());
 

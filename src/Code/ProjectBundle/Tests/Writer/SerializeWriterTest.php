@@ -8,11 +8,24 @@ use org\bovigo\vfs\vfsStream;
 
 class SerializeWriterTest extends \PHPUnit_Framework_TestCase
 {
+    private function createProjectMock()
+    {
+        $projectMock = $this->getMockBuilder('\Code\ProjectBundle\Project')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $projectMock->expects($this->once())
+            ->method('getId')
+            ->will($this->returnValue('testProject'));
+
+        return $projectMock;
+    }
+
     public function testWrite()
     {
         vfsStream::setup('root', 0777);
 
-        $project = new Project('testProject', 'Test Project', 'sourceDir');
+        $project = $this->createProjectMock();
 
         $writer = new SerializeWriter(vfsStream::url('root'));
         $writer->write($project);
@@ -27,7 +40,7 @@ class SerializeWriterTest extends \PHPUnit_Framework_TestCase
     {
         vfsStream::setup('mkdirRoot', 0);
 
-        $project = new Project('testProject', 'Test Project', 'sourceDir');
+        $project = $this->createProjectMock();
 
         $writer = new SerializeWriter(vfsStream::url('mkdirRoot'));
         $writer->write($project);

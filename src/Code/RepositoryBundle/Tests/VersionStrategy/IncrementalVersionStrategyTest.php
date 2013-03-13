@@ -12,22 +12,18 @@ class IncrementalVersionStrategyTest extends \PHPUnit_Framework_TestCase
     {
         vfsStream::setup('root');
 
-        $project = new Project('testProject', 'Test Project', 'testSourceDir');
-
         $strategy = new IncrementalVersionStrategy(vfsStream::url('root'));
-        $version = $strategy->determineVersion($project);
+        $version = $strategy->determineVersion();
 
         $this->assertEquals(1, $version);
     }
 
     public function testCreateVersionWithExistantVersionFile()
     {
-        vfsStream::setup('root', 0777, array('data' => array('testProject' => array('version' => '5'))));
-
-        $project = new Project('testProject', 'Test Project', 'testSourceDir');
+        vfsStream::setup('root', 0777, array('version' => '5'));
 
         $strategy = new IncrementalVersionStrategy(vfsStream::url('root'));
-        $version = $strategy->determineVersion($project);
+        $version = $strategy->determineVersion();
 
         $this->assertEquals(6, $version);
     }
@@ -39,10 +35,8 @@ class IncrementalVersionStrategyTest extends \PHPUnit_Framework_TestCase
     {
         vfsStream::setup('mkdirRoot', 0);
 
-        $project = new Project('testProject', 'Test Project', 'sourceDir');
-
         $strategy = new IncrementalVersionStrategy(vfsStream::url('mkdirRoot'));
-        $strategy->determineVersion($project);
+        $strategy->determineVersion();
     }
 
     /**
@@ -53,9 +47,7 @@ class IncrementalVersionStrategyTest extends \PHPUnit_Framework_TestCase
         vfsStream::setup('permRoot', 0777, array('data' => array('testProject' => array())));
         chmod(vfsStream::url('permRoot/data/testProject'), 0);
 
-        $project = new Project('testProject', 'Test Project', 'sourceDir');
-
-        $strategy = new IncrementalVersionStrategy(vfsStream::url('permRoot'));
-        $strategy->determineVersion($project);
+        $strategy = new IncrementalVersionStrategy(vfsStream::url('permRoot/data/testProject'));
+        $strategy->determineVersion();
     }
 }

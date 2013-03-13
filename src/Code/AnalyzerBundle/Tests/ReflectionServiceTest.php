@@ -32,20 +32,57 @@ class ReflectionServiceTest extends \PHPUnit_Framework_TestCase
         $this->brokerMock = null;
     }
 
-    public function testGetClassNameForFileUsesReflectionLookupClassnameFromFile()
+    private function applyFileMock($brokerMock)
     {
+        $fileMock = $this->getMockBuilder('\TokenReflection\ReflectionFile')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $brokerMock
+            ->expects($this->once())
+            ->method('getFile')
+            ->will($this->returnValue($fileMock));
+
+        return $fileMock;
+    }
+
+    private function applyNamespaceMock($brokerMock)
+    {
+        $fileMock = $this->applyFileMock($brokerMock);
+
+        $namespaceMock = $this->getMockBuilder('\TokenReflection\ReflectionNamespace')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $fileMock
+            ->expects($this->once())
+            ->method('getNamespaces')
+            ->will($this->returnValue(array($namespaceMock)));
+
+        return $namespaceMock;
+    }
+
+    private function applyClassMock($brokerMock)
+    {
+        $namespaceMock = $this->applyNamespaceMock($brokerMock);
+
         $classMock = $this->getMockBuilder('\TokenReflection\IReflectionClass')
             ->getMock();
+
+        $namespaceMock
+            ->expects($this->once())
+            ->method('getClasses')
+            ->will($this->returnValue(array($classMock)));
 
         $classMock
             ->expects($this->once())
             ->method('getShortName')
             ->will($this->returnValue('testClass'));
+    }
 
-        $this->brokerMock
-            ->expects($this->once())
-            ->method('getClasses')
-            ->will($this->returnValue(array($classMock)));
+    public function testGetClassNameForFileUsesReflectionLookupClassnameFromFile()
+    {
+        $this->applyClassMock($this->brokerMock);
 
         $result = $this->service->getClassNameForFile('testFile.php');
 
@@ -54,18 +91,7 @@ class ReflectionServiceTest extends \PHPUnit_Framework_TestCase
 
     public function testGetClassNameForFileCachesFile()
     {
-        $classMock = $this->getMockBuilder('\TokenReflection\IReflectionClass')
-            ->getMock();
-
-        $classMock
-            ->expects($this->once())
-            ->method('getShortName')
-            ->will($this->returnValue('testClass'));
-
-        $this->brokerMock
-            ->expects($this->once())
-            ->method('getClasses')
-            ->will($this->returnValue(array($classMock)));
+        $this->applyClassMock($this->brokerMock);
 
         $this->service->getClassNameForFile('testFile.php');
         $result = $this->service->getClassNameForFile('testFile.php');
@@ -75,7 +101,8 @@ class ReflectionServiceTest extends \PHPUnit_Framework_TestCase
 
     public function testGetClassnameForFileReturnsNullForFileWithoutClass()
     {
-        $this->brokerMock
+        $namespaceMock = $this->applyNamespaceMock($this->brokerMock);
+        $namespaceMock
             ->expects($this->once())
             ->method('getClasses')
             ->will($this->returnValue(array()));
@@ -87,18 +114,11 @@ class ReflectionServiceTest extends \PHPUnit_Framework_TestCase
 
     public function testGetNamespaceNameForFileUsesReflectionLookupClassnameFromFile()
     {
-        $classMock = $this->getMockBuilder('\TokenReflection\IReflectionClass')
-            ->getMock();
-
-        $classMock
+        $namespaceMock = $this->applyNamespaceMock($this->brokerMock);
+        $namespaceMock
             ->expects($this->once())
-            ->method('getNamespaceName')
+            ->method('getName')
             ->will($this->returnValue('testNamespace'));
-
-        $this->brokerMock
-            ->expects($this->once())
-            ->method('getClasses')
-            ->will($this->returnValue(array($classMock)));
 
         $result = $this->service->getNamespaceNameForFile('testFile.php');
 
@@ -107,18 +127,11 @@ class ReflectionServiceTest extends \PHPUnit_Framework_TestCase
 
     public function testGetNamespaceNameForFileCachesFile()
     {
-        $classMock = $this->getMockBuilder('\TokenReflection\IReflectionClass')
-            ->getMock();
-
-        $classMock
+        $namespaceMock = $this->applyNamespaceMock($this->brokerMock);
+        $namespaceMock
             ->expects($this->once())
-            ->method('getNamespaceName')
+            ->method('getName')
             ->will($this->returnValue('testNamespace'));
-
-        $this->brokerMock
-            ->expects($this->once())
-            ->method('getClasses')
-            ->will($this->returnValue(array($classMock)));
 
         $this->service->getNamespaceNameForFile('testFile.php');
         $result = $this->service->getNamespaceNameForFile('testFile.php');
@@ -128,9 +141,10 @@ class ReflectionServiceTest extends \PHPUnit_Framework_TestCase
 
     public function testGetNamespaceNameForFileReturnsNullForFileWithoutClass()
     {
-        $this->brokerMock
+        $fileMock = $this->applyFileMock($this->brokerMock);
+        $fileMock
             ->expects($this->once())
-            ->method('getClasses')
+            ->method('getNamespaces')
             ->will($this->returnValue(array()));
 
         $result = $this->service->getNamespaceNameForFile('testFileWithoutClass.php');
@@ -187,5 +201,17 @@ class ReflectionServiceTest extends \PHPUnit_Framework_TestCase
         $result = $this->service->getMethodSource('testFile.php', 'testClass', 'testMethod');
 
         $this->assertEquals('testMethodSource', $result);
+    }
+
+    public function testGetSourceExtract()
+    {
+        $fileMock = $this->applyFileMock($this->brokerMock);
+        $fileMock->expects($this->once())
+            ->method('getSource')
+            ->will($this->returnValue('A'.PHP_EOL.'B'.PHP_EOL.'C'.PHP_EOL.'D'.PHP_EOL));
+        
+        $result = $this->service->getSourceExtract('testFile.php', 2, 3);
+
+        $this->assertEquals('B'.PHP_EOL.'C', $result);
     }
 }

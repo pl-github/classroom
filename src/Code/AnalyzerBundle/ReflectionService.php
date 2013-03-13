@@ -142,6 +142,10 @@ class ReflectionService
     {
         $namespace = $this->extractNamespaceFromFile($fileName);
 
+        if (!$namespace) {
+            return null;
+        }
+
         return $namespace->getName();
     }
 
