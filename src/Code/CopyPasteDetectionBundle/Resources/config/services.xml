@@ -13,17 +13,13 @@
             <argument>%code.copy_paste_detection.phpcpd.executable%</argument>
         </service>
 
-        <service id="code.copy_paste_detection.phpcpd.parser" class="Code\CopyPasteDetectionBundle\Phpcpd\PhpcpdParser">
-        </service>
-
-        <service id="code.copy_paste_detection.phpcpd.mapper" class="Code\CopyPasteDetectionBundle\Phpcpd\PhpcpdMapper">
+        <service id="code.copy_paste_detection.phpcpd.processor" class="Code\CopyPasteDetectionBundle\Phpcpd\PhpcpdProcessor">
             <argument type="service" id="code.analyzer.reflection_service" />
         </service>
 
         <service id="code.copy_paste_detection.phpcpd.analyzer" class="Code\AnalyzerBundle\Analyzer\Analyzer">
             <argument type="service" id="code.copy_paste_detection.phpcpd.runner" />
-            <argument type="service" id="code.copy_paste_detection.phpcpd.parser" />
-            <argument type="service" id="code.copy_paste_detection.phpcpd.mapper" />
+            <argument type="service" id="code.copy_paste_detection.phpcpd.processor" />
             <tag name="code.analyzer" />
         </service>
     </services>

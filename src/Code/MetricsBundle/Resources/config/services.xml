@@ -13,17 +13,13 @@
             <argument>%code.metrics.pdepend.executable%</argument>
         </service>
 
-        <service id="code.metrics.pdepend.parser" class="Code\MetricsBundle\Pdepend\PdependParser">
-        </service>
-
-        <service id="code.metrics.pdepend.mapper" class="Code\MetricsBundle\Pdepend\PdependMapper">
+        <service id="code.metrics.pdepend.processor" class="Code\MetricsBundle\Pdepend\PdependProcessor">
             <argument type="service" id="code.analyzer.reflection_service" />
         </service>
 
         <service id="code.metrics.pdepend.analyzer" class="Code\AnalyzerBundle\Analyzer\Analyzer">
             <argument type="service" id="code.metrics.pdepend.runner" />
-            <argument type="service" id="code.metrics.pdepend.parser" />
-            <argument type="service" id="code.metrics.pdepend.mapper" />
+            <argument type="service" id="code.metrics.pdepend.processor" />
             <tag name="code.analyzer" />
         </service>
     </services>

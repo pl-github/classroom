@@ -3,8 +3,7 @@
 namespace Code\AnalyzerBundle\Analyzer;
 
 use Code\AnalyzerBundle\Analyzer\Runner\RunnerInterface;
-use Code\AnalyzerBundle\Analyzer\Mapper\MapperInterface;
-use Code\AnalyzerBundle\Analyzer\Parser\ParserInterface;
+use Code\AnalyzerBundle\Analyzer\Processor\ProcessorInterface;
 
 class Analyzer implements AnalyzerInterface
 {
@@ -14,25 +13,18 @@ class Analyzer implements AnalyzerInterface
     private $runner;
 
     /**
-     * @var ParserInterface
+     * @var ProcessorInterface
      */
-    private $parser;
+    private $processor;
 
     /**
-     * @var MapperInterface
+     * @param RunnerInterface    $runner
+     * @param ProcessorInterface $processor
      */
-    private $mapper;
-
-    /**
-     * @param RunnerInterface $runner
-     * @param ParserInterface $parser
-     * @param MapperInterface $mapper
-     */
-    public function __construct(RunnerInterface $runner, ParserInterface $parser, MapperInterface $mapper)
+    public function __construct(RunnerInterface $runner, ProcessorInterface $processor)
     {
-        $this->runner = $runner;
-        $this->parser = $parser;
-        $this->mapper = $mapper;
+        $this->runner    = $runner;
+        $this->processor = $processor;
     }
 
     /**
@@ -41,8 +33,7 @@ class Analyzer implements AnalyzerInterface
     public function analyze($sourceDirectory, $workDirectory)
     {
         $filename = $this->runner->run($sourceDirectory, $workDirectory);
-        $result = $this->parser->parse($filename);
-        $classes = $this->mapper->map($result);
+        $classes = $this->processor->process($filename);
 
         return $classes;
     }
