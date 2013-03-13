@@ -49,9 +49,9 @@ class PhpcsProcessor implements ProcessorInterface
                 $warningAttributes = $warningNode->attributes();
 
                 $line = (string)$warningAttributes['line'];
-                $column = (string)$warningAttributes['column'];
-                $source = (string)$warningAttributes['source'];
-                $severity = (string)$warningAttributes['severity'];
+                //$column = (string)$warningAttributes['column'];
+                //$source = (string)$warningAttributes['source'];
+                //$severity = (string)$warningAttributes['severity'];
                 $message = (string)$warningNode;
 
                 $sourceLine = $this->reflectionService->getSourceExtract($name, $line, $line + 1);
@@ -64,9 +64,9 @@ class PhpcsProcessor implements ProcessorInterface
                 $errorAttributes = $errorNode->attributes();
 
                 $line = (string)$errorAttributes['line'];
-                $column = (string)$errorAttributes['column'];
-                $source = (string)$errorAttributes['source'];
-                $severity = (string)$errorAttributes['severity'];
+                //$column = (string)$errorAttributes['column'];
+                //$source = (string)$errorAttributes['source'];
+                //$severity = (string)$errorAttributes['severity'];
                 $message = (string)$errorNode;
 
                 $sourceLine = $this->reflectionService->getSourceExtract($name, $line, $line + 1);

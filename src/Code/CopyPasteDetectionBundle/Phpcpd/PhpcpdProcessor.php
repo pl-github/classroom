@@ -36,7 +36,7 @@ class PhpcpdProcessor implements ProcessorInterface
             $duplicationAttributes = $duplicationNode->attributes();
 
             $lines = (string)$duplicationAttributes['lines'];
-            $tokens = (string)$duplicationAttributes['tokens'];
+            //$tokens = (string)$duplicationAttributes['tokens'];
 
             $codefragment = (string)$duplicationNode->codefragment;
 
@@ -44,7 +44,7 @@ class PhpcpdProcessor implements ProcessorInterface
                 $fileAttributes = $fileNode->attributes();
 
                 $path = (string)$fileAttributes['path'];
-                $line = (string)$fileAttributes['line'];
+                //$line = (string)$fileAttributes['line'];
 
                 $className = $this->reflectionService->getClassNameForFile($path);
                 $namespaceName = $this->reflectionService->getNamespaceNameForFile($path);

@@ -33,9 +33,9 @@ class PhpmdProcessor implements ProcessorInterface
 
         $classes = new ClassesModel();
 
-        $pmdAttributes = $xml->attributes();
-        $pmdVersion = (string)$pmdAttributes['version'];
-        $pmdTimestamp = new \DateTime($pmdAttributes['timestamp']);
+        //$pmdAttributes = $xml->attributes();
+        //$pmdVersion = (string)$pmdAttributes['version'];
+        //$pmdTimestamp = new \DateTime($pmdAttributes['timestamp']);
 
         foreach ($xml->file as $fileNode) {
             $fileAttributes = $fileNode->attributes();
@@ -51,10 +51,10 @@ class PhpmdProcessor implements ProcessorInterface
                 $violationAttributes = $violationNode->attributes();
                 $violationBeginLine = (string)$violationAttributes['beginline'];
                 $violationEndLine = (string)$violationAttributes['endline'];
-                $violationRule = (string)$violationAttributes['rule'];
-                $violationRuleset = (string)$violationAttributes['ruleset'];
-                $violationExternalInfoUrl = (string)$violationAttributes['externalInfoUrl'];
-                $violationPriority = (string)$violationAttributes['priority'];
+                //$violationRule = (string)$violationAttributes['rule'];
+                //$violationRuleset = (string)$violationAttributes['ruleset'];
+                //$violationExternalInfoUrl = (string)$violationAttributes['externalInfoUrl'];
+                //$violationPriority = (string)$violationAttributes['priority'];
 
                 $violationText = (string)$violationNode;
 
