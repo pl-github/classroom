@@ -3,6 +3,7 @@
 namespace Code\CopyPasteDetectionBundle\Phpcpd;
 
 use Code\AnalyzerBundle\Analyzer\Processor\ProcessorInterface;
+use Code\AnalyzerBundle\Model\SourceModel;
 use Code\AnalyzerBundle\ReflectionService;
 use Code\AnalyzerBundle\Model\ClassesModel;
 use Code\AnalyzerBundle\Model\ClassModel;
@@ -29,23 +30,24 @@ class PhpcpdProcessor implements ProcessorInterface
      */
     public function process($filename)
     {
-        $xml = simplexml_load_file($filename);
+        $duplications = $this->processDuplications($filename);
 
         $classes = new ClassesModel();
-        foreach ($xml->duplication as $duplicationNode) {
-            $duplicationAttributes = $duplicationNode->attributes();
+        foreach ($duplications as $duplication) {
+            $fileCount = count($duplication['files']);
 
-            $lines = (string)$duplicationAttributes['lines'];
-            //$tokens = (string)$duplicationAttributes['tokens'];
+            $lines = $duplication['lines'];
 
-            $codefragment = (string)$duplicationNode->codefragment;
+            $files = array();
+            foreach ($duplication['files'] as $path => $line) {
+                $files[] = array(
+                    'file'      => $path,
+                    'startLine' => $line,
+                    'endLine'   => $line + $lines + 1
+                );
+            }
 
-            foreach ($duplicationNode->file as $fileNode) {
-                $fileAttributes = $fileNode->attributes();
-
-                $path = (string)$fileAttributes['path'];
-                //$line = (string)$fileAttributes['line'];
-
+            foreach ($duplication['files'] as $path => $line) {
                 $className = $this->reflectionService->getClassNameForFile($path);
                 $namespaceName = $this->reflectionService->getNamespaceNameForFile($path);
 
@@ -55,11 +57,97 @@ class PhpcpdProcessor implements ProcessorInterface
                 $metric = new MetricModel('duplication', $lines);
                 $class->addMetric($metric);
 
-                $smell = new SmellModel('copy_paste_detection', 'Similar code', $codefragment, 1);
+                $sourceLines = $this->reflectionService->getSourceLines($path);
+                $source = new SourceModel($sourceLines, $line, $line + $lines + 1, 5, $files);
+
+                $smell = new SmellModel(
+                    'Duplication',
+                    'Duplication',
+                    'Similar code in ' . $fileCount . ' files.',
+                    $source,
+                    1
+                );
                 $class->addSmell($smell);
             }
         }
 
         return $classes;
+    }
+
+    private function processDuplications($filename)
+    {
+        return $this->mergeDuplications($this->readDuplications($filename));
+    }
+
+    private function readDuplications($filename)
+    {
+        $xml = simplexml_load_file($filename);
+
+        $duplications = array();
+        foreach ($xml->duplication as $duplicationNode) {
+            $duplAttributes = $duplicationNode->attributes();
+            $lines = (string)$duplAttributes['lines'];
+            $tokens = (string)$duplAttributes['tokens'];
+
+            $files = array();
+            foreach ($duplicationNode->file as $fileNode) {
+                $fileAttributes = $fileNode->attributes();
+                $path = (string)$fileAttributes['path'];
+                $line = (string)$fileAttributes['line'];
+
+                $key = $path.'_'.$line.'_'.$lines.'_'.$tokens;
+                $files[$key] = array(
+                    'key'    => $key,
+                    'path'   => $path,
+                    'line'   => $line,
+                    'lines'  => $lines,
+                    'tokens' => $tokens,
+                    'target' => null,
+                );
+            }
+
+            foreach (array_keys($files) as $key) {
+                $targets = $files;
+                unset($targets[$key]);
+                reset($targets);
+                $target = key($targets);
+                $files[$key]['target'] = $target;
+            }
+
+            $duplications = array_merge($duplications, $files);
+        }
+
+        return $duplications;
+    }
+
+    private function mergeDuplications($duplications)
+    {
+        $mergedDuplications = array();
+        while (count($duplications)) {
+            $currentDuplication = array_shift($duplications);
+            $key = $currentDuplication['key'];
+
+            $target = $currentDuplication['target'];
+            $item = array(
+                'lines' => $currentDuplication['lines'],
+                'tokens' => $currentDuplication['tokens'],
+                'files' => array(
+                    $currentDuplication['path'] => $currentDuplication['line'],
+                    $duplications[$target]['path'] => $duplications[$target]['line'],
+                ),
+            );
+            unset($duplications[$target]);
+
+            foreach ($duplications as $checkId => $checkDuplication) {
+                if ($checkDuplication['target'] === $key) {
+                    $item['files'][$checkDuplication['path']] = $currentDuplication['line'];
+                    unset($duplications[$checkId]);
+                }
+            }
+
+            $mergedDuplications[] = $item;
+        }
+
+        return $mergedDuplications;
     }
 }

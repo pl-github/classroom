@@ -1,11 +1,26 @@
+<div class="well">
+    <span class="badge badge-Mess">Mess</span>
+    <span class="badge badge-Duplication">Duplication</span>
+    <span class="badge badge-CodeStyle">CodeStyle</span>
+</div>
+
+<table class="table table-striped table-hover table-condensed">
+    <tr>
+        <th>Origin</th>
+        <th>Rule</th>
+        {# <th>Text</th> #}
+        <th>Class</th>
+    </tr>
 {% for class in classes.classes %}
     {% if class.hasSmells() %}
-        <div class="classname"><span class="badge badge-score-{{ class.score }}">{{ class.score }}</span> <a href="{{ url("code_class", {projectId: project.id, className: class.fullQualifiedName}) }}">{{ class.name }}</a></div>
-        <div class="namespace with-badge">{{ class.namespace }}</div>
-        <ul>
         {% for smell in class.smells %}
-            <li>{{ smell.origin }}: {{ smell.text }} ({{ smell.score }})</li>
+            <tr>
+                <td><span class="badge badge-{{ smell.origin }}">{{ smell.origin }}</span></td>
+                <td>{{ smell.rule }}</td>
+                {# <td>{{ smell.text }}</td> #}
+                <td><a href="{{ url("code_class", {projectId: project.id, className: class.fullQualifiedName}) }}">{{ class.fullQualifiedName }}</a></td>
+            </tr>
         {% endfor %}
-        </ul>
     {% endif %}
 {% endfor %}
+</table>

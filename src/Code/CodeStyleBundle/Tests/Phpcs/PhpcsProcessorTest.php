@@ -13,16 +13,16 @@ class PhpcpdParserTest extends \PHPUnit_Framework_TestCase
 <?xml version="1.0" encoding="UTF-8"?>
 <phpcs version="1.4.4">
  <file name="file1.php" errors="1" warnings="2">
-  <error line="16" column="1" source="Generic.Files.LineLength.TooLong" severity="5">Line exceeds 120 characters; contains 121 characters</error>
-  <warning line="21" column="1" source="Generic.Files.LineLength.TooLong" severity="5">Line exceeds 120 characters; contains 121 characters</warning>
-  <warning line="24" column="1" source="Generic.Files.LineLength.TooLong" severity="5">Line exceeds 120 characters; contains 121 characters</warning>
+  <error line="16" column="1" source="source1" severity="5">message1</error>
+  <warning line="21" column="1" source="source1" severity="5">message2</warning>
+  <warning line="24" column="1" source="source2" severity="5">message3</warning>
  </file>
  <file name="file2.php" errors="0" warnings="2">
-  <warning line="15" column="1" source="Generic.Files.LineLength.TooLong" severity="5">Line exceeds 120 characters; contains 291 characters</warning>
-  <warning line="17" column="1" source="Generic.Files.LineLength.TooLong" severity="5">Line exceeds 120 characters; contains 249 characters</warning>
+  <warning line="15" column="1" source="source3" severity="5">message4</warning>
+  <warning line="17" column="1" source="source4" severity="5">message5</warning>
  </file>
  <file name="file3.php" errors="1" warnings="0">
-  <error line="15" column="1" source="Generic.Files.LineLength.TooLong" severity="5">Line exceeds 120 characters; contains 291 characters</error>
+  <error line="15" column="1" source="source5" severity="5">mesage6</error>
  </file>
 </phpcs>
 EOL;

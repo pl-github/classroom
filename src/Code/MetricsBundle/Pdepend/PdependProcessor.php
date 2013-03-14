@@ -82,12 +82,14 @@ class PdependProcessor implements ProcessorInterface
                 $class->addMetric(new MetricModel('complexity', $complexity));
                 $class->addMetric(new MetricModel('complexityPerMethod', $complexityPerMethod));
 
+                /*
                 if ($classMetrics['wmc'] >= 10) {
                     $classSource = $this->reflectionService->getClassSource($fileName, $class->getFullQualifiedName());
 
                     $smell = new SmellModel('metrics', 'High overall complexity', $classSource, 1);
                     $class->addSmell($smell);
                 }
+                */
 
                 /*
                 foreach ($classNode->method as $methodNode) {

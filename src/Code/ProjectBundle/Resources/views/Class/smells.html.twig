@@ -3,11 +3,22 @@
     <div class="accordion-group" id="smellsAccordion">
         <div class="accordion-heading">
             <a class="accordion-toggle" data-toggle="collapse" data-parent="#smellsAccordion" href="#{{ smell.id }}">
-                {{ smell.origin }}: {{ smell.text }} ({{ smell.score }})
+                <span class="badge">{{ smell.rule }}</span> {{ smell.text }} ({{ smell.score }})
             </a>
         </div>
         <div id="{{ smell.id }}" class="accordion-body collapse">
-            <pre>{{ smell.codeFragment }}</pre>
+            {% if smell.source %}
+                {% if smell.source.files %}
+                    <div class="alert alert-info" style="margin-left: 15px; margin-right: 15px;">
+                    {% for file in smell.source.files %}
+                        {{ file.file }} {{ file.startLine }}:{{ file.endLine }}<br />
+                    {%  endfor %}
+                    </div>
+                {% endif %}
+                <pre class="pre-scrollable" style="margin-left: 15px; margin-right: 15px;">{{ smell.source.sourceString|raw }}</pre>
+            {% else %}
+                <div class="alert alert-error" style="margin-left: 15px; margin-right: 15px;">No source found.</div>
+            {% endif %}
         </div>
     </div>
 {% endfor %}

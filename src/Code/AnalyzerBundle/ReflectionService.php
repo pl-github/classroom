@@ -93,21 +93,35 @@ class ReflectionService
     }
 
     /**
-     * Return source extract
+     * Return source lines
+     *
+     * @param string $fileName
+     * @return array
+     */
+    public function getSourceLines($fileName)
+    {
+        $file = $this->getFile($fileName);
+        $source = $file->getSource();
+        $sourceLines = explode(PHP_EOL, $source);
+
+        return $sourceLines;
+    }
+
+    /**
+     * Return source lines extract
      *
      * @param string  $fileName
      * @param integer $beginLine
      * @param integer $endLine
+     * @return array
      */
-    public function getSourceExtract($fileName, $beginLine, $endLine)
+    public function getSourceLinesExtract($fileName, $beginLine, $endLine)
     {
-        $file = $this->getFile($fileName);
+        $sourceLines = $this->getSourceLines($fileName);
 
-        $source = $file->getSource();
-        $sourceLines = explode(PHP_EOL, $source);
         $extract = array_slice($sourceLines, $beginLine - 1, $endLine - $beginLine + 1);
 
-        return implode(PHP_EOL, $extract);
+        return $extract;
     }
 
     /**

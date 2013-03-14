@@ -3,6 +3,7 @@
 namespace Code\CodeStyleBundle\Phpcs;
 
 use Code\AnalyzerBundle\Analyzer\Processor\ProcessorInterface;
+use Code\AnalyzerBundle\Model\SourceModel;
 use Code\AnalyzerBundle\ReflectionService;
 use Code\AnalyzerBundle\Model\ClassesModel;
 use Code\AnalyzerBundle\Model\ClassModel;
@@ -54,9 +55,10 @@ class PhpcsProcessor implements ProcessorInterface
                 //$severity = (string)$warningAttributes['severity'];
                 $message = (string)$warningNode;
 
-                $sourceLine = $this->reflectionService->getSourceExtract($name, $line, $line + 1);
+                $sourceLines = $this->reflectionService->getSourceLines($name);
+                $source = new SourceModel($sourceLines, $line, $line + 1, 5);
 
-                $smell = new SmellModel('code_style', $message, $sourceLine, 1);
+                $smell = new SmellModel('code_style', 'CodeStyleWarning', $message, $source, 1);
                 $class->addSmell($smell);
             }
 
@@ -69,9 +71,10 @@ class PhpcsProcessor implements ProcessorInterface
                 //$severity = (string)$errorAttributes['severity'];
                 $message = (string)$errorNode;
 
-                $sourceLine = $this->reflectionService->getSourceExtract($name, $line, $line + 1);
+                $sourceLines = $this->reflectionService->getSourceLines($name);
+                $source = new SourceModel($sourceLines, $line, $line + 1, 5);
 
-                $smell = new SmellModel('code_style', $message, $sourceLine, 1);
+                $smell = new SmellModel('CodeStyle', 'CodeStyleError', $message, $source, 1);
                 $class->addSmell($smell);
             }
         }

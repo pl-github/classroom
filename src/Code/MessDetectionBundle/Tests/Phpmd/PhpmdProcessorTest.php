@@ -13,15 +13,15 @@ class PhpcpdProcessorTest extends \PHPUnit_Framework_TestCase
         $phpmdXml = <<<EOL
 <pmd version="1.4.1" timestamp="2013-03-10T14:53:42+01:00">
   <file name="file1.php">
-    <violation beginline="1" endline="2" rule="rule1" ruleset="ruleset1" externalInfoUrl="externalInfoUrl1" priority="1">
+    <violation beginline="1" endline="2" rule="rule1" ruleset="ruleset1" externalInfoUrl="url1" priority="1">
       text1
     </violation>
   </file>
   <file name="file2.php">
-    <violation beginline="3" endline="4" rule="rule2" ruleset="ruleset2" externalInfoUrl="externalInfoUrl2" priority="2">
+    <violation beginline="3" endline="4" rule="rule2" ruleset="ruleset2" externalInfoUrl="url2" priority="2">
       text2
     </violation>
-    <violation beginline="5" endline="6" rule="rule3" ruleset="ruleset3" externalInfoUrl="externalInfoUrl3" priority="3">
+    <violation beginline="5" endline="6" rule="rule3" ruleset="ruleset3" externalInfoUrl="url3" priority="3">
       text3
     </violation>
   </file>
