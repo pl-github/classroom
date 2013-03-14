@@ -23,6 +23,6 @@ class CodeCopyPasteDetectionExtension extends Extension
         $loader = new XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.xml');
 
-        $container->setParameter('code.duplication.phpcpd.executable', $config['duplication']['phpcpd']['executable']);
+        $container->setParameter('code.duplication.phpcpd.executable', $config['phpcpd']['executable']);
     }
 }

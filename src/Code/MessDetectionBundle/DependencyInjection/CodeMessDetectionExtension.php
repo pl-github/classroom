@@ -23,6 +23,6 @@ class CodeMessDetectionExtension extends Extension
         $loader = new XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.xml');
 
-        $container->setParameter('code.mess_detection.phpcmd.executable', $config['phpmd']['executable']);
+        $container->setParameter('code.mess_detection.phpmd.executable', $config['phpmd']['executable']);
     }
 }

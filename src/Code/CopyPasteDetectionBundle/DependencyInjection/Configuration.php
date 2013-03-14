@@ -21,15 +21,10 @@ class Configuration implements ConfigurationInterface
 
         $rootNode
             ->children()
-                ->arrayNode('duplication')
+                ->arrayNode('phpcpd')
                     ->addDefaultsIfNotSet()
                     ->children()
-                        ->arrayNode('phpcpd')
-                            ->addDefaultsIfNotSet()
-                            ->children()
-                                ->scalarNode('executable')->defaultValue('phpcpd')->end()
-                            ->end()
-                        ->end()
+                        ->scalarNode('executable')->defaultValue('%kernel.root_dir%/../bin/phpcpd')->end()
                     ->end()
                 ->end()
             ->end()

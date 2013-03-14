@@ -17,14 +17,14 @@ class Configuration implements ConfigurationInterface
     public function getConfigTreeBuilder()
     {
         $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('mess_detection');
+        $rootNode = $treeBuilder->root('code_mess_detection');
 
         $rootNode
             ->children()
                 ->arrayNode('phpmd')
                     ->addDefaultsIfNotSet()
                     ->children()
-                        ->scalarNode('executable')->defaultValue('phpmd')->end()
+                        ->scalarNode('executable')->defaultValue('%kernel.root_dir%/../bin/phpmd')->end()
                     ->end()
                 ->end()
             ->end()

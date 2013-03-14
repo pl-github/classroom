@@ -17,14 +17,14 @@ class Configuration implements ConfigurationInterface
     public function getConfigTreeBuilder()
     {
         $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('metrics');
+        $rootNode = $treeBuilder->root('code_metrics');
 
         $rootNode
             ->children()
                 ->arrayNode('pdepend')
                     ->addDefaultsIfNotSet()
                     ->children()
-                        ->scalarNode('executable')->defaultValue('pdepend')->end()
+                        ->scalarNode('executable')->defaultValue('%kernel.root_dir%/../bin/pdepend')->end()
                     ->end()
                 ->end()
             ->end()
