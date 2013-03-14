@@ -2,19 +2,35 @@
 
 namespace Code\MetricsBundle\Pdepend;
 
-use Code\AnalyzerBundle\Analyzer\Parser\ParserInterface;
-use Code\MetricsBundle\Pdepend\Model\ClassModel;
-use Code\MetricsBundle\Pdepend\Model\MethodModel;
-use Code\MetricsBundle\Pdepend\Model\MetricsModel;
-use Code\MetricsBundle\Pdepend\Model\PackageModel;
+use Code\AnalyzerBundle\Analyzer\Processor\ProcessorInterface;
+use Code\AnalyzerBundle\ReflectionService;
+use Code\AnalyzerBundle\Model\ClassesModel;
+use Code\AnalyzerBundle\Model\ClassModel;
+use Code\AnalyzerBundle\Model\MetricModel;
+use Code\AnalyzerBundle\Model\SmellModel;
 
-class PdependParser implements ParserInterface
+class PdependProcessor implements ProcessorInterface
 {
+    /**
+     * @var ReflectionService
+     */
+    private $reflectionService;
+
+    /**
+     * @param ReflectionService $reflectionService
+     */
+    public function __construct(ReflectionService $reflectionService)
+    {
+        $this->reflectionService = $reflectionService;
+    }
+
     /**
      * @inheritDoc
      */
-    public function parse($filename)
+    public function process($filename)
     {
+        $classes = new ClassesModel();
+
         $xml = simplexml_load_file($filename);
 
         $metricsAttributes = $xml->attributes();
@@ -26,8 +42,6 @@ class PdependParser implements ParserInterface
         $pdepend = (string)$metricsMetrics['pdepend'];
         unset($metricsMetrics['generated'], $metricsMetrics['pdepend']);
 
-        $metrics = new MetricsModel($generated, $pdepend, $metricsMetrics);
-
         foreach ($xml->package as $packageNode) {
             $packageAttributes = $packageNode->attributes();
             $packageMetrics = array();
@@ -36,8 +50,6 @@ class PdependParser implements ParserInterface
             }
             $packageName = $packageMetrics['name'];
             unset($packageMetrics['name']);
-
-            $package = new PackageModel($packageName, $packageMetrics);
 
             foreach ($packageNode->class as $classNode) {
                 $classAttributes = $classNode->attributes();
@@ -51,10 +63,33 @@ class PdependParser implements ParserInterface
                 $fileAttributes = $classNode->file->attributes();
                 $fileName = (string)$fileAttributes['name'];
 
-                $class = new ClassModel($className, $fileName, $classMetrics);
+                $class = new ClassModel($className, $packageName);
+                $classes->addClass($class);
 
-                $package->addClass($class);
+                $lines = $classMetrics['loc'];
+                $linesOfCode = $classMetrics['eloc'];
+                $methods = $classMetrics['nom'];
+                $linesOfCodePerMethod = $methods ? $linesOfCode / $methods : 0;
+                $complexity = $classMetrics['wmcnp'];
+                $complexityPerMethod = $methods ? $complexity / $methods : 0;
 
+                $class->addMetric(new MetricModel('lines', $lines));
+                $class->addMetric(new MetricModel('linesOfCode', $linesOfCode));
+
+                $class->addMetric(new MetricModel('methods', $methods));
+                $class->addMetric(new MetricModel('linesOfCodePerMethod', $linesOfCodePerMethod));
+
+                $class->addMetric(new MetricModel('complexity', $complexity));
+                $class->addMetric(new MetricModel('complexityPerMethod', $complexityPerMethod));
+
+                if ($classMetrics['wmc'] > 7) {
+                    $classSource = $this->reflectionService->getClassSource($fileName, $class->getFullQualifiedName());
+
+                    $smell = new SmellModel('metrics', 'High overall complexity', $classSource, 1);
+                    $class->addSmell($smell);
+                }
+
+                /*
                 foreach ($classNode->method as $methodNode) {
                     $methodAttributes = $methodNode->attributes();
                     $methodMetrics = array();
@@ -63,16 +98,11 @@ class PdependParser implements ParserInterface
                     }
                     $methodName = $methodMetrics['name'];
                     unset($methodMetrics['name']);
-
-                    $method = new MethodModel($methodName, $methodMetrics);
-
-                    $class->addMethod($method);
                 }
+                */
             }
-
-            $metrics->addPackage($package);
         }
 
-        return $metrics;
+        return $classes;
     }
 }

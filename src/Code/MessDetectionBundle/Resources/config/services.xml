@@ -13,17 +13,13 @@
             <argument>%code.mess_detection.phpmd.executable%</argument>
         </service>
 
-        <service id="code.mess_detection.phpmd.parser" class="Code\MessDetectionBundle\Phpmd\PhpmdParser">
-        </service>
-
-        <service id="code.mess_detection.phpmd.mapper" class="Code\MessDetectionBundle\Phpmd\PhpmdMapper">
+        <service id="code.mess_detection.phpmd.processor" class="Code\MessDetectionBundle\Phpmd\PhpmdProcessor">
             <argument type="service" id="code.analyzer.reflection_service" />
         </service>
 
         <service id="code.mess_detection.phpmd.analyzer" class="Code\AnalyzerBundle\Analyzer\Analyzer">
             <argument type="service" id="code.mess_detection.phpmd.runner" />
-            <argument type="service" id="code.mess_detection.phpmd.parser" />
-            <argument type="service" id="code.mess_detection.phpmd.mapper" />
+            <argument type="service" id="code.mess_detection.phpmd.processor" />
             <tag name="code.analyzer" />
         </service>
     </services>

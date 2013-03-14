@@ -9,7 +9,7 @@ interface RunnerInterface
      *
      * @param string $sourceDirectory
      * @param string $workDirectory
-     * @return Model
+     * @return string
      * @throws \Exception
      */
     public function run($sourceDirectory, $workDirectory);
