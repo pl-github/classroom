@@ -62,10 +62,6 @@ class PhpcpdRunner implements RunnerInterface
 
         $this->processExecutor->execute($process, 1);
 
-        if (!file_exists($phpcpdFilename)) {
-            throw new \Exception('phpcpd log xml file not found.');
-        }
-
         return $phpcpdFilename;
     }
 

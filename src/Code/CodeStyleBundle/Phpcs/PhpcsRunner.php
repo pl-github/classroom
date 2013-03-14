@@ -63,10 +63,6 @@ class PhpcsRunner implements RunnerInterface
 
         $this->processExecutor->execute($process, 1);
 
-        if (!file_exists($phpcsFilename)) {
-            throw new \Exception('phpcs report xml file not found.');
-        }
-
         return $phpcsFilename;
     }
 

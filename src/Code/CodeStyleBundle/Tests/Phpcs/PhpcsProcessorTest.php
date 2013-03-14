@@ -1,6 +1,6 @@
 <?php
 
-namespace Code\CopyPasteDetectionBundle\Tests\Phpcs\PhpcsProcessor;
+namespace Code\CodeStyleBundle\Tests\Phpcs;
 
 use Code\CodeStyleBundle\Phpcs\PhpcsProcessor;
 use org\bovigo\vfs\vfsStream;

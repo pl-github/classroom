@@ -30,6 +30,10 @@ class PhpmdProcessor implements ProcessorInterface
      */
     public function process($filename)
     {
+        if (!file_exists($filename)) {
+            throw new \Exception('phpmd report xml file not found.');
+        }
+
         $xml = simplexml_load_file($filename);
 
         $classes = new ClassesModel();

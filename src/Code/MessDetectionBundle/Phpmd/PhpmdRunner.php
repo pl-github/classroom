@@ -62,10 +62,6 @@ class PhpmdRunner implements RunnerInterface
 
         $this->processExecutor->execute($process, 2);
 
-        if (!file_exists($phpmdFilename)) {
-            throw new \Exception('phpcpd log xml file not found.');
-        }
-
         return $phpmdFilename;
     }
 
