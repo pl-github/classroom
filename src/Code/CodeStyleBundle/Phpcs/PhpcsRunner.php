@@ -3,21 +3,37 @@
 namespace Code\CodeStyleBundle\Phpcs;
 
 use Code\AnalyzerBundle\Analyzer\Runner\RunnerInterface;
+use Code\AnalyzerBundle\ProcessExecutor;
+use Symfony\Component\HttpKernel\Log\LoggerInterface;
 use Symfony\Component\Process\ProcessBuilder;
 use Symfony\Component\Process\Process;
 
 class PhpcsRunner implements RunnerInterface
 {
     /**
+     * @var ProcessExecutor
+     */
+    private $processExecutor;
+
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
+    /**
      * @var string
      */
     private $phpcsExecutable;
 
     /**
-     * @param string $phpcsExecutable
+     * @param ProcessExecutor $processExecutor
+     * @param LoggerInterface $logger
+     * @param string          $phpcsExecutable
      */
-    public function __construct($phpcsExecutable)
+    public function __construct(ProcessExecutor $processExecutor, LoggerInterface $logger, $phpcsExecutable)
     {
+        $this->processExecutor = $processExecutor;
+        $this->logger = $logger;
         $this->phpcsExecutable = $phpcsExecutable;
     }
 
@@ -27,6 +43,10 @@ class PhpcsRunner implements RunnerInterface
     public function run($sourceDirectory, $workDirectory)
     {
         $phpcsFilename = $this->ensureDirectoryWritable($workDirectory) . '/phpcs.xml';
+
+        if (file_exists($phpcsFilename) && !unlink($phpcsFilename)) {
+            throw new \Exception('Can\'t unlink ' . $phpcsFilename);
+        }
 
         $processBuilder = new ProcessBuilder();
         $processBuilder
@@ -39,14 +59,12 @@ class PhpcsRunner implements RunnerInterface
 
         $process = $processBuilder->getProcess();
 
-        $exitStatusCode = $process->run();
+        $this->logger->debug($process->getCommandLine());
 
-        if (!$process->isSuccessful() && $exitStatusCode != 1) {
-            echo $process->getCommandLine().PHP_EOL;
-            echo 'RC: ' . $exitStatusCode.PHP_EOL;
-            echo 'Output: ' . $process->getOutput().PHP_EOL;
-            echo 'Error output: ' . $process->getErrorOutput().PHP_EOL;
-            throw new \Exception('phpcs execution resulted in an error');
+        $this->processExecutor->execute($process, 1);
+
+        if (!file_exists($phpcsFilename)) {
+            throw new \Exception('phpcs report xml file not found.');
         }
 
         return $phpcsFilename;

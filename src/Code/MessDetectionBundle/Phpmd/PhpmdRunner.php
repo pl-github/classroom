@@ -3,18 +3,37 @@
 namespace Code\MessDetectionBundle\Phpmd;
 
 use Code\AnalyzerBundle\Analyzer\Runner\RunnerInterface;
+use Code\AnalyzerBundle\ProcessExecutor;
+use Symfony\Component\HttpKernel\Log\LoggerInterface;
 use Symfony\Component\Process\ProcessBuilder;
 use Symfony\Component\Process\Process;
 
 class PhpmdRunner implements RunnerInterface
 {
+    /**
+     * @var ProcessExecutor
+     */
+    private $processExecutor;
+
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
+    /**
+     * @var string
+     */
     private $phpmdExecutable;
 
     /**
-     * @param $phpcpdExecutable
+     * @param ProcessExecutor $processExecutor
+     * @param LoggerInterface $logger
+     * @param string          $phpmdExecutable
      */
-    public function __construct($phpmdExecutable)
+    public function __construct(ProcessExecutor $processExecutor, LoggerInterface $logger, $phpmdExecutable)
     {
+        $this->processExecutor = $processExecutor;
+        $this->logger = $logger;
         $this->phpmdExecutable = $phpmdExecutable;
     }
 
@@ -24,6 +43,10 @@ class PhpmdRunner implements RunnerInterface
     public function run($sourceDirectory, $workDirectory)
     {
         $phpmdFilename = $this->ensureDirectoryWritable($workDirectory) . '/phpmd.xml';
+
+        if (file_exists($phpmdFilename) && !unlink($phpmdFilename)) {
+            throw new \Exception('Can\'t unlink ' . $phpmdFilename);
+        }
 
         $processBuilder = new ProcessBuilder();
         $processBuilder->add($this->phpmdExecutable)
@@ -35,14 +58,12 @@ class PhpmdRunner implements RunnerInterface
 
         $process = $processBuilder->getProcess();
 
-        $exitStatusCode = $process->run();
+        $this->logger->debug($process->getCommandLine());
 
-        if (!$process->isSuccessful() && $exitStatusCode != 2) {
-            echo $process->getCommandLine().PHP_EOL;
-            echo 'RC: ' . $exitStatusCode.PHP_EOL;
-            echo 'Output: ' . $process->getOutput().PHP_EOL;
-            echo 'Error output: ' . $process->getErrorOutput().PHP_EOL;
-            throw new \Exception('pdepend execution resulted in an error');
+        $this->processExecutor->execute($process, 2);
+
+        if (!file_exists($phpmdFilename)) {
+            throw new \Exception('phpcpd log xml file not found.');
         }
 
         return $phpmdFilename;

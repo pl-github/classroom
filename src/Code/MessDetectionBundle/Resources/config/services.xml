@@ -5,12 +5,15 @@
     xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <parameters>
-        <parameter key="code.mess_detection.phpmd.executable">phpmd</parameter>
+        <parameter key="code.mess_detection.phpmd.executable">%kernel.root_dir%/../bin/phpmd</parameter>
     </parameters>
 
     <services>
         <service id="code.mess_detection.phpmd.runner" class="Code\MessDetectionBundle\Phpmd\PhpmdRunner">
+            <argument type="service" id="code.analyzer.process_executor" />
+            <argument type="service" id="logger" />
             <argument>%code.mess_detection.phpmd.executable%</argument>
+            <tag name="monolog.logger" channel="analyzer" />
         </service>
 
         <service id="code.mess_detection.phpmd.processor" class="Code\MessDetectionBundle\Phpmd\PhpmdProcessor">

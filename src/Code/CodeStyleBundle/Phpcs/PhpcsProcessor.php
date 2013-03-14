@@ -37,8 +37,8 @@ class PhpcsProcessor implements ProcessorInterface
             $fileAttributes = $fileNode->attributes();
 
             $name = (string)$fileAttributes['name'];
-            $errors = (string)$fileAttributes['errors'];
-            $warning = (string)$fileAttributes['warnings'];
+            //$errors = (string)$fileAttributes['errors'];
+            //$warning = (string)$fileAttributes['warnings'];
 
             $className = $this->reflectionService->getClassNameForFile($name);
             $namespaceName = $this->reflectionService->getNamespaceNameForFile($name);

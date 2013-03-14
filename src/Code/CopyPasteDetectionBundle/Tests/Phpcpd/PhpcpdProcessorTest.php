@@ -37,6 +37,11 @@ EOL;
             ->method('getClassnameForFile')
             ->will($this->returnArgument(0));
 
+        $reflectionServiceMock
+            ->expects($this->any())
+            ->method('getSourceLines')
+            ->will($this->returnValue(array('A', 'B', 'C', 'D')));
+
         $processor = new PhpcpdProcessor($reflectionServiceMock);
 
         $classes = $processor->process(vfsStream::url('root/pmd-cpd.xml'));
