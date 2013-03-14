@@ -131,25 +131,25 @@ class ClassModel
      */
     public function getScore()
     {
+        if (!$this->hasSmells()) {
+            return 0;
+
+        }
         $score = 0;
         foreach ($this->smells as $smell) {
             $score += $smell->getScore();
         }
 
+        if (!$this->hasMetric('linesOfCode')) {
+            return 0;
+        }
+
+        $linesOfCode = $this->getMetric('linesOfCode')->getValue();
+        if ($linesOfCode) {
+            $score /= $linesOfCode;
+        }
+
         return $score;
-    }
-
-    /**
-     * Add metric
-     *
-     * @param MetricModel $metric
-     * @return $this
-     */
-    public function addMetric(MetricModel $metric)
-    {
-        $this->metrics[$metric->getKey()] = $metric;
-
-        return $this;
     }
 
     /**
@@ -170,5 +170,44 @@ class ClassModel
     public function hasMetrics()
     {
         return count($this->metrics) > 0;
+    }
+
+    /**
+     * Add metric
+     *
+     * @param MetricModel $metric
+     * @return $this
+     */
+    public function addMetric(MetricModel $metric)
+    {
+        $this->metrics[$metric->getKey()] = $metric;
+
+        return $this;
+    }
+
+    /**
+     * Return single metric
+     *
+     * @param string $key
+     * @return MetricModel
+     */
+    public function getMetric($key)
+    {
+        if (!$this->hasMetric($key)) {
+            return null;
+        }
+
+        return $this->metrics[$key];
+    }
+
+    /**
+     * Is this metric set?
+     *
+     * @param string $key
+     * @return boolean
+     */
+    public function hasMetric($key)
+    {
+        return isset($this->metrics[$key]);
     }
 }

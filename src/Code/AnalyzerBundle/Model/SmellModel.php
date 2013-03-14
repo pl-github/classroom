@@ -12,12 +12,17 @@ class SmellModel
     /**
      * @var string
      */
-    private $text;
+    private $rule;
 
     /**
      * @var string
      */
-    private $codeFragment;
+    private $text;
+
+    /**
+     * @var SourceModel
+     */
+    private $source;
 
     /**
      * @var integer
@@ -25,16 +30,18 @@ class SmellModel
     private $score;
 
     /**
-     * @param string  $origin
-     * @param string  $text
-     * @param string  $codeFragment
-     * @param integer $score
+     * @param string      $origin
+     * @param string      $rule
+     * @param string      $text
+     * @param SourceModel $source
+     * @param integer     $score
      */
-    public function __construct($origin, $text, $codeFragment = '', $score = null)
+    public function __construct($origin, $rule, $text, $source = null, $score = null)
     {
         $this->origin = $origin;
+        $this->rule = $rule;
         $this->text = $text;
-        $this->codeFragment = $codeFragment;
+        $this->source = $source;
         $this->score = $score;
     }
 
@@ -59,6 +66,16 @@ class SmellModel
     }
 
     /*+
+     * Return rule
+     *
+     * @return string
+     */
+    public function getRule()
+    {
+        return $this->rule;
+    }
+
+    /*+
      * Return text
      *
      * @return string
@@ -69,13 +86,13 @@ class SmellModel
     }
 
     /**
-     * Return code fragment
+     * Return source
      *
-     * @return string
+     * @return SourceModel
      */
-    public function getCodeFragment()
+    public function getSource()
     {
-        return $this->codeFragment;
+        return $this->source;
     }
 
     /**

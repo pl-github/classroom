@@ -35,18 +35,18 @@ class PdependProcessor implements ProcessorInterface
 
         $metricsAttributes = $xml->attributes();
         $metricsMetrics = array();
-        foreach ($metricsAttributes as $metricsAttributeKey => $metricsAttributeValue) {
-            $metricsMetrics[$metricsAttributeKey] = (string)$metricsAttributeValue;
+        foreach ($metricsAttributes as $metricKey => $metricValue) {
+            $metricsMetrics[$metricKey] = (string)$metricValue;
         }
-        $generated = new \DateTime($metricsMetrics['generated']);
-        $pdepend = (string)$metricsMetrics['pdepend'];
+        //$generated = new \DateTime($metricsMetrics['generated']);
+        //$pdepend = (string)$metricsMetrics['pdepend'];
         unset($metricsMetrics['generated'], $metricsMetrics['pdepend']);
 
         foreach ($xml->package as $packageNode) {
             $packageAttributes = $packageNode->attributes();
             $packageMetrics = array();
-            foreach ($packageAttributes as $packageAttributeKey => $packageAttributeValue) {
-                $packageMetrics[$packageAttributeKey] = (string)$packageAttributeValue;
+            foreach ($packageAttributes as $packageKey => $packageValue) {
+                $packageMetrics[$packageKey] = (string)$packageValue;
             }
             $packageName = $packageMetrics['name'];
             unset($packageMetrics['name']);
@@ -54,8 +54,8 @@ class PdependProcessor implements ProcessorInterface
             foreach ($packageNode->class as $classNode) {
                 $classAttributes = $classNode->attributes();
                 $classMetrics = array();
-                foreach ($classAttributes as $classAttributeKey => $classAttributeValue) {
-                    $classMetrics[$classAttributeKey] = (string)$classAttributeValue;
+                foreach ($classAttributes as $classKey => $classValue) {
+                    $classMetrics[$classKey] = (string)$classValue;
                 }
                 $className = $classMetrics['name'];
                 unset($classMetrics['name']);
@@ -82,12 +82,14 @@ class PdependProcessor implements ProcessorInterface
                 $class->addMetric(new MetricModel('complexity', $complexity));
                 $class->addMetric(new MetricModel('complexityPerMethod', $complexityPerMethod));
 
-                if ($classMetrics['wmc'] > 7) {
+                /*
+                if ($classMetrics['wmc'] >= 10) {
                     $classSource = $this->reflectionService->getClassSource($fileName, $class->getFullQualifiedName());
 
                     $smell = new SmellModel('metrics', 'High overall complexity', $classSource, 1);
                     $class->addSmell($smell);
                 }
+                */
 
                 /*
                 foreach ($classNode->method as $methodNode) {
