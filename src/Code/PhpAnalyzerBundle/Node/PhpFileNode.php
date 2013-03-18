@@ -1,8 +1,10 @@
 <?php
 
-namespace Code\AnalyzerBundle\Model;
+namespace Code\PhpAnalyzerBundle\Node;
 
-class PhpClassNode implements NodeInterface
+use Code\AnalyzerBundle\Model\NodeInterface;
+
+class PhpFileNode implements NodeInterface
 {
     /**
      * @var string
@@ -10,38 +12,34 @@ class PhpClassNode implements NodeInterface
     private $name;
 
     /**
-     * @var string
-     */
-    private $namespace;
-
-    /**
-     * @var NodeReference
-     */
-    private $fileReference;
-
-    /**
      * @var array
      */
     private $metrics = array();
 
     /**
-     * @param string        $name
-     * @param string        $namespace
-     * @param NodeReference $fileReference
+     * @var string
      */
-    public function __construct($name, $namespace = '', NodeReference $fileReference)
+    private $sourceFilename;
+
+    /**
+     * @param string $name
+     * @param string $sourceFilename
+     * @param array  $metrics
+     */
+    public function __construct($name, array $metrics = array())
     {
         $this->name = $name;
-        $this->namespace = $namespace;
-        $this->fileReference = $fileReference;
+        $this->metrics = $metrics;
     }
 
     /**
-     * @inheritDoc
+     * Return id
+     *
+     * @return string
      */
     public function getId()
     {
-        return spl_object_hash($this);
+        return $this->name;
     }
 
     /*+
@@ -52,25 +50,12 @@ class PhpClassNode implements NodeInterface
         return $this->name;
     }
 
-    /*+
-     * @inheritDoc
-     */
-    public function getNamespace()
-    {
-        return $this->namespace;
-    }
-
     /**
      * @inheritDoc
      */
     public function getFullQualifiedName()
     {
         $name = $this->getName();
-        $namespace = $this->getNamespace();
-
-        if ($namespace) {
-            $name = $namespace . '\\' . $name;
-        }
 
         return $name;
     }
@@ -80,7 +65,22 @@ class PhpClassNode implements NodeInterface
      */
     public function getParentNodeReference()
     {
-        return $this->fileReference;
+        return null;
+    }
+
+    public function setSourceFilename($sourceFilename)
+    {
+        $this->sourceFilename = $sourceFilename;
+    }
+
+    public function getSourceFilename()
+    {
+        return $this->sourceFilename;
+    }
+
+    public function getContent()
+    {
+        return file_get_contents($this->sourceFilename);
     }
 
     /**

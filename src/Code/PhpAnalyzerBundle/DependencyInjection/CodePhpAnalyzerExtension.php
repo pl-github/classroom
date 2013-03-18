@@ -1,13 +1,13 @@
 <?php
 
-namespace Code\MetricsBundle\DependencyInjection;
+namespace Code\PhpAnalyzerBundle\DependencyInjection;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 use Symfony\Component\Config\FileLocator;
 
-class CodeMetricsExtension extends Extension
+class CodePhpAnalyzerExtension extends Extension
 {
     /**
      * Responds to the app.config configuration parameter.
@@ -21,8 +21,17 @@ class CodeMetricsExtension extends Extension
         $config = $this->processConfiguration($configuration, $configs);
 
         $loader = new XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
-        $loader->load('services.xml');
 
-        $container->setParameter('code.metrics.pdepend.executable', $config['pdepend']['executable']);
+        $loader->load('phpcs.xml');
+        $container->setParameter('code.php_analyzer.phpcs.executable', $config['phpcs']['executable']);
+
+        $loader->load('phpcpd.xml');
+        $container->setParameter('code.php_analyzer.phpcpd.executable', $config['phpcpd']['executable']);
+
+        $loader->load('phpmd.xml');
+        $container->setParameter('code.php_analyzer.phpmd.executable', $config['phpmd']['executable']);
+
+        $loader->load('pdepend.xml');
+        $container->setParameter('code.php_analyzer.pdepend.executable', $config['pdepend']['executable']);
     }
 }
