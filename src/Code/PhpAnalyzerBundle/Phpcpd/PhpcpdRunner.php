@@ -1,6 +1,6 @@
 <?php
 
-namespace Code\CopyPasteDetectionBundle\Phpcpd;
+namespace Code\PhpAnalyzerBundle\Phpcpd;
 
 use Code\AnalyzerBundle\Analyzer\Runner\RunnerInterface;
 use Code\AnalyzerBundle\ProcessExecutor;

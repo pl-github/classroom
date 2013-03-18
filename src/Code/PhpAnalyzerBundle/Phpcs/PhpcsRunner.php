@@ -1,6 +1,6 @@
 <?php
 
-namespace Code\CodeStyleBundle\Phpcs;
+namespace Code\PhpAnalyzerBundle\Phpcs;
 
 use Code\AnalyzerBundle\Analyzer\Runner\RunnerInterface;
 use Code\AnalyzerBundle\ProcessExecutor;

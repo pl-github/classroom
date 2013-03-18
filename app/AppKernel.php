@@ -23,7 +23,7 @@ class AppKernel extends Kernel
             new Code\BuildBundle\CodeBuildBundle(),
             new Code\AnalyzerBundle\CodeAnalyzerBundle(),
             new Code\RepositoryBundle\CodeRepositoryBundle(),
-            new Code\PhpAnalyzerBundle\CodePhpCodeStyleBundle(),
+            new Code\PhpAnalyzerBundle\CodePhpAnalyzerBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {

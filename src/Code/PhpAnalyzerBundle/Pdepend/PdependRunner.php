@@ -1,6 +1,6 @@
 <?php
 
-namespace Code\MetricsBundle\Pdepend;
+namespace Code\PhpAnalyzerBundle\Pdepend;
 
 use Code\AnalyzerBundle\Analyzer\Runner\RunnerInterface;
 use Code\AnalyzerBundle\ProcessExecutor;

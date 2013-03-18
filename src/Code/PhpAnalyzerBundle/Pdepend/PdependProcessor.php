@@ -1,13 +1,10 @@
 <?php
 
-namespace Code\MetricsBundle\Pdepend;
+namespace Code\PhpAnalyzerBundle\Pdepend;
 
 use Code\AnalyzerBundle\Analyzer\Processor\ProcessorInterface;
-use Code\AnalyzerBundle\ReflectionService;
-use Code\AnalyzerBundle\Model\ClassesModel;
-use Code\AnalyzerBundle\Model\ClassModel;
 use Code\AnalyzerBundle\Model\MetricModel;
-use Code\AnalyzerBundle\Model\SmellModel;
+use Code\AnalyzerBundle\ReflectionService;
 use Code\AnalyzerBundle\ResultBuilder;
 
 class PdependProcessor implements ProcessorInterface
@@ -35,8 +32,6 @@ class PdependProcessor implements ProcessorInterface
         }
 
         $xml = simplexml_load_file($filename);
-
-        $classes = new ClassesModel();
 
         $metricsAttributes = $xml->attributes();
         $metricsMetrics = array();

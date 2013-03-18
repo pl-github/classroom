@@ -1,14 +1,11 @@
 <?php
 
-namespace Code\MessDetectionBundle\Phpmd;
+namespace Code\PhpAnalyzerBundle\Phpmd;
 
 use Code\AnalyzerBundle\Analyzer\Processor\ProcessorInterface;
-use Code\AnalyzerBundle\Model\NodeReference;
 use Code\AnalyzerBundle\Model\SourceRange;
-use Code\AnalyzerBundle\ReflectionService;
-use Code\AnalyzerBundle\Model\ClassesModel;
-use Code\AnalyzerBundle\Model\ClassModel;
 use Code\AnalyzerBundle\Model\SmellModel;
+use Code\AnalyzerBundle\ReflectionService;
 use Code\AnalyzerBundle\ResultBuilder;
 
 class PhpmdProcessor implements ProcessorInterface

@@ -1,6 +1,6 @@
 <?php
 
-namespace Code\MessDetectionBundle\Phpmd;
+namespace Code\PhpAnalyzerBundle\Phpmd;
 
 use Code\AnalyzerBundle\Analyzer\Runner\RunnerInterface;
 use Code\AnalyzerBundle\ProcessExecutor;
