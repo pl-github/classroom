@@ -10,7 +10,10 @@
 
     <services>
         <service id="code.metrics.pdepend.runner" class="Code\MetricsBundle\Pdepend\PdependRunner">
+            <argument type="service" id="code.analyzer.process_executor" />
+            <argument type="service" id="logger" />
             <argument>%code.metrics.pdepend.executable%</argument>
+            <tag name="monolog.logger" channel="analyzer" />
         </service>
 
         <service id="code.metrics.pdepend.processor" class="Code\MetricsBundle\Pdepend\PdependProcessor">

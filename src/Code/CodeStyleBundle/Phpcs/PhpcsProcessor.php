@@ -30,6 +30,10 @@ class PhpcsProcessor implements ProcessorInterface
      */
     public function process($filename)
     {
+        if (!file_exists($filename)) {
+            throw new \Exception('phpcs report xml file not found.');
+        }
+
         $xml = simplexml_load_file($filename);
 
         $classes = new ClassesModel();
@@ -37,8 +41,8 @@ class PhpcsProcessor implements ProcessorInterface
             $fileAttributes = $fileNode->attributes();
 
             $name = (string)$fileAttributes['name'];
-            $errors = (string)$fileAttributes['errors'];
-            $warning = (string)$fileAttributes['warnings'];
+            //$errors = (string)$fileAttributes['errors'];
+            //$warning = (string)$fileAttributes['warnings'];
 
             $className = $this->reflectionService->getClassNameForFile($name);
             $namespaceName = $this->reflectionService->getNamespaceNameForFile($name);

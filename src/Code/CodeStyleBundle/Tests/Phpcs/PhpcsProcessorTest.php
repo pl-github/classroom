@@ -1,6 +1,6 @@
 <?php
 
-namespace Code\CopyPasteDetectionBundle\Tests\Phpcs\PhpcsProcessor;
+namespace Code\CodeStyleBundle\Tests\Phpcs;
 
 use Code\CodeStyleBundle\Phpcs\PhpcsProcessor;
 use org\bovigo\vfs\vfsStream;
@@ -37,6 +37,11 @@ EOL;
             ->expects($this->any())
             ->method('getClassnameForFile')
             ->will($this->returnArgument(0));
+
+        $reflectionServiceMock
+            ->expects($this->any())
+            ->method('getSourceLines')
+            ->will($this->returnValue(array('A', 'B', 'C', 'D')));
 
         $processor = new PhpcsProcessor($reflectionServiceMock);
 

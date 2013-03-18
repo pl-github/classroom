@@ -31,7 +31,7 @@ class ClassesMergerTest extends \PHPUnit_Framework_TestCase
         $class1 = new ClassModel('class1', 'namespace1');
         $metric1 = new MetricModel('key1', 'value1');
         $class1->addMetric($metric1);
-        $smell1 = new SmellModel('origin1', 'text1');
+        $smell1 = new SmellModel('origin1', 'rule1', 'text1');
         $class1->addSmell($smell1);
         $classes1->addClass($class1);
 
@@ -39,7 +39,7 @@ class ClassesMergerTest extends \PHPUnit_Framework_TestCase
         $class2 = new ClassModel('class2', 'namespace2');
         $metric2 = new MetricModel('key2', 'value2');
         $class2->addMetric($metric2);
-        $smell2 = new SmellModel('origin2', 'text2');
+        $smell2 = new SmellModel('origin2', 'rule2', 'text2');
         $class2->addSmell($smell2);
         $classes2->addClass($class2);
 
@@ -47,7 +47,7 @@ class ClassesMergerTest extends \PHPUnit_Framework_TestCase
         $class3 = new ClassModel('class1', 'namespace1');
         $metric3 = new MetricModel('key3', 'value3');
         $class3->addMetric($metric3);
-        $smell3 = new SmellModel('origin3', 'text3');
+        $smell3 = new SmellModel('origin3', 'rule3', 'text3');
         $class3->addSmell($smell3);
         $classes3->addClass($class3);
 
@@ -55,7 +55,7 @@ class ClassesMergerTest extends \PHPUnit_Framework_TestCase
         $class4 = new ClassModel('class4', 'namespace1');
         $metric4 = new MetricModel('key4', 'value4');
         $class4->addMetric($metric4);
-        $smell4 = new SmellModel('origin4', 'text4');
+        $smell4 = new SmellModel('origin4', 'rule4', 'text4');
         $class4->addSmell($smell4);
         $classes4->addClass($class4);
 
@@ -107,6 +107,7 @@ class ClassesMergerTest extends \PHPUnit_Framework_TestCase
         $smell = current($smells);
 
         $this->assertEquals('origin1', $smell->getOrigin());
+        $this->assertEquals('rule1', $smell->getRule());
         $this->assertEquals('text1', $smell->getText());
 
         return $class;
@@ -152,6 +153,7 @@ class ClassesMergerTest extends \PHPUnit_Framework_TestCase
         $smell = current($smells);
 
         $this->assertEquals('origin2', $smell->getOrigin());
+        $this->assertEquals('rule2', $smell->getRule());
         $this->assertEquals('text2', $smell->getText());
 
         return $class;

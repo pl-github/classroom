@@ -3,21 +3,37 @@
 namespace Code\CopyPasteDetectionBundle\Phpcpd;
 
 use Code\AnalyzerBundle\Analyzer\Runner\RunnerInterface;
+use Code\AnalyzerBundle\ProcessExecutor;
+use Symfony\Component\HttpKernel\Log\LoggerInterface;
 use Symfony\Component\Process\ProcessBuilder;
 use Symfony\Component\Process\Process;
 
 class PhpcpdRunner implements RunnerInterface
 {
     /**
+     * @var ProcessExecutor
+     */
+    private $processExecutor;
+
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
+    /**
      * @var string
      */
     private $phpcpdExecutable;
 
     /**
-     * @param string $phpcpdExecutable
+     * @param ProcessExecutor $processExecutor
+     * @param LoggerInterface $logger
+     * @param string          $phpcpdExecutable
      */
-    public function __construct($phpcpdExecutable)
+    public function __construct(ProcessExecutor $processExecutor, LoggerInterface $logger, $phpcpdExecutable)
     {
+        $this->processExecutor = $processExecutor;
+        $this->logger = $logger;
         $this->phpcpdExecutable = $phpcpdExecutable;
     }
 
@@ -26,29 +42,27 @@ class PhpcpdRunner implements RunnerInterface
      */
     public function run($sourceDirectory, $workDirectory)
     {
-        $pmdFilename = $this->ensureDirectoryWritable($workDirectory) . '/pmdcpd.xml';
+        $phpcpdFilename = $this->ensureDirectoryWritable($workDirectory) . '/phpcpd.xml';
+
+        if (file_exists($phpcpdFilename) && !unlink($phpcpdFilename)) {
+            throw new \Exception('Can\'t unlink ' . $phpcpdFilename);
+        }
 
         $processBuilder = new ProcessBuilder();
         $processBuilder
             ->add($this->phpcpdExecutable)
             ->add('--log-pmd')
-            ->add($pmdFilename)
+            ->add($phpcpdFilename)
             ->add('--quiet')
             ->add($sourceDirectory);
 
         $process = $processBuilder->getProcess();
 
-        $exitStatusCode = $process->run();
+        $this->logger->debug($process->getCommandLine());
 
-        if (!$process->isSuccessful() && $exitStatusCode != 1) {
-            echo $process->getCommandLine().PHP_EOL;
-            echo 'RC: ' . $exitStatusCode.PHP_EOL;
-            echo 'Output: ' . $process->getOutput().PHP_EOL;
-            echo 'Error output: ' . $process->getErrorOutput().PHP_EOL;
-            throw new \Exception('phpcpd execution resulted in an error');
-        }
+        $this->processExecutor->execute($process, 1);
 
-        return $pmdFilename;
+        return $phpcpdFilename;
     }
 
     /**

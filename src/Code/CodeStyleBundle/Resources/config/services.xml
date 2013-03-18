@@ -10,7 +10,10 @@
 
     <services>
         <service id="code.code_style.phpcs.runner" class="Code\CodeStyleBundle\Phpcs\PhpcsRunner">
+            <argument type="service" id="code.analyzer.process_executor" />
+            <argument type="service" id="logger" />
             <argument>%code.code_style.phpcs.executable%</argument>
+            <tag name="monolog.logger" channel="analyzer" />
         </service>
 
         <service id="code.code_style.phpcs.processor" class="Code\CodeStyleBundle\Phpcs\PhpcsProcessor">
