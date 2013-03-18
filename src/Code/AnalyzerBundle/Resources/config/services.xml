@@ -19,8 +19,12 @@
         <service id="code.analyzer.merger.classes_merger" class="Code\AnalyzerBundle\Merger\ClassesMerger">
         </service>
 
+        <service id="code.analyzer.result_builder" class="Code\AnalyzerBundle\ResultBuilder">
+            <argument type="service" id="code.analyzer.reflection_service" />
+            <argument type="service" id="code.analyzer.chain_analyzer" />
+        </service>
+
         <service id="code.analyzer.chain_analyzer" class="Code\AnalyzerBundle\Analyzer\ChainAnalyzer">
-            <argument type="service" id="code.analyzer.merger.classes_merger" />
             <argument type="collection" />
         </service>
     </services>

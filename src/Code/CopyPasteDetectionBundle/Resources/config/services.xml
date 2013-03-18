@@ -5,7 +5,7 @@
     xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <parameters>
-        <parameter key="code.copy_paste_detection.phpcpd.executable">phpcpd</parameter>
+        <parameter key="code.copy_paste_detection.phpcpd.executable">phpcpd.phar</parameter>
     </parameters>
 
     <services>

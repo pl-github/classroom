@@ -2,42 +2,32 @@
 
 namespace Code\AnalyzerBundle\Analyzer;
 
-use Code\AnalyzerBundle\Merger\ClassesMerger;
+use Code\AnalyzerBundle\ResultBuilder;
 
 class ChainAnalyzer implements AnalyzerInterface
 {
-    /**
-     * @var ClassesMerger
-     */
-    private $merger;
-
     /**
      * @var array
      */
     private $analyzers;
 
     /**
-     * @param ClassesMerger $merger
-     * @param array         $analyzers
+     * @param array $analyzers
      */
-    public function __construct(ClassesMerger $merger, array $analyzers = array())
+    public function __construct(array $analyzers = array())
     {
-        $this->merger = $merger;
         $this->analyzers = $analyzers;
     }
 
     /**
      * @inheritDoc
      */
-    public function analyze($sourceDirectory, $workDirectory)
+    public function analyze(ResultBuilder $resultBuilder, $sourceDirectory, $workDirectory)
     {
-        $results = array();
-
         foreach ($this->analyzers as $analyzer) {
             /* @var $analyzer AnalyzerInterface */
-            $results[] = $analyzer->analyze($sourceDirectory, $workDirectory);
-        }
 
-        return $this->merger->merge($results);
+            $analyzer->analyze($resultBuilder, $sourceDirectory, $workDirectory);
+        }
     }
 }

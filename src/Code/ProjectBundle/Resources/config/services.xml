@@ -16,23 +16,6 @@
             <argument>%kernel.root_dir%</argument>
         </service>
 
-        <service id="code.project.build.builder" class="Code\ProjectBundle\Build\Builder">
-            <argument type="service" id="code.analyzer.chain_analyzer" />
-            <argument type="service" id="code.repository.factory" />
-            <argument>%kernel.root_dir%</argument>
-        </service>
-
-        <service id="code.project.build.loader" class="Code\ProjectBundle\Build\Loader\SerializeLoader">
-            <argument>%kernel.root_dir%</argument>
-        </service>
-
-        <service id="code.project.build.writer" class="Code\ProjectBundle\Build\Writer\SerializeWriter">
-            <argument>%kernel.root_dir%</argument>
-        </service>
-
-        <service id="code.project.build.comparer" class="Code\ProjectBundle\Build\Comparer\Comparer">
-        </service>
-
         <service id="code.project.change.loader" class="Code\ProjectBundle\Change\Loader\SerializeLoader">
             <argument>%kernel.root_dir%</argument>
         </service>

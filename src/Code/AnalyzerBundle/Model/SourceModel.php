@@ -7,93 +7,41 @@ class SourceModel
     /**
      * @var array
      */
-    private $sourcesLines;
+    private $source;
 
     /**
-     * @var integer
+     * @var NodeReference
      */
-    private $from;
+    private $nodeReference;
 
     /**
-     * @var integer
+     * @param string        $source
+     * @param NodeReference $nodeReference
      */
-    private $to;
-
-    /**
-     * @var integer
-     */
-    private $surround;
-
-    /**
-     * @var array
-     */
-    private $files = array();
-
-    /**
-     * @param array   $files
-     * @param integer $from
-     * @param integer $to
-     * @param integer $surround
-     * @param array   $files
-     */
-    public function __construct(array $sourceLines, $from = null, $to = null, $surround = null, array $files = array())
+    public function __construct($source, NodeReference $nodeReference)
     {
-        $this->sourcesLines = $sourceLines;
-        $this->from = $from;
-        $this->to = $to;
-        $this->surround= $surround;
-        $this->files = $files;
-    }
-
-
-    /*+
-     * Return sourceLines
-     *
-     * @return array
-     */
-    public function getSourceLines()
-    {
-        return $this->sourcesLines;
+        $this->sources = $source;
+        $this->nodeReference = $nodeReference;
     }
 
     /*+
-     * Return from
+     * Return source
      *
-     * @return integer
+     * @return string
      */
-    public function getFrom()
+    public function getSource()
     {
-        return $this->from;
-    }
-
-    /*+
-     * Return to
-     *
-     * @return integer
-     */
-    public function getTo()
-    {
-        return $this->to;
+        return $this->sources;
     }
 
     /**
-     * Return surround
+     * Return node reference
      *
-     * @return integer
+     * @return NodeReference
      */
-    public function getSurround()
+    public function getNodeReference()
     {
-        return $this->surround;
-    }
-
-    /**
-     * Return files
-     *
-     * @return array
-     */
-    public function getFiles()
-    {
-        return $this->files;
+        return $this->nodeReference;
     }
 
     public function getSourceString()

@@ -19,6 +19,6 @@ class AddAnalyzersPass implements CompilerPassInterface
             $analyzers[] = new Reference($serviceId);
         }
 
-        $container->getDefinition('code.analyzer.chain_analyzer')->replaceArgument(1, $analyzers);
+        $container->getDefinition('code.analyzer.chain_analyzer')->replaceArgument(0, $analyzers);
     }
 }

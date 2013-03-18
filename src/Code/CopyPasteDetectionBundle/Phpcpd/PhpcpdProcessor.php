@@ -3,12 +3,15 @@
 namespace Code\CopyPasteDetectionBundle\Phpcpd;
 
 use Code\AnalyzerBundle\Analyzer\Processor\ProcessorInterface;
+use Code\AnalyzerBundle\Model\NodeReference;
 use Code\AnalyzerBundle\Model\SourceModel;
+use Code\AnalyzerBundle\Model\SourceRange;
 use Code\AnalyzerBundle\ReflectionService;
 use Code\AnalyzerBundle\Model\ClassesModel;
 use Code\AnalyzerBundle\Model\ClassModel;
 use Code\AnalyzerBundle\Model\MetricModel;
 use Code\AnalyzerBundle\Model\SmellModel;
+use Code\AnalyzerBundle\ResultBuilder;
 
 class PhpcpdProcessor implements ProcessorInterface
 {
@@ -28,11 +31,10 @@ class PhpcpdProcessor implements ProcessorInterface
     /**
      * @inheritDoc
      */
-    public function process($filename)
+    public function process(ResultBuilder $resultBuilder, $filename)
     {
         $duplications = $this->processDuplications($filename);
 
-        $classes = new ClassesModel();
         foreach ($duplications as $duplication) {
             $fileCount = count($duplication['files']);
 
@@ -48,30 +50,30 @@ class PhpcpdProcessor implements ProcessorInterface
             }
 
             foreach ($duplication['files'] as $path => $line) {
-                $className = $this->reflectionService->getClassNameForFile($path);
-                $namespaceName = $this->reflectionService->getNamespaceNameForFile($path);
+                //$className = $this->reflectionService->getClassNameForFile($path);
+                //$namespaceName = $this->reflectionService->getNamespaceNameForFile($path);
 
-                $class = new ClassModel($className, $namespaceName);
-                $classes->addClass($class);
+                $fileResultNode = $resultBuilder->getNode($path);
+                $classResultReference = current($resultBuilder->getIncomingReferences($fileResultNode));
 
                 $metric = new MetricModel('duplication', $lines);
-                $class->addMetric($metric);
+                $fileResultNode->addMetric($metric);
 
-                $sourceLines = $this->reflectionService->getSourceLines($path);
-                $source = new SourceModel($sourceLines, $line, $line + $lines + 1, 5, $files);
+                $beginLine = $line;
+                $endLine = $line + $lines + 1;
+                $sourceRange = new SourceRange($beginLine, $endLine);
 
                 $smell = new SmellModel(
+                    $classResultReference,
                     'Duplication',
                     'Duplication',
                     'Similar code in ' . $fileCount . ' files.',
-                    $source,
+                    $sourceRange,
                     1
                 );
-                $class->addSmell($smell);
+                $resultBuilder->addSmell($smell);
             }
         }
-
-        return $classes;
     }
 
     private function processDuplications($filename)

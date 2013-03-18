@@ -5,6 +5,11 @@ namespace Code\AnalyzerBundle\Model;
 class SmellModel
 {
     /**
+     * @var NodeReference
+     */
+    private $nodeReference;
+
+    /**
      * @var string
      */
     private $origin;
@@ -20,9 +25,9 @@ class SmellModel
     private $text;
 
     /**
-     * @var SourceModel
+     * @var SourceRange
      */
-    private $source;
+    private $sourceRange;
 
     /**
      * @var integer
@@ -30,18 +35,20 @@ class SmellModel
     private $score;
 
     /**
-     * @param string      $origin
-     * @param string      $rule
-     * @param string      $text
-     * @param SourceModel $source
-     * @param integer     $score
+     * @param NodeReference $nodeReference
+     * @param string        $origin
+     * @param string        $rule
+     * @param string        $text
+     * @param SourceRange   $sourceRange
+     * @param integer       $score
      */
-    public function __construct($origin, $rule, $text, $source = null, $score = null)
+    public function __construct(NodeReference $nodeReference, $origin, $rule, $text, SourceRange $sourceRange, $score)
     {
+        $this->nodeReference = $nodeReference;
         $this->origin = $origin;
         $this->rule = $rule;
         $this->text = $text;
-        $this->source = $source;
+        $this->sourceRange = $sourceRange;
         $this->score = $score;
     }
 
@@ -53,6 +60,16 @@ class SmellModel
     public function getId()
     {
         return spl_object_hash($this);
+    }
+
+    /*+
+     * Return node reference
+     *
+     * @return NodeReference
+     */
+    public function getNodeReference()
+    {
+        return $this->nodeReference;
     }
 
     /*+
@@ -86,13 +103,13 @@ class SmellModel
     }
 
     /**
-     * Return source
+     * Return source range
      *
-     * @return SourceModel
+     * @return SourceRange
      */
-    public function getSource()
+    public function getSourceRange()
     {
-        return $this->source;
+        return $this->sourceRange;
     }
 
     /**

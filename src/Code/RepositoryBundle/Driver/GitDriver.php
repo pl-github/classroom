@@ -13,9 +13,18 @@ class GitDriver implements DriverInterface
      */
     private $url;
 
+    /**
+     * @var string
+     */
+    private $libDir;
+
+    /**
+     * @param RepositoryConfig $repositoryConfig
+     */
     public function __construct(RepositoryConfig $repositoryConfig)
     {
         $this->url = $repositoryConfig->getUrl();
+        $this->libDir = $repositoryConfig->getLibDir();
     }
 
     /**

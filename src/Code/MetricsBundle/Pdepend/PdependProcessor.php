@@ -8,6 +8,7 @@ use Code\AnalyzerBundle\Model\ClassesModel;
 use Code\AnalyzerBundle\Model\ClassModel;
 use Code\AnalyzerBundle\Model\MetricModel;
 use Code\AnalyzerBundle\Model\SmellModel;
+use Code\AnalyzerBundle\ResultBuilder;
 
 class PdependProcessor implements ProcessorInterface
 {
@@ -27,10 +28,8 @@ class PdependProcessor implements ProcessorInterface
     /**
      * @inheritDoc
      */
-    public function process($filename)
+    public function process(ResultBuilder $resultBuilder, $filename)
     {
-        $classes = new ClassesModel();
-
         $xml = simplexml_load_file($filename);
 
         $metricsAttributes = $xml->attributes();
@@ -61,10 +60,9 @@ class PdependProcessor implements ProcessorInterface
                 unset($classMetrics['name']);
 
                 $fileAttributes = $classNode->file->attributes();
-                $fileName = (string)$fileAttributes['name'];
+                //$fileName = (string)$fileAttributes['name'];
 
-                $class = new ClassModel($className, $packageName);
-                $classes->addClass($class);
+                $classResultNode = $resultBuilder->getNode($packageName . '\\' . $className);
 
                 $lines = $classMetrics['loc'];
                 $linesOfCode = $classMetrics['eloc'];
@@ -73,14 +71,14 @@ class PdependProcessor implements ProcessorInterface
                 $complexity = $classMetrics['wmcnp'];
                 $complexityPerMethod = $methods ? $complexity / $methods : 0;
 
-                $class->addMetric(new MetricModel('lines', $lines));
-                $class->addMetric(new MetricModel('linesOfCode', $linesOfCode));
+                $classResultNode->addMetric(new MetricModel('lines', $lines));
+                $classResultNode->addMetric(new MetricModel('linesOfCode', $linesOfCode));
 
-                $class->addMetric(new MetricModel('methods', $methods));
-                $class->addMetric(new MetricModel('linesOfCodePerMethod', $linesOfCodePerMethod));
+                $classResultNode->addMetric(new MetricModel('methods', $methods));
+                $classResultNode->addMetric(new MetricModel('linesOfCodePerMethod', $linesOfCodePerMethod));
 
-                $class->addMetric(new MetricModel('complexity', $complexity));
-                $class->addMetric(new MetricModel('complexityPerMethod', $complexityPerMethod));
+                $classResultNode->addMetric(new MetricModel('complexity', $complexity));
+                $classResultNode->addMetric(new MetricModel('complexityPerMethod', $complexityPerMethod));
 
                 /*
                 if ($classMetrics['wmc'] >= 10) {
@@ -104,7 +102,5 @@ class PdependProcessor implements ProcessorInterface
                 */
             }
         }
-
-        return $classes;
     }
 }

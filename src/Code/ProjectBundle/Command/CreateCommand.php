@@ -2,11 +2,11 @@
 
 namespace Code\ProjectBundle\Command;
 
-use Code\ProjectBundle\Feed\Item;
-use Code\ProjectBundle\Writer\WriterInterface;
-use Code\ProjectBundle\Project;
-use Code\RepositoryBundle\RepositoryConfig;
+use Code\ProjectBundle\Entity\Project;
+use Code\RepositoryBundle\Entity\RepositoryConfig;
+use Doctrine\ORM\EntityManager;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -23,11 +23,10 @@ class CreateCommand extends ContainerAwareCommand
         $this
             ->setName('code:project:create')
             ->setDescription('Create project')
-            ->addArgument('id')
-            ->addArgument('name')
-            ->addArgument('libDir')
-            ->addArgument('type')
-            ->addArgument('url');
+            ->addArgument('name', InputArgument::REQUIRED)
+            ->addArgument('type', InputArgument::REQUIRED)
+            ->addArgument('url', InputArgument::REQUIRED)
+            ->addArgument('libDir', InputArgument::REQUIRED);
     }
 
     /**
@@ -35,19 +34,30 @@ class CreateCommand extends ContainerAwareCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $id = $input->getArgument('id');
         $name = $input->getArgument('name');
-        $libDir = $input->getArgument('libDir');
         $type = $input->getArgument('type');
         $url = $input->getArgument('url');
+        $libDir = $input->getArgument('libDir');
 
-        $repositoryConfig = new RepositoryConfig($type, $url);
+        $repositoryConfig = new RepositoryConfig();
+        $project = new Project();
 
-        $project = new Project($id, $name, $libDir, $repositoryConfig);
-        //$project->getFeed()->addItem(new Item('Project "' . $name . '" created.', new \DateTime));
+        $repositoryConfig
+            ->setType($type)
+            ->setUrl($url)
+            ->setLibDir($libDir)
+            ->setProject($project);
 
-        $writer = $this->getContainer()->get('code.project.writer');
-        /* @var $writer WriterInterface */
-        $writer->write($project);
+        $project
+            ->setName($name)
+            ->setRepositoryConfig($repositoryConfig);
+
+        $entityManager = $this->getContainer()->get('doctrine.orm.entity_manager');
+        /* @var $entityManager EntityManager */
+
+        $entityManager->persist($repositoryConfig);
+        $entityManager->persist($project);
+
+        $entityManager->flush();
     }
 }

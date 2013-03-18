@@ -3,12 +3,13 @@
 namespace Code\MessDetectionBundle\Phpmd;
 
 use Code\AnalyzerBundle\Analyzer\Processor\ProcessorInterface;
-use Code\AnalyzerBundle\Model\SourceModel;
+use Code\AnalyzerBundle\Model\NodeReference;
+use Code\AnalyzerBundle\Model\SourceRange;
 use Code\AnalyzerBundle\ReflectionService;
 use Code\AnalyzerBundle\Model\ClassesModel;
 use Code\AnalyzerBundle\Model\ClassModel;
-use Code\AnalyzerBundle\Model\MetricModel;
 use Code\AnalyzerBundle\Model\SmellModel;
+use Code\AnalyzerBundle\ResultBuilder;
 
 class PhpmdProcessor implements ProcessorInterface
 {
@@ -28,11 +29,9 @@ class PhpmdProcessor implements ProcessorInterface
     /**
      * @inheritDoc
      */
-    public function process($filename)
+    public function process(ResultBuilder $resultBuilder, $filename)
     {
         $xml = simplexml_load_file($filename);
-
-        $classes = new ClassesModel();
 
         //$pmdAttributes = $xml->attributes();
         //$pmdVersion = (string)$pmdAttributes['version'];
@@ -42,11 +41,11 @@ class PhpmdProcessor implements ProcessorInterface
             $fileAttributes = $fileNode->attributes();
             $fileName = (string)$fileAttributes['name'];
 
-            $className = $this->reflectionService->getClassNameForFile($fileName);
-            $namespaceName = $this->reflectionService->getNamespaceNameForFile($fileName);
+            //$className = $this->reflectionService->getClassNameForFile($fileName);
+            //$namespaceName = $this->reflectionService->getNamespaceNameForFile($fileName);
 
-            $class = new ClassModel($className, $namespaceName);
-            $classes->addClass($class);
+            $fileResultNode = $resultBuilder->getNode($fileName);
+            $classResultReference = current($resultBuilder->getIncomingReferences($fileResultNode));
 
             foreach ($fileNode->violation as $violationNode) {
                 $violationAttributes = $violationNode->attributes();
@@ -59,14 +58,11 @@ class PhpmdProcessor implements ProcessorInterface
 
                 $violationText = (string)$violationNode;
 
-                $sourceLines = $this->reflectionService->getSourceLines($fileName);
-                $source = new SourceModel($sourceLines, $violationBeginLine, $violationEndLine, 5);
+                $sourceRange = new SourceRange($violationBeginLine, $violationEndLine);
 
-                $smell = new SmellModel('Mess', $violationRule, $violationText, $source, 1);
-                $class->addSmell($smell);
+                $smell = new SmellModel($classResultReference, 'Mess', $violationRule, $violationText, $sourceRange, 1);
+                $resultBuilder->addSmell($smell);
             }
         }
-
-        return $classes;
     }
 }

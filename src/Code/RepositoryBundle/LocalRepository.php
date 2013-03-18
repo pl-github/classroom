@@ -22,7 +22,7 @@ class LocalRepository implements RepositoryInterface
      */
     public function __construct(RepositoryConfig $repositoryConfig, $projectDirectory)
     {
-        $this->sourceDirectory = $repositoryConfig->getUrl();
+        $this->sourceDirectory = $repositoryConfig->getUrl() . '/' . $repositoryConfig->getLibDir();
         $this->projectDirectory = $projectDirectory;
     }
 

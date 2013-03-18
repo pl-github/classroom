@@ -3,12 +3,15 @@
 namespace Code\CodeStyleBundle\Phpcs;
 
 use Code\AnalyzerBundle\Analyzer\Processor\ProcessorInterface;
+use Code\AnalyzerBundle\Model\NodeReference;
 use Code\AnalyzerBundle\Model\SourceModel;
+use Code\AnalyzerBundle\Model\SourceRange;
 use Code\AnalyzerBundle\ReflectionService;
 use Code\AnalyzerBundle\Model\ClassesModel;
 use Code\AnalyzerBundle\Model\ClassModel;
 use Code\AnalyzerBundle\Model\MetricModel;
 use Code\AnalyzerBundle\Model\SmellModel;
+use Code\AnalyzerBundle\ResultBuilder;
 
 class PhpcsProcessor implements ProcessorInterface
 {
@@ -28,57 +31,53 @@ class PhpcsProcessor implements ProcessorInterface
     /**
      * @inheritDoc
      */
-    public function process($filename)
+    public function process(ResultBuilder $resultBuilder, $filename)
     {
         $xml = simplexml_load_file($filename);
 
-        $classes = new ClassesModel();
         foreach ($xml->file as $fileNode) {
             $fileAttributes = $fileNode->attributes();
 
             $name = (string)$fileAttributes['name'];
-            $errors = (string)$fileAttributes['errors'];
-            $warning = (string)$fileAttributes['warnings'];
+            //$errors = (string)$fileAttributes['errors'];
+            //$warning = (string)$fileAttributes['warnings'];
 
-            $className = $this->reflectionService->getClassNameForFile($name);
-            $namespaceName = $this->reflectionService->getNamespaceNameForFile($name);
+            $fileResultNode = $resultBuilder->getNode($name);
+            $classResultReference = current($resultBuilder->getIncomingReferences($fileResultNode));
 
-            $class = new ClassModel($className, $namespaceName);
-            $classes->addClass($class);
+            if (isset($fileNode->warning)) {
+                foreach ($fileNode->warning as $warningNode) {
+                    $warningAttributes = $warningNode->attributes();
 
-            foreach ($fileNode->warning as $warningNode) {
-                $warningAttributes = $warningNode->attributes();
+                    $line = (string)$warningAttributes['line'];
+                    //$column = (string)$warningAttributes['column'];
+                    //$source = (string)$warningAttributes['source'];
+                    //$severity = (string)$warningAttributes['severity'];
+                    $message = (string)$warningNode;
 
-                $line = (string)$warningAttributes['line'];
-                //$column = (string)$warningAttributes['column'];
-                //$source = (string)$warningAttributes['source'];
-                //$severity = (string)$warningAttributes['severity'];
-                $message = (string)$warningNode;
+                    $sourceRange = new SourceRange($line);
 
-                $sourceLines = $this->reflectionService->getSourceLines($name);
-                $source = new SourceModel($sourceLines, $line, $line + 1, 5);
-
-                $smell = new SmellModel('code_style', 'CodeStyleWarning', $message, $source, 1);
-                $class->addSmell($smell);
+                    $smell = new SmellModel($classResultReference, 'CodeStyle', 'CodeStyleWarning', $message, $sourceRange, 1);
+                    $resultBuilder->addSmell($smell);
+                }
             }
 
-            foreach ($fileNode->error as $errorNode) {
-                $errorAttributes = $errorNode->attributes();
+            if (isset($fileNode->error)) {
+                foreach ($fileNode->error as $errorNode) {
+                    $errorAttributes = $errorNode->attributes();
 
-                $line = (string)$errorAttributes['line'];
-                //$column = (string)$errorAttributes['column'];
-                //$source = (string)$errorAttributes['source'];
-                //$severity = (string)$errorAttributes['severity'];
-                $message = (string)$errorNode;
+                    $line = (string)$errorAttributes['line'];
+                    //$column = (string)$errorAttributes['column'];
+                    //$source = (string)$errorAttributes['source'];
+                    //$severity = (string)$errorAttributes['severity'];
+                    $message = (string)$errorNode;
 
-                $sourceLines = $this->reflectionService->getSourceLines($name);
-                $source = new SourceModel($sourceLines, $line, $line + 1, 5);
+                    $sourceRange = new SourceRange($line);
 
-                $smell = new SmellModel('CodeStyle', 'CodeStyleError', $message, $source, 1);
-                $class->addSmell($smell);
+                    $smell = new SmellModel($classResultReference, 'CodeStyle', 'CodeStyleError', $message, $sourceRange, 1);
+                    $resultBuilder->addSmell($smell);
+                }
             }
         }
-
-        return $classes;
     }
 }
