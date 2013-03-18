@@ -16,6 +16,9 @@
             <argument type="service" id="code.analyzer.tokenreflection.broker" />
         </service>
 
+        <service id="code.analyzer.process_executor" class="Code\AnalyzerBundle\ProcessExecutor">
+        </service>
+
         <service id="code.analyzer.merger.classes_merger" class="Code\AnalyzerBundle\Merger\ClassesMerger">
         </service>
 

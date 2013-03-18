@@ -3,18 +3,37 @@
 namespace Code\MetricsBundle\Pdepend;
 
 use Code\AnalyzerBundle\Analyzer\Runner\RunnerInterface;
+use Code\AnalyzerBundle\ProcessExecutor;
+use Symfony\Component\HttpKernel\Log\LoggerInterface;
 use Symfony\Component\Process\ProcessBuilder;
 use Symfony\Component\Process\Process;
 
 class PdependRunner implements RunnerInterface
 {
+    /**
+     * @var ProcessExecutor
+     */
+    private $processExecutor;
+
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
+    /**
+     * @var string
+     */
     private $pdependExecutable;
 
     /**
-     * @param $pdependExecutable
+     * @param ProcessExecutor $processExecutor
+     * @param LoggerInterface $logger
+     * @param string          $pdependExecutable
      */
-    public function __construct($pdependExecutable)
+    public function __construct(ProcessExecutor $processExecutor, LoggerInterface $logger, $pdependExecutable)
     {
+        $this->processExecutor = $processExecutor;
+        $this->logger = $logger;
         $this->pdependExecutable = $pdependExecutable;
     }
 
@@ -23,26 +42,24 @@ class PdependRunner implements RunnerInterface
      */
     public function run($sourceDirectory, $workDirectory)
     {
-        $summaryFilename = $this->ensureDirectoryWritable($workDirectory) . '/pdepend-summary.xml';
+        $pdependFilename = $this->ensureDirectoryWritable($workDirectory) . '/pdepend.xml';
+
+        if (file_exists($pdependFilename) && !unlink($pdependFilename)) {
+            throw new \Exception('Can\'t unlink ' . $pdependFilename);
+        }
 
         $processBuilder = new ProcessBuilder();
         $processBuilder->add($this->pdependExecutable)
-            ->add('--summary-xml=' . $summaryFilename)
+            ->add('--summary-xml=' . $pdependFilename)
             ->add($sourceDirectory);
 
         $process = $processBuilder->getProcess();
 
-        $exitStatusCode = $process->run();
+        $this->logger->debug($process->getCommandLine());
 
-        if (!$process->isSuccessful() && $exitStatusCode != 1) {
-            echo $process->getCommandLine().PHP_EOL;
-            echo 'RC: ' . $exitStatusCode.PHP_EOL;
-            echo 'Output: ' . $process->getOutput().PHP_EOL;
-            echo 'Error output: ' . $process->getErrorOutput().PHP_EOL;
-            throw new \Exception('pdepend execution resulted in an error');
-        }
+        $this->processExecutor->execute($process, 1);
 
-        return $summaryFilename;
+        return $pdependFilename;
     }
 
     /**

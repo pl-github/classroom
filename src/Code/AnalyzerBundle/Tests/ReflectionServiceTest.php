@@ -209,9 +209,9 @@ class ReflectionServiceTest extends \PHPUnit_Framework_TestCase
         $fileMock->expects($this->once())
             ->method('getSource')
             ->will($this->returnValue('A'.PHP_EOL.'B'.PHP_EOL.'C'.PHP_EOL.'D'.PHP_EOL));
-        
-        $result = $this->service->getSourceExtract('testFile.php', 2, 3);
 
-        $this->assertEquals('B'.PHP_EOL.'C', $result);
+        $result = $this->service->getSourceLinesExtract('testFile.php', 2, 3);
+
+        $this->assertEquals(array('B', 'C'), $result);
     }
 }

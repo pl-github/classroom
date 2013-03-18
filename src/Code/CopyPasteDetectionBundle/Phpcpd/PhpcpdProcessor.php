@@ -33,6 +33,10 @@ class PhpcpdProcessor implements ProcessorInterface
      */
     public function process(ResultBuilder $resultBuilder, $filename)
     {
+        if (!file_exists($filename)) {
+            throw new \Exception('phpcpd log xml file not found.');
+        }
+
         $duplications = $this->processDuplications($filename);
 
         foreach ($duplications as $duplication) {

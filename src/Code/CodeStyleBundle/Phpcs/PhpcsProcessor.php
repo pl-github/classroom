@@ -33,6 +33,10 @@ class PhpcsProcessor implements ProcessorInterface
      */
     public function process(ResultBuilder $resultBuilder, $filename)
     {
+        if (!file_exists($filename)) {
+            throw new \Exception('phpcs report xml file not found.');
+        }
+
         $xml = simplexml_load_file($filename);
 
         foreach ($xml->file as $fileNode) {
