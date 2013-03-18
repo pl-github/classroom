@@ -2,7 +2,8 @@
 
 namespace Code\PhpAnalyzerBundle\Node;
 
-use Code\AnalyzerBundle\Model\NodeInterface;
+use Code\AnalyzerBundle\Model\MetricModel;
+use Code\AnalyzerBundle\Node\NodeInterface;
 
 class PhpFileNode implements NodeInterface
 {

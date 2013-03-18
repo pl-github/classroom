@@ -3,6 +3,7 @@
 namespace Code\RepositoryBundle;
 
 use Code\RepositoryBundle\Driver\GitDriver;
+use Code\RepositoryBundle\Entity\RepositoryConfig;
 
 class RepositoryFactory
 {

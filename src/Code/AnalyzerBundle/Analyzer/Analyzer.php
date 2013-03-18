@@ -4,7 +4,7 @@ namespace Code\AnalyzerBundle\Analyzer;
 
 use Code\AnalyzerBundle\Analyzer\Runner\RunnerInterface;
 use Code\AnalyzerBundle\Analyzer\Processor\ProcessorInterface;
-use Code\AnalyzerBundle\ResultBuilder;
+use Code\AnalyzerBundle\ResultBuilderInterface;
 
 class Analyzer implements AnalyzerInterface
 {
@@ -31,7 +31,7 @@ class Analyzer implements AnalyzerInterface
     /**
      * @inheritDoc
      */
-    public function analyze(ResultBuilder $resultBuilder, $sourceDirectory, $workDirectory)
+    public function analyze(ResultBuilderInterface $resultBuilder, $sourceDirectory, $workDirectory)
     {
         $filename = $this->runner->run($sourceDirectory, $workDirectory);
         $classes = $this->processor->process($resultBuilder, $filename);

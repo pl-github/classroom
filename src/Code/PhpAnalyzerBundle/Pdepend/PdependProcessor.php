@@ -5,7 +5,7 @@ namespace Code\PhpAnalyzerBundle\Pdepend;
 use Code\AnalyzerBundle\Analyzer\Processor\ProcessorInterface;
 use Code\AnalyzerBundle\Model\MetricModel;
 use Code\AnalyzerBundle\ReflectionService;
-use Code\AnalyzerBundle\ResultBuilder;
+use Code\AnalyzerBundle\ResultBuilderInterface;
 
 class PdependProcessor implements ProcessorInterface
 {
@@ -25,7 +25,7 @@ class PdependProcessor implements ProcessorInterface
     /**
      * @inheritDoc
      */
-    public function process(ResultBuilder $resultBuilder, $filename)
+    public function process(ResultBuilderInterface $resultBuilder, $filename)
     {
         if (!file_exists($filename)) {
             throw new \Exception('pdepend summary xml file not found.');

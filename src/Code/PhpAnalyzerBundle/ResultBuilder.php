@@ -1,18 +1,20 @@
 <?php
 
-namespace Code\AnalyzerBundle;
+namespace Code\PhpAnalyzerBundle;
 
 use Code\AnalyzerBundle\Analyzer\AnalyzerInterface;
-use Code\AnalyzerBundle\Model\NodeInterface;
-use Code\AnalyzerBundle\Model\NodeReference;
-use Code\AnalyzerBundle\Model\PhpClassNode;
-use Code\AnalyzerBundle\Model\PhpFileNode;
 use Code\AnalyzerBundle\Model\ResultModel;
 use Code\AnalyzerBundle\Model\SmellModel;
+use Code\AnalyzerBundle\Node\NodeInterface;
+use Code\AnalyzerBundle\Node\NodeReference;
+use Code\AnalyzerBundle\ReflectionService;
+use Code\AnalyzerBundle\ResultBuilderInterface;
+use Code\PhpAnalyzerBundle\Node\PhpClassNode;
+use Code\PhpAnalyzerBundle\Node\PhpFileNode;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
 
-class ResultBuilder
+class ResultBuilder implements ResultBuilderInterface
 {
     /**
      * @var ReflectionService

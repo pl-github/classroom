@@ -9,7 +9,7 @@
     </parameters>
 
     <services>
-        <service id="code.php_analyzer.phpcpd.runner" class="Code\PhpAnalyerBundle\Phpcpd\PhpcpdRunner">
+        <service id="code.php_analyzer.phpcpd.runner" class="Code\PhpAnalyzerBundle\Phpcpd\PhpcpdRunner">
             <argument type="service" id="code.analyzer.process_executor" />
             <argument type="service" id="logger" />
             <argument>%code.php_analyzer.phpcpd.executable%</argument>

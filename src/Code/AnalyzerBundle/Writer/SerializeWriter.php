@@ -1,9 +1,8 @@
 <?php
 
-namespace Code\BuildBundle\Writer;
+namespace Code\AnalyzerBundle\Writer;
 
-use Code\AnalyzerBundle\Model\ClassesModel;
-use Code\AnalyzerBundle\Writer;
+use Code\AnalyzerBundle\Model\ResultModel;
 
 class SerializeWriter implements WriterInterface
 {
@@ -23,7 +22,7 @@ class SerializeWriter implements WriterInterface
     /**
      * @inheritDoc
      */
-    public function write(Build $build, ClassesModel $classes)
+    public function write(ResultModel $result)
     {
         $buildVersion = $build->getVersion();
         $project = $build->getProject();
@@ -31,7 +30,7 @@ class SerializeWriter implements WriterInterface
 
         $directory = $this->ensureDirectoryWritable($this->dataDir . '/' . $projectId . '/build');
         $filename = $directory . '/' . $buildVersion . '.serialized';
-        $data = serialize($classes);
+        $data = serialize($result);
 
         file_put_contents($filename, $data);
     }

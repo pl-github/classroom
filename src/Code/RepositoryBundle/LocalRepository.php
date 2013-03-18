@@ -2,6 +2,7 @@
 
 namespace Code\RepositoryBundle;
 
+use Code\RepositoryBundle\Entity\RepositoryConfig;
 use Code\RepositoryBundle\VersionStrategy\IncrementalVersionStrategy;
 
 class LocalRepository implements RepositoryInterface

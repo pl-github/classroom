@@ -50,7 +50,7 @@ class Builder
         $repositoryConfig = $project->getRepositoryConfig();
         $repository = $this->repositoryFactory->factory($repositoryConfig, $projectDirectory);
 
-        $sourceDirectory = $repository->getSourceDirectory() . '/' . $project->getLibDir();
+        $sourceDirectory = $repository->getSourceDirectory();
 
         $versionStrategy = $repository->getVersionStrategy();
         $version = $versionStrategy->determineVersion($project);

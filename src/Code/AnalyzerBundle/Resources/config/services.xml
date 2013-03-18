@@ -16,15 +16,23 @@
             <argument type="service" id="code.analyzer.tokenreflection.broker" />
         </service>
 
+        <service id="code.analyzer.loader.serialize" class="Code\ProjectBundle\Loader\SerializeLoader">
+            <argument>%kernel.root_dir%</argument>
+        </service>
+
+        <service id="code.analyzer.loader.phar" class="Code\ProjectBundle\Loader\PharLoader">
+            <argument>%kernel.root_dir%</argument>
+        </service>
+
+        <service id="code.analyzer.writer.serialize" class="Code\ProjectBundle\Writer\SerializeWriter">
+            <argument>%kernel.root_dir%</argument>
+        </service>
+
+        <service id="code.analyzer.writer.phar" class="Code\ProjectBundle\Writer\PharWriter">
+            <argument>%kernel.root_dir%</argument>
+        </service>
+
         <service id="code.analyzer.process_executor" class="Code\AnalyzerBundle\ProcessExecutor">
-        </service>
-
-        <service id="code.analyzer.merger.classes_merger" class="Code\AnalyzerBundle\Merger\ClassesMerger">
-        </service>
-
-        <service id="code.analyzer.result_builder" class="Code\AnalyzerBundle\ResultBuilder">
-            <argument type="service" id="code.analyzer.reflection_service" />
-            <argument type="service" id="code.analyzer.chain_analyzer" />
         </service>
 
         <service id="code.analyzer.chain_analyzer" class="Code\AnalyzerBundle\Analyzer\ChainAnalyzer">

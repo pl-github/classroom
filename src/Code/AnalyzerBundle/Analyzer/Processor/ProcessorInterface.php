@@ -3,15 +3,15 @@
 namespace Code\AnalyzerBundle\Analyzer\Processor;
 
 use Code\AnalyzerBundle\Model\ClassesModel;
-use Code\AnalyzerBundle\ResultBuilder;
+use Code\AnalyzerBundle\ResultBuilderInterface;
 
 interface ProcessorInterface
 {
     /**
      * Process file
      *
-     * @param ResultBuilder $resultBuilder
-     * @param string        $filename
+     * @param ResultBuilderInterface $resultBuilder
+     * @param string                 $filename
      */
-    public function process(ResultBuilder $resultBuilder, $filename);
+    public function process(ResultBuilderInterface $resultBuilder, $filename);
 }

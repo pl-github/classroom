@@ -1,13 +1,10 @@
 <?php
 
-namespace Code\AnalyzerBundle\Command;
+namespace Code\PhpAnalyzerBundle\Command;
 
-use Code\AnalyzerBundle\PharBuilder;
-use Code\AnalyzerBundle\ResultBuilder;
 use Code\BuildBundle\Build;
+use Code\PhpAnalyzerBundle\ResultBuilder;
 use Code\ProjectBundle\Project;
-use Code\ProjectBundle\Loader\LoaderInterface as ProjectLoaderInterface;
-use Code\ProjectBundle\Writer\WriterInterface as ProjectWriterInterface;
 use Doctrine\ORM\EntityManager;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputArgument;
@@ -23,8 +20,8 @@ class AnalyzeCommand extends ContainerAwareCommand
     protected function configure()
     {
         $this
-            ->setName('code:analyzer:analyze')
-            ->setDescription('Analyze')
+            ->setName('code:php:analyze')
+            ->setDescription('Analyze PHP')
             ->addArgument('projectId', InputArgument::REQUIRED);
     }
 
@@ -39,7 +36,7 @@ class AnalyzeCommand extends ContainerAwareCommand
         /* @var $entityManager EntityManager */
         $projectRepository = $entityManager->getRepository('Code\ProjectBundle\Entity\Project');
 
-        $resultBuilder = $this->getContainer()->get('code.analyzer.result_builder');
+        $resultBuilder = $this->getContainer()->get('code.php_analyzer.result_builder');
         /* @var $resultBuilder ResultBuilder */
 
         //$project = $projectRepository->findOneBy(array('name' => $projectId));
@@ -60,9 +57,6 @@ class AnalyzeCommand extends ContainerAwareCommand
             $node = $result->getNode($smell->getNodeReference());
             echo '  ' . $node->getFullQualifiedName().PHP_EOL;
         }
-
-        $pharBuilder = new PharBuilder();
-        $pharBuilder->createPhar($result);
 
         $output->writeln('Analyze for ' . $projectId . ' finished.');
     }

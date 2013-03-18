@@ -2,6 +2,9 @@
 
 namespace Code\AnalyzerBundle\Model;
 
+use Code\AnalyzerBundle\Node\NodeInterface;
+use Code\AnalyzerBundle\Node\NodeReference;
+
 class ResultModel
 {
     /**

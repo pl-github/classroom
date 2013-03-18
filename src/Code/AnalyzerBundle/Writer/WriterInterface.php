@@ -2,16 +2,14 @@
 
 namespace Code\AnalyzerBundle\Writer;
 
-use Code\AnalyzerBundle\Model\ClassesModel;
-use Code\BuildBundle\Build;
+use Code\AnalyzerBundle\Model\ResultModel;
 
 interface WriterInterface
 {
     /**
-     * Write build
+     * Write result
      *
-     * @param Build        $build
-     * @param ClassesModel $classes
+     * @param ResultModel $result
      */
-    public function write(Build $build, ClassesModel $classes);
+    public function write(ResultModel $result);
 }

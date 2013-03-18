@@ -1,20 +1,32 @@
 <?php
 
-namespace Code\AnalyzerBundle;
+namespace Code\AnalyzerBundle\Writer;
 
 use Code\AnalyzerBundle\Model\NodeInterface;
 use Code\AnalyzerBundle\Model\ResultModel;
 use Code\AnalyzerBundle\Model\SmellModel;
-use Symfony\Component\Finder\Finder;
 
-class PharBuilder
+class PharWriter
 {
+    /**
+     * @var string
+     */
+    private $dataDir;
+
+    /**
+     * @param string $rootDir
+     */
+    public function __construct($rootDir)
+    {
+        $this->dataDir = $rootDir . '/data';
+    }
+
     /**
      * @param ResultModel $result
      */
     public function createPhar(ResultModel $result)
     {
-        $phar = new \Phar('test.phar');
+        $phar = new \Phar($this->dataDir . '/test.phar');
         $phar->setStub(
             '<?php Phar::mapPhar("result.phar"); __HALT_COMPILER();'
         );

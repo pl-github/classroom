@@ -2,6 +2,8 @@
 
 namespace Code\AnalyzerBundle\Model;
 
+use Code\AnalyzerBundle\Node\NodeReference;
+
 class SmellModel
 {
     /**

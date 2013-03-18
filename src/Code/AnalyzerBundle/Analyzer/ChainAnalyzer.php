@@ -2,7 +2,7 @@
 
 namespace Code\AnalyzerBundle\Analyzer;
 
-use Code\AnalyzerBundle\ResultBuilder;
+use Code\AnalyzerBundle\ResultBuilderInterface;
 
 class ChainAnalyzer implements AnalyzerInterface
 {
@@ -22,7 +22,7 @@ class ChainAnalyzer implements AnalyzerInterface
     /**
      * @inheritDoc
      */
-    public function analyze(ResultBuilder $resultBuilder, $sourceDirectory, $workDirectory)
+    public function analyze(ResultBuilderInterface $resultBuilder, $sourceDirectory, $workDirectory)
     {
         foreach ($this->analyzers as $analyzer) {
             /* @var $analyzer AnalyzerInterface */

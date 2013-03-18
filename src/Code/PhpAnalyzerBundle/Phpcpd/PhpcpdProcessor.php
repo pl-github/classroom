@@ -7,7 +7,7 @@ use Code\AnalyzerBundle\Model\SourceRange;
 use Code\AnalyzerBundle\Model\MetricModel;
 use Code\AnalyzerBundle\Model\SmellModel;
 use Code\AnalyzerBundle\ReflectionService;
-use Code\AnalyzerBundle\ResultBuilder;
+use Code\AnalyzerBundle\ResultBuilderInterface;
 
 class PhpcpdProcessor implements ProcessorInterface
 {
@@ -27,7 +27,7 @@ class PhpcpdProcessor implements ProcessorInterface
     /**
      * @inheritDoc
      */
-    public function process(ResultBuilder $resultBuilder, $filename)
+    public function process(ResultBuilderInterface $resultBuilder, $filename)
     {
         if (!file_exists($filename)) {
             throw new \Exception('phpcpd log xml file not found.');

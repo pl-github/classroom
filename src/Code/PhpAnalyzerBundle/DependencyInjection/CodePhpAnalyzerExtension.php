@@ -22,6 +22,8 @@ class CodePhpAnalyzerExtension extends Extension
 
         $loader = new XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
 
+        $loader->load('services.xml');
+
         $loader->load('phpcs.xml');
         $container->setParameter('code.php_analyzer.phpcs.executable', $config['phpcs']['executable']);
 

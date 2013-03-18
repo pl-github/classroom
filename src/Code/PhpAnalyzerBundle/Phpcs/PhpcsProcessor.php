@@ -6,7 +6,7 @@ use Code\AnalyzerBundle\Analyzer\Processor\ProcessorInterface;
 use Code\AnalyzerBundle\Model\SourceRange;
 use Code\AnalyzerBundle\Model\SmellModel;
 use Code\AnalyzerBundle\ReflectionService;
-use Code\AnalyzerBundle\ResultBuilder;
+use Code\AnalyzerBundle\ResultBuilderInterface;
 
 class PhpcsProcessor implements ProcessorInterface
 {
@@ -26,7 +26,7 @@ class PhpcsProcessor implements ProcessorInterface
     /**
      * @inheritDoc
      */
-    public function process(ResultBuilder $resultBuilder, $filename)
+    public function process(ResultBuilderInterface $resultBuilder, $filename)
     {
         if (!file_exists($filename)) {
             throw new \Exception('phpcs report xml file not found.');

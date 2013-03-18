@@ -8,14 +8,6 @@
         <service id="code.project.merge.classes_merge" class="Code\ProjectBundle\Merger\ClassesMerger">
         </service>
 
-        <service id="code.project.loader" class="Code\ProjectBundle\Loader\SerializeLoader">
-            <argument>%kernel.root_dir%</argument>
-        </service>
-
-        <service id="code.project.writer" class="Code\ProjectBundle\Writer\SerializeWriter">
-            <argument>%kernel.root_dir%</argument>
-        </service>
-
         <service id="code.project.change.loader" class="Code\ProjectBundle\Change\Loader\SerializeLoader">
             <argument>%kernel.root_dir%</argument>
         </service>
