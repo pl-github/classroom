@@ -45,8 +45,7 @@ class Configuration implements ConfigurationInterface
                         ->scalarNode('executable')->defaultValue('%kernel.root_dir%/../bin/pdepend')->end()
                     ->end()
                 ->end()
-            ->end()
-        ;
+            ->end();
 
         return $treeBuilder;
     }

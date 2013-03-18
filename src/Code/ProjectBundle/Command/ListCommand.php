@@ -50,8 +50,7 @@ class ListCommand extends ContainerAwareCommand
             'Latest Build'
         );
 
-        foreach ($projects as $project)
-        {
+        foreach ($projects as $project) {
             /* @var $project \Code\ProjectBundle\Entity\Project */
 
             $output->writeln(

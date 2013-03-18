@@ -33,7 +33,7 @@ class PhpClassNode implements NodeInterface
      * @param string        $namespace
      * @param NodeReference $fileReference
      */
-    public function __construct($name, $namespace = '', NodeReference $fileReference)
+    public function __construct($name, $namespace, NodeReference $fileReference)
     {
         $this->name = $name;
         $this->namespace = $namespace;

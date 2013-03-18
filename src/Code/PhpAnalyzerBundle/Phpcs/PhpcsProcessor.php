@@ -56,7 +56,14 @@ class PhpcsProcessor implements ProcessorInterface
 
                     $sourceRange = new SourceRange($line);
 
-                    $smell = new SmellModel($classResultReference, 'CodeStyle', 'CodeStyleWarning', $message, $sourceRange, 1);
+                    $smell = new SmellModel(
+                        $classResultReference,
+                        'CodeStyle',
+                        'CodeStyleWarning',
+                        $message,
+                        $sourceRange,
+                        1
+                    );
                     $resultBuilder->addSmell($smell);
                 }
             }
@@ -73,7 +80,14 @@ class PhpcsProcessor implements ProcessorInterface
 
                     $sourceRange = new SourceRange($line);
 
-                    $smell = new SmellModel($classResultReference, 'CodeStyle', 'CodeStyleError', $message, $sourceRange, 1);
+                    $smell = new SmellModel(
+                        $classResultReference,
+                        'CodeStyle',
+                        'CodeStyleError',
+                        $message,
+                        $sourceRange,
+                        1
+                    );
                     $resultBuilder->addSmell($smell);
                 }
             }

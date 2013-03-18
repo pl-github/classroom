@@ -41,18 +41,20 @@ class AnalyzeCommand extends ContainerAwareCommand
 
         //$project = $projectRepository->findOneBy(array('name' => $projectId));
 
-        $result = $resultBuilder->createResult('/opt/www/code/symfony/src/Code', '/opt/www/code/symfony/app/data/code/work');
+        $result = $resultBuilder->createResult(
+            '/opt/www/code/symfony/src/Code',
+            '/opt/www/code/symfony/app/data/code/work'
+        );
 
-        foreach ($result->getNodes() as $nodeId => $node)
-        {
+        foreach ($result->getNodes() as $nodeId => $node) {
             /* @var $smell NodeInterface */
             echo '[node] ' . $nodeId . ' => ' . get_class($node) . PHP_EOL;
         }
 
-        foreach ($result->getSmells() as $smellId => $smell)
-        {
+        foreach ($result->getSmells() as $smellId => $smell) {
             /* @var $smell SmellModel */
-            echo '[smell] ' . $smellId . ' => ' . $smell->getRule() . PHP_EOL;
+            echo '[smell] ' . $smellId . ' => ' . $smell->getRule() . ' ' .
+                $smell->getSourceRange()->getBeginLine() . '-' . $smell->getSourceRange()->getEndLine() . PHP_EOL;
 
             $node = $result->getNode($smell->getNodeReference());
             echo '  ' . $node->getFullQualifiedName().PHP_EOL;

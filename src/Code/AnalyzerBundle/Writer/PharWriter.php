@@ -32,16 +32,14 @@ class PharWriter
         );
 
         $references = array();
-        foreach ($result->getSmells() as $smell)
-        {
+        foreach ($result->getSmells() as $smell) {
             /* @var $smell SmellModel */
 
             $nodeReference = $smell->getNodeReference();
             $references[$nodeReference->getReferenceName()] = $smell->getNodeReference();
         }
 
-        foreach ($references as $reference)
-        {
+        foreach ($references as $reference) {
             $node = $result->getNode($reference);
             $fileNode = $this->findRootNode($result, $node);
 

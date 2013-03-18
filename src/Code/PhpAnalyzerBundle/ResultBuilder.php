@@ -51,8 +51,7 @@ class ResultBuilder implements ResultBuilderInterface
         $finder = new Finder();
         $finder->name('*.php');
 
-        foreach ($finder->in($sourceDirectory) as $file)
-        {
+        foreach ($finder->in($sourceDirectory) as $file) {
             /* @var $file SplFileInfo */
 
             //echo $file->getPathname().PHP_EOL;
