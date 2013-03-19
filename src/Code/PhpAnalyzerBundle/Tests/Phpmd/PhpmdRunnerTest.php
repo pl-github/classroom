@@ -1,8 +1,8 @@
 <?php
 
-namespace Code\MessDetectionBundle\Tests\Phpcs;
+namespace Code\PhpAnalyzerBundle\Tests\Phpcs;
 
-use Code\MessDetectionBundle\Phpmd\PhpmdRunner;
+use Code\PhpAnalyzerBundle\Phpmd\PhpmdRunner;
 use org\bovigo\vfs\vfsStream;
 
 class PhpmdRunnerTest extends \PHPUnit_Framework_TestCase

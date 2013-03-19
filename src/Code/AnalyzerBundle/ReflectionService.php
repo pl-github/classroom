@@ -19,6 +19,11 @@ class ReflectionService
     /**
      * @var array
      */
+    private $filenameToClassShortNameMap = array();
+
+    /**
+     * @var array
+     */
     private $filenameToNamespaceNameMap = array();
 
     /**
@@ -47,6 +52,23 @@ class ReflectionService
     }
 
     /**
+     * Get class short name for file
+     *
+     * @param string $fileName
+     * @return string
+     */
+    public function getClassShortNameForFile($fileName)
+    {
+        $hash = sha1($fileName);
+
+        if (empty($this->filenameToClassShortNameMap[$hash])) {
+            $this->filenameToClassShortNameMap[$hash] = $this->extractClassShortNameFromFile($fileName);
+        }
+
+        return $this->filenameToClassShortNameMap[$hash];
+    }
+
+    /**
      * Get namespace name for file
      *
      * @param string $filename
@@ -64,73 +86,34 @@ class ReflectionService
     }
 
     /**
-     * Return class source
-     *
-     * @param string $fileName
-     * @param string $className
-     * @return string
-     */
-    public function getClassSource($fileName, $className)
-    {
-        $class = $this->getClass($fileName, $className);
-
-        return $class->getSource();
-    }
-
-    /**
-     * Return method source
-     *
-     * @param string $fileName
-     * @param string $className
-     * @param string $methodName
-     * @return string
-     */
-    public function getMethodSource($fileName, $className, $methodName)
-    {
-        $method = $this->getMethod($fileName, $className, $methodName);
-
-        return $method->getSource();
-    }
-
-    /**
-     * Return source lines
-     *
-     * @param string $fileName
-     * @return array
-     */
-    public function getSourceLines($fileName)
-    {
-        $file = $this->getFile($fileName);
-        $source = $file->getSource();
-        $sourceLines = explode(PHP_EOL, $source);
-
-        return $sourceLines;
-    }
-
-    /**
-     * Return source lines extract
-     *
-     * @param string  $fileName
-     * @param integer $beginLine
-     * @param integer $endLine
-     * @return array
-     */
-    public function getSourceLinesExtract($fileName, $beginLine, $endLine)
-    {
-        $sourceLines = $this->getSourceLines($fileName);
-
-        $extract = array_slice($sourceLines, $beginLine - 1, $endLine - $beginLine + 1);
-
-        return $extract;
-    }
-
-    /**
-     * Extract classname from file
+     * Extract class name from file
      *
      * @param string $fileName
      * @return null|string
      */
     private function extractClassNameFromFile($fileName)
+    {
+        $namespace = $this->extractNamespaceFromFile($fileName);
+
+        $classes = $namespace->getClasses();
+
+        if (!count($classes)) {
+            return null;
+        }
+
+        $class = current($classes);
+        /* @var $class \TokenReflection\IReflectionClass */
+
+        return $class->getName();
+    }
+
+    /**
+     * Extract class short name from file
+     *
+     * @param string $fileName
+     * @return null|string
+     */
+    private function extractClassShortNameFromFile($fileName)
     {
         $namespace = $this->extractNamespaceFromFile($fileName);
 

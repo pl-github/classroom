@@ -1,16 +1,11 @@
 <?php
 
-namespace Code\AnalyzerBundle\Model;
+namespace Code\AnalyzerBundle\Smell;
 
-use Code\AnalyzerBundle\Node\NodeReference;
+use Code\AnalyzerBundle\Source\SourceRange;
 
-class SmellModel
+class Smell implements SmellInterface
 {
-    /**
-     * @var NodeReference
-     */
-    private $nodeReference;
-
     /**
      * @var string
      */
@@ -37,21 +32,39 @@ class SmellModel
     private $score;
 
     /**
-     * @param NodeReference $nodeReference
+     * @var string
+     */
+    private $hash;
+
+    /**
      * @param string        $origin
      * @param string        $rule
      * @param string        $text
      * @param SourceRange   $sourceRange
      * @param integer       $score
      */
-    public function __construct(NodeReference $nodeReference, $origin, $rule, $text, SourceRange $sourceRange, $score)
+    public function __construct($origin, $rule, $text, SourceRange $sourceRange, $score)
     {
-        $this->nodeReference = $nodeReference;
         $this->origin = $origin;
         $this->rule = $rule;
         $this->text = $text;
         $this->sourceRange = $sourceRange;
         $this->score = $score;
+
+        $this->hash = sha1(uniqid('bla', true) . rand(0, 99999));
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getHash()
+    {
+        return $this->hash;
+    }
+
+    public function setHash($hash)
+    {
+        $this->hash = $hash;
     }
 
     /**
@@ -62,16 +75,6 @@ class SmellModel
     public function getId()
     {
         return spl_object_hash($this);
-    }
-
-    /*+
-     * Return node reference
-     *
-     * @return NodeReference
-     */
-    public function getNodeReference()
-    {
-        return $this->nodeReference;
     }
 
     /*+

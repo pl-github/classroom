@@ -24,6 +24,8 @@ class CodePhpAnalyzerExtension extends Extension
 
         $loader->load('services.xml');
 
+        $loader->load('base.xml');
+
         $loader->load('phpcs.xml');
         $container->setParameter('code.php_analyzer.phpcs.executable', $config['phpcs']['executable']);
 

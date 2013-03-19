@@ -1,14 +1,14 @@
 <?php
 
-namespace Code\PhpAnalyzerBundle\Pdepend;
+namespace Code\PhpAnalyzerBundle\Phpcs;
 
-use Code\AnalyzerBundle\Analyzer\Runner\RunnerInterface;
+use Code\AnalyzerBundle\Analyzer\Collector\CollectorInterface;
 use Code\AnalyzerBundle\ProcessExecutor;
 use Symfony\Component\HttpKernel\Log\LoggerInterface;
 use Symfony\Component\Process\ProcessBuilder;
 use Symfony\Component\Process\Process;
 
-class PdependRunner implements RunnerInterface
+class PhpcsCollector implements CollectorInterface
 {
     /**
      * @var ProcessExecutor
@@ -23,34 +23,39 @@ class PdependRunner implements RunnerInterface
     /**
      * @var string
      */
-    private $pdependExecutable;
+    private $phpcsExecutable;
 
     /**
      * @param ProcessExecutor $processExecutor
      * @param LoggerInterface $logger
-     * @param string          $pdependExecutable
+     * @param string          $phpcsExecutable
      */
-    public function __construct(ProcessExecutor $processExecutor, LoggerInterface $logger, $pdependExecutable)
+    public function __construct(ProcessExecutor $processExecutor, LoggerInterface $logger, $phpcsExecutable)
     {
         $this->processExecutor = $processExecutor;
         $this->logger = $logger;
-        $this->pdependExecutable = $pdependExecutable;
+        $this->phpcsExecutable = $phpcsExecutable;
     }
 
     /**
      * @inheritDoc
      */
-    public function run($sourceDirectory, $workDirectory)
+    public function collect($sourceDirectory, $workDirectory)
     {
-        $pdependFilename = $this->ensureDirectoryWritable($workDirectory) . '/pdepend.xml';
+        $phpcsFilename = $this->ensureDirectoryWritable($workDirectory) . '/phpcs.xml';
+        #return $phpcsFilename;
 
-        if (file_exists($pdependFilename) && !unlink($pdependFilename)) {
-            throw new \Exception('Can\'t unlink ' . $pdependFilename);
+        if (file_exists($phpcsFilename) && !unlink($phpcsFilename)) {
+            throw new \Exception('Can\'t unlink ' . $phpcsFilename);
         }
 
         $processBuilder = new ProcessBuilder();
-        $processBuilder->add($this->pdependExecutable)
-            ->add('--summary-xml=' . $pdependFilename)
+        $processBuilder
+            ->add($this->phpcsExecutable)
+            ->add('--extensions=php')
+            ->add('--standard=PSR1')
+            ->add('--standard=PSR2')
+            ->add('--report-xml=' . $phpcsFilename)
             ->add($sourceDirectory);
 
         $process = $processBuilder->getProcess();
@@ -59,7 +64,7 @@ class PdependRunner implements RunnerInterface
 
         $this->processExecutor->execute($process, 1);
 
-        return $pdependFilename;
+        return $phpcsFilename;
     }
 
     /**

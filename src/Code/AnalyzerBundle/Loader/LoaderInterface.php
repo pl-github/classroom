@@ -2,18 +2,23 @@
 
 namespace Code\AnalyzerBundle\Loader;
 
-use Code\AnalyzerBundle\Model\ClassesModel;
-use Code\BuildBundle\Build;
-use Code\ProjectBundle\Project;
+use Code\AnalyzerBundle\Model\ResultModel;
 
 interface LoaderInterface
 {
     /**
-     * Load classes
+     * Load result
      *
-     * @param Project $project
-     * @param mixed   $version
-     * @return ClassesModel
+     * @param string $filename
+     * @return ResultModel
      */
-    public function load(Project $project, $version);
+    public function load($filename);
+
+    /**
+     * Return supported extension
+     *
+     * @param string $filename
+     * @return boolean
+     */
+    public function supports($filename);
 }

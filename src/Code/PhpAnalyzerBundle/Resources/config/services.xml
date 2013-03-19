@@ -7,12 +7,16 @@
     <services>
 
         <service id="code.php_analyzer.result_builder" class="Code\PhpAnalyzerBundle\ResultBuilder">
-            <argument type="service" id="code.analyzer.reflection_service" />
-            <argument type="service" id="code.analyzer.chain_analyzer" />
         </service>
 
-        <service id="code.analyzer.chain_analyzer" class="Code\AnalyzerBundle\Analyzer\ChainAnalyzer">
-            <argument type="collection" />
+        <service id="code.php_analyzer.analyzer" class="Code\AnalyzerBundle\Analyzer\ChainAnalyzer">
+            <argument type="collection">
+                <argument type="service" id="code.php_analyzer.base.analyzer" />
+                <argument type="service" id="code.php_analyzer.phpcpd.analyzer" />
+                <argument type="service" id="code.php_analyzer.phpcs.analyzer" />
+                <argument type="service" id="code.php_analyzer.phpmd.analyzer" />
+                <argument type="service" id="code.php_analyzer.pdepend.analyzer" />
+            </argument>
         </service>
     </services>
 </container>

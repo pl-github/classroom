@@ -1,11 +1,8 @@
 <?php
 
-namespace Code\ProjectBundle\Tests\Build\Loader;
+namespace Code\AnalyzerBundle\Tests\Build\Loader;
 
-use Code\ProjectBundle\Build\Loader\SerializeLoader;
-use Code\ProjectBundle\Project;
-use Code\RepositoryBundle\RepositoryConfig;
-use PhpOption\Tests\Repository;
+use Code\AnalyzerBundle\Loader\SerializeLoader;
 use org\bovigo\vfs\vfsStream;
 
 class SerializeLoaderTest extends \PHPUnit_Framework_TestCase

@@ -3,31 +3,18 @@
 namespace Code\PhpAnalyzerBundle\Phpcpd;
 
 use Code\AnalyzerBundle\Analyzer\Processor\ProcessorInterface;
-use Code\AnalyzerBundle\Model\SourceRange;
-use Code\AnalyzerBundle\Model\MetricModel;
-use Code\AnalyzerBundle\Model\SmellModel;
+use Code\AnalyzerBundle\Metric\Metric;
+use Code\AnalyzerBundle\Smell\Smell;
+use Code\AnalyzerBundle\Source\SourceRange;
 use Code\AnalyzerBundle\ReflectionService;
-use Code\AnalyzerBundle\ResultBuilderInterface;
+use Code\AnalyzerBundle\Model\ResultModel;
 
 class PhpcpdProcessor implements ProcessorInterface
 {
     /**
-     * @var ReflectionService
-     */
-    private $reflectionService;
-
-    /**
-     * @param ReflectionService $reflectionService
-     */
-    public function __construct(ReflectionService $reflectionService)
-    {
-        $this->reflectionService = $reflectionService;
-    }
-
-    /**
      * @inheritDoc
      */
-    public function process(ResultBuilderInterface $resultBuilder, $filename)
+    public function process(ResultModel $result, $filename)
     {
         if (!file_exists($filename)) {
             throw new \Exception('phpcpd log xml file not found.');
@@ -50,28 +37,24 @@ class PhpcpdProcessor implements ProcessorInterface
             }
 
             foreach ($duplication['files'] as $path => $line) {
-                //$className = $this->reflectionService->getClassNameForFile($path);
-                //$namespaceName = $this->reflectionService->getNamespaceNameForFile($path);
+                $fileNode = $result->getNode($path);
+                $classNode = $result->getNode(current($result->getIncoming('node', $fileNode)));
 
-                $fileResultNode = $resultBuilder->getNode($path);
-                $classResultReference = current($resultBuilder->getIncomingReferences($fileResultNode));
-
-                $metric = new MetricModel('duplication', $lines);
-                $fileResultNode->addMetric($metric);
+                $metric = new Metric('duplication', $lines);
+                $classNode->addMetric($metric);
 
                 $beginLine = $line;
                 $endLine = $line + $lines + 1;
                 $sourceRange = new SourceRange($beginLine, $endLine);
 
-                $smell = new SmellModel(
-                    $classResultReference,
+                $smell = new Smell(
                     'Duplication',
                     'Duplication',
                     'Similar code in ' . $fileCount . ' files.',
                     $sourceRange,
                     1
                 );
-                $resultBuilder->addSmell($smell);
+                $result->addSmell($smell, $classNode);
             }
         }
     }

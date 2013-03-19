@@ -1,8 +1,8 @@
 <?php
 
-namespace Code\MetricsBundle\Tests\Pdepend;
+namespace Code\PhpAnalyzerBundle\Tests\Pdepend;
 
-use Code\MetricsBundle\Pdepend\PdependRunner;
+use Code\PhpAnalyzerBundle\Pdepend\PdependRunner;
 use org\bovigo\vfs\vfsStream;
 
 class PdependRunnerTest extends \PHPUnit_Framework_TestCase

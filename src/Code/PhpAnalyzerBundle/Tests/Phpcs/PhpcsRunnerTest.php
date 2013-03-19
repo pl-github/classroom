@@ -1,11 +1,11 @@
 <?php
 
-namespace Code\CodeStyleBundle\Tests\Phpcs;
+namespace Code\PhpAnalyzerBundle\Tests\Phpcs;
 
-use Code\CodeStyleBundle\Phpcs\PhpcsRunner;
+use Code\PhpAnalyzerBundle\Phpcs\PhpcsRunner;
 use org\bovigo\vfs\vfsStream;
 
-class PhpcpdRunnerTest extends \PHPUnit_Framework_TestCase
+class PhpcsRunnerTest extends \PHPUnit_Framework_TestCase
 {
     public function testRun()
     {

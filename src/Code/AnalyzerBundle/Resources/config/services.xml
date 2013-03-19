@@ -16,20 +16,29 @@
             <argument type="service" id="code.analyzer.tokenreflection.broker" />
         </service>
 
-        <service id="code.analyzer.loader.serialize" class="Code\ProjectBundle\Loader\SerializeLoader">
-            <argument>%kernel.root_dir%</argument>
+        <service id="code.analyzer.loader.serialize" class="Code\AnalyzerBundle\Loader\SerializeLoader">
         </service>
 
-        <service id="code.analyzer.loader.phar" class="Code\ProjectBundle\Loader\PharLoader">
-            <argument>%kernel.root_dir%</argument>
+        <service id="code.analyzer.loader.phar" class="Code\AnalyzerBundle\Loader\PharLoader">
+            <argument type="service" id="code.analyzer.serializer.xml" />
         </service>
 
-        <service id="code.analyzer.writer.serialize" class="Code\ProjectBundle\Writer\SerializeWriter">
-            <argument>%kernel.root_dir%</argument>
+        <service id="code.analyzer.loader.xml" class="Code\AnalyzerBundle\Loader\FileLoader">
+            <argument type="service" id="code.analyzer.serializer.xml" />
         </service>
 
-        <service id="code.analyzer.writer.phar" class="Code\ProjectBundle\Writer\PharWriter">
-            <argument>%kernel.root_dir%</argument>
+        <service id="code.analyzer.serializer.xml" class="Code\AnalyzerBundle\Serializer\XmlSerializer">
+        </service>
+
+        <service id="code.analyzer.writer.serialize" class="Code\AnalyzerBundle\Writer\SerializeWriter">
+        </service>
+
+        <service id="code.analyzer.writer.phar" class="Code\AnalyzerBundle\Writer\PharWriter">
+            <argument type="service" id="code.analyzer.serializer.xml" />
+        </service>
+
+        <service id="code.analyzer.writer.xml" class="Code\AnalyzerBundle\Writer\FileWriter">
+            <argument type="service" id="code.analyzer.serializer.xml" />
         </service>
 
         <service id="code.analyzer.process_executor" class="Code\AnalyzerBundle\ProcessExecutor">

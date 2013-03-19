@@ -1,14 +1,14 @@
 <?php
 
-namespace Code\PhpAnalyzerBundle\Phpmd;
+namespace Code\PhpAnalyzerBundle\Phpcpd;
 
-use Code\AnalyzerBundle\Analyzer\Runner\RunnerInterface;
+use Code\AnalyzerBundle\Analyzer\Collector\CollectorInterface;
 use Code\AnalyzerBundle\ProcessExecutor;
 use Symfony\Component\HttpKernel\Log\LoggerInterface;
 use Symfony\Component\Process\ProcessBuilder;
 use Symfony\Component\Process\Process;
 
-class PhpmdRunner implements RunnerInterface
+class PhpcpdCollector implements CollectorInterface
 {
     /**
      * @var ProcessExecutor
@@ -23,46 +23,47 @@ class PhpmdRunner implements RunnerInterface
     /**
      * @var string
      */
-    private $phpmdExecutable;
+    private $phpcpdExecutable;
 
     /**
      * @param ProcessExecutor $processExecutor
      * @param LoggerInterface $logger
-     * @param string          $phpmdExecutable
+     * @param string          $phpcpdExecutable
      */
-    public function __construct(ProcessExecutor $processExecutor, LoggerInterface $logger, $phpmdExecutable)
+    public function __construct(ProcessExecutor $processExecutor, LoggerInterface $logger, $phpcpdExecutable)
     {
         $this->processExecutor = $processExecutor;
         $this->logger = $logger;
-        $this->phpmdExecutable = $phpmdExecutable;
+        $this->phpcpdExecutable = $phpcpdExecutable;
     }
 
     /**
      * @inheritDoc
      */
-    public function run($sourceDirectory, $workDirectory)
+    public function collect($sourceDirectory, $workDirectory)
     {
-        $phpmdFilename = $this->ensureDirectoryWritable($workDirectory) . '/phpmd.xml';
+        $phpcpdFilename = $this->ensureDirectoryWritable($workDirectory) . '/phpcpd.xml';
+        #return $phpcpdFilename;
 
-        if (file_exists($phpmdFilename) && !unlink($phpmdFilename)) {
-            throw new \Exception('Can\'t unlink ' . $phpmdFilename);
+        if (file_exists($phpcpdFilename) && !unlink($phpcpdFilename)) {
+            throw new \Exception('Can\'t unlink ' . $phpcpdFilename);
         }
 
         $processBuilder = new ProcessBuilder();
-        $processBuilder->add($this->phpmdExecutable)
-            ->add($sourceDirectory)
-            ->add('xml')
-            ->add('codesize,unusedcode,naming')
-            ->add('--suffixes')->add('php')
-            ->add('--reportfile')->add($phpmdFilename);
+        $processBuilder
+            ->add($this->phpcpdExecutable)
+            ->add('--log-pmd')
+            ->add($phpcpdFilename)
+            ->add('--quiet')
+            ->add($sourceDirectory);
 
         $process = $processBuilder->getProcess();
 
         $this->logger->debug($process->getCommandLine());
 
-        $this->processExecutor->execute($process, 2);
+        $this->processExecutor->execute($process, 1);
 
-        return $phpmdFilename;
+        return $phpcpdFilename;
     }
 
     /**

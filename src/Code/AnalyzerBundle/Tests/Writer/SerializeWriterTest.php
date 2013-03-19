@@ -1,11 +1,8 @@
 <?php
 
-namespace Code\ProjectBundle\Tests\Build\Writer;
+namespace Code\AnalyzerBundle\Tests\Writer;
 
-use Code\ProjectBundle\Build\Build;
-use Code\ProjectBundle\Project;
-use Code\ProjectBundle\Build\Writer\SerializeWriter;
-use Code\RepositoryBundle\RepositoryConfig;
+use Code\AnalyzerBundle\Writer\SerializeWriter;
 use org\bovigo\vfs\vfsStream;
 
 class SerializeWriterTest extends \PHPUnit_Framework_TestCase

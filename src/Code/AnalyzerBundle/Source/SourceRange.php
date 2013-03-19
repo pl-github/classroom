@@ -1,6 +1,6 @@
 <?php
 
-namespace Code\AnalyzerBundle\Model;
+namespace Code\AnalyzerBundle\Source;
 
 class SourceRange
 {

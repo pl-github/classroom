@@ -3,30 +3,17 @@
 namespace Code\PhpAnalyzerBundle\Phpcs;
 
 use Code\AnalyzerBundle\Analyzer\Processor\ProcessorInterface;
-use Code\AnalyzerBundle\Model\SourceRange;
-use Code\AnalyzerBundle\Model\SmellModel;
+use Code\AnalyzerBundle\Model\ResultModel;
 use Code\AnalyzerBundle\ReflectionService;
-use Code\AnalyzerBundle\ResultBuilderInterface;
+use Code\AnalyzerBundle\Smell\Smell;
+use Code\AnalyzerBundle\Source\SourceRange;
 
 class PhpcsProcessor implements ProcessorInterface
 {
     /**
-     * @var ReflectionService
-     */
-    private $reflectionService;
-
-    /**
-     * @param ReflectionService $reflectionService
-     */
-    public function __construct(ReflectionService $reflectionService)
-    {
-        $this->reflectionService = $reflectionService;
-    }
-
-    /**
      * @inheritDoc
      */
-    public function process(ResultBuilderInterface $resultBuilder, $filename)
+    public function process(ResultModel $result, $filename)
     {
         if (!file_exists($filename)) {
             throw new \Exception('phpcs report xml file not found.');
@@ -34,42 +21,41 @@ class PhpcsProcessor implements ProcessorInterface
 
         $xml = simplexml_load_file($filename);
 
-        foreach ($xml->file as $fileNode) {
-            $fileAttributes = $fileNode->attributes();
+        foreach ($xml->file as $xmlFileNode) {
+            $fileAttributes = $xmlFileNode->attributes();
 
             $name = (string)$fileAttributes['name'];
             //$errors = (string)$fileAttributes['errors'];
             //$warning = (string)$fileAttributes['warnings'];
 
-            $fileResultNode = $resultBuilder->getNode($name);
-            $classResultReference = current($resultBuilder->getIncomingReferences($fileResultNode));
+            $fileNode = $result->getNode($name);
+            $classNode = $result->getNode(current($result->getIncoming('node', $fileNode)));
 
-            if (isset($fileNode->warning)) {
-                foreach ($fileNode->warning as $warningNode) {
-                    $warningAttributes = $warningNode->attributes();
+            if (isset($xmlFileNode->warning)) {
+                foreach ($xmlFileNode->warning as $xmlWarningNode) {
+                    $warningAttributes = $xmlWarningNode->attributes();
 
                     $line = (string)$warningAttributes['line'];
                     //$column = (string)$warningAttributes['column'];
                     //$source = (string)$warningAttributes['source'];
                     //$severity = (string)$warningAttributes['severity'];
-                    $message = (string)$warningNode;
+                    $message = (string)$xmlWarningNode;
 
                     $sourceRange = new SourceRange($line);
 
-                    $smell = new SmellModel(
-                        $classResultReference,
+                    $smell = new Smell(
                         'CodeStyle',
                         'CodeStyleWarning',
                         $message,
                         $sourceRange,
                         1
                     );
-                    $resultBuilder->addSmell($smell);
+                    $result->addSmell($smell, $classNode);
                 }
             }
 
-            if (isset($fileNode->error)) {
-                foreach ($fileNode->error as $errorNode) {
+            if (isset($xmlFileNode->error)) {
+                foreach ($xmlFileNode->error as $errorNode) {
                     $errorAttributes = $errorNode->attributes();
 
                     $line = (string)$errorAttributes['line'];
@@ -80,15 +66,14 @@ class PhpcsProcessor implements ProcessorInterface
 
                     $sourceRange = new SourceRange($line);
 
-                    $smell = new SmellModel(
-                        $classResultReference,
+                    $smell = new Smell(
                         'CodeStyle',
                         'CodeStyleError',
                         $message,
                         $sourceRange,
                         1
                     );
-                    $resultBuilder->addSmell($smell);
+                    $result->addSmell($smell, $classNode);
                 }
             }
         }

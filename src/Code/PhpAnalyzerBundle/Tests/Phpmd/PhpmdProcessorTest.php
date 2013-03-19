@@ -1,9 +1,9 @@
 <?php
 
-namespace Code\MessDetectionBundle\Tests\Phpmd\PhpmdProcessor;
+namespace Code\PhpAnalyzerBundle\Tests\Phpmd\PhpmdProcessor;
 
 use Code\AnalyzerBundle\Model\ClassesModel;
-use Code\MessDetectionBundle\Phpmd\PhpmdProcessor;
+use Code\PhpAnalyzerBundle\Phpmd\PhpmdProcessor;
 use org\bovigo\vfs\vfsStream;
 
 class PhpcpdProcessorTest extends \PHPUnit_Framework_TestCase

@@ -1,8 +1,8 @@
 <?php
 
-namespace Code\AnalyzerBundle\Model;
+namespace Code\AnalyzerBundle\Metric;
 
-class MetricModel
+class Metric implements MetricInterface
 {
     /**
      * @var string
@@ -24,9 +24,7 @@ class MetricModel
     }
 
     /**
-     * Return id
-     *
-     * @return string
+     * @inheritDoc
      */
     public function getId()
     {
@@ -34,9 +32,7 @@ class MetricModel
     }
 
     /*+
-     * Return key
-     *
-     * @return string
+     * @inheritDoc
      */
     public function getKey()
     {
@@ -44,9 +40,7 @@ class MetricModel
     }
 
     /*+
-     * Return value
-     *
-     * @return string
+     * @inheritDoc
      */
     public function getValue()
     {

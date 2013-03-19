@@ -9,7 +9,7 @@
     </parameters>
 
     <services>
-        <service id="code.php_analyzer.pdepend.runner" class="Code\PhpAnalyzerBundle\Pdepend\PdependRunner">
+        <service id="code.php_analyzer.pdepend.collector" class="Code\PhpAnalyzerBundle\Pdepend\PdependCollector">
             <argument type="service" id="code.analyzer.process_executor" />
             <argument type="service" id="logger" />
             <argument>%code.php_analyzer.pdepend.executable%</argument>
@@ -21,7 +21,7 @@
         </service>
 
         <service id="code.php_analyzer.pdepend.analyzer" class="Code\AnalyzerBundle\Analyzer\Analyzer">
-            <argument type="service" id="code.php_analyzer.pdepend.runner" />
+            <argument type="service" id="code.php_analyzer.pdepend.collector" />
             <argument type="service" id="code.php_analyzer.pdepend.processor" />
             <tag name="code.analyzer" />
         </service>

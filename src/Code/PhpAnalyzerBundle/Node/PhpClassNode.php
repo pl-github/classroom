@@ -2,11 +2,12 @@
 
 namespace Code\PhpAnalyzerBundle\Node;
 
-use Code\AnalyzerBundle\Model\MetricModel;
+use Code\AnalyzerBundle\Metric\Measurable;
+use Code\AnalyzerBundle\Metric\MetricInterface;
 use Code\AnalyzerBundle\Node\NodeInterface;
 use Code\AnalyzerBundle\Node\NodeReference;
 
-class PhpClassNode implements NodeInterface
+class PhpClassNode implements NodeInterface, Measurable
 {
     /**
      * @var string
@@ -14,41 +15,19 @@ class PhpClassNode implements NodeInterface
     private $name;
 
     /**
-     * @var string
-     */
-    private $namespace;
-
-    /**
-     * @var NodeReference
-     */
-    private $fileReference;
-
-    /**
      * @var array
      */
     private $metrics = array();
 
     /**
-     * @param string        $name
-     * @param string        $namespace
-     * @param NodeReference $fileReference
+     * @param string $name
      */
-    public function __construct($name, $namespace, NodeReference $fileReference)
+    public function __construct($name)
     {
         $this->name = $name;
-        $this->namespace = $namespace;
-        $this->fileReference = $fileReference;
     }
 
     /**
-     * @inheritDoc
-     */
-    public function getId()
-    {
-        return spl_object_hash($this);
-    }
-
-    /*+
      * @inheritDoc
      */
     public function getName()
@@ -56,41 +35,16 @@ class PhpClassNode implements NodeInterface
         return $this->name;
     }
 
-    /*+
+    /**
      * @inheritDoc
      */
-    public function getNamespace()
+    public function getHash()
     {
-        return $this->namespace;
+        return $this->getName();
     }
 
     /**
      * @inheritDoc
-     */
-    public function getFullQualifiedName()
-    {
-        $name = $this->getName();
-        $namespace = $this->getNamespace();
-
-        if ($namespace) {
-            $name = $namespace . '\\' . $name;
-        }
-
-        return $name;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getParentNodeReference()
-    {
-        return $this->fileReference;
-    }
-
-    /**
-     * Return metrics
-     *
-     * @return array
      */
     public function getMetrics()
     {
@@ -98,9 +52,7 @@ class PhpClassNode implements NodeInterface
     }
 
     /**
-     * Is at least one metric set?
-     *
-     * @return boolean
+     * @inheritDoc
      */
     public function hasMetrics()
     {
@@ -108,12 +60,9 @@ class PhpClassNode implements NodeInterface
     }
 
     /**
-     * Add metric
-     *
-     * @param MetricModel $metric
-     * @return $this
+     * @inheritDoc
      */
-    public function addMetric(MetricModel $metric)
+    public function addMetric(MetricInterface $metric)
     {
         $this->metrics[$metric->getKey()] = $metric;
 
@@ -121,10 +70,7 @@ class PhpClassNode implements NodeInterface
     }
 
     /**
-     * Return single metric
-     *
-     * @param string $key
-     * @return MetricModel
+     * @inheritDoc
      */
     public function getMetric($key)
     {
@@ -136,10 +82,7 @@ class PhpClassNode implements NodeInterface
     }
 
     /**
-     * Is this metric set?
-     *
-     * @param string $key
-     * @return boolean
+     * @inheritDoc
      */
     public function hasMetric($key)
     {

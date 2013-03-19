@@ -1,8 +1,8 @@
 <?php
 
-namespace Code\CopyPasteDetectionBundle\Tests\Phpcpd\PhpcpdProcessor;
+namespace Code\PhpAnalyzerBundle\Tests\Phpcpd\PhpcpdProcessor;
 
-use Code\CopyPasteDetectionBundle\Phpcpd\PhpcpdProcessor;
+use Code\PhpAnalyzerBundle\Phpcpd\PhpcpdProcessor;
 use org\bovigo\vfs\vfsStream;
 
 class PhpcpdParserTest extends \PHPUnit_Framework_TestCase

@@ -3,29 +3,16 @@
 namespace Code\PhpAnalyzerBundle\Pdepend;
 
 use Code\AnalyzerBundle\Analyzer\Processor\ProcessorInterface;
-use Code\AnalyzerBundle\Model\MetricModel;
+use Code\AnalyzerBundle\Metric\Metric;
+use Code\AnalyzerBundle\Model\ResultModel;
 use Code\AnalyzerBundle\ReflectionService;
-use Code\AnalyzerBundle\ResultBuilderInterface;
 
 class PdependProcessor implements ProcessorInterface
 {
     /**
-     * @var ReflectionService
-     */
-    private $reflectionService;
-
-    /**
-     * @param ReflectionService $reflectionService
-     */
-    public function __construct(ReflectionService $reflectionService)
-    {
-        $this->reflectionService = $reflectionService;
-    }
-
-    /**
      * @inheritDoc
      */
-    public function process(ResultBuilderInterface $resultBuilder, $filename)
+    public function process(ResultModel $result, $filename)
     {
         if (!file_exists($filename)) {
             throw new \Exception('pdepend summary xml file not found.');
@@ -63,7 +50,7 @@ class PdependProcessor implements ProcessorInterface
                 $fileAttributes = $classNode->file->attributes();
                 //$fileName = (string)$fileAttributes['name'];
 
-                $classResultNode = $resultBuilder->getNode($packageName . '\\' . $className);
+                $classResultNode = $result->getNode($packageName . '\\' . $className);
 
                 $lines = $classMetrics['loc'];
                 $linesOfCode = $classMetrics['eloc'];
@@ -72,35 +59,14 @@ class PdependProcessor implements ProcessorInterface
                 $complexity = $classMetrics['wmcnp'];
                 $complexityPerMethod = $methods ? $complexity / $methods : 0;
 
-                $classResultNode->addMetric(new MetricModel('lines', $lines));
-                $classResultNode->addMetric(new MetricModel('linesOfCode', $linesOfCode));
+                $classResultNode->addMetric(new Metric('lines', $lines));
+                $classResultNode->addMetric(new Metric('linesOfCode', $linesOfCode));
 
-                $classResultNode->addMetric(new MetricModel('methods', $methods));
-                $classResultNode->addMetric(new MetricModel('linesOfCodePerMethod', $linesOfCodePerMethod));
+                $classResultNode->addMetric(new Metric('methods', $methods));
+                $classResultNode->addMetric(new Metric('linesOfCodePerMethod', $linesOfCodePerMethod));
 
-                $classResultNode->addMetric(new MetricModel('complexity', $complexity));
-                $classResultNode->addMetric(new MetricModel('complexityPerMethod', $complexityPerMethod));
-
-                /*
-                if ($classMetrics['wmc'] >= 10) {
-                    $classSource = $this->reflectionService->getClassSource($fileName, $class->getFullQualifiedName());
-
-                    $smell = new SmellModel('metrics', 'High overall complexity', $classSource, 1);
-                    $class->addSmell($smell);
-                }
-                */
-
-                /*
-                foreach ($classNode->method as $methodNode) {
-                    $methodAttributes = $methodNode->attributes();
-                    $methodMetrics = array();
-                    foreach ($methodAttributes as $methodAttributeKey => $methodAttributeValue) {
-                        $methodMetrics[$methodAttributeKey] = (string)$methodAttributeValue;
-                    }
-                    $methodName = $methodMetrics['name'];
-                    unset($methodMetrics['name']);
-                }
-                */
+                $classResultNode->addMetric(new Metric('complexity', $complexity));
+                $classResultNode->addMetric(new Metric('complexityPerMethod', $complexityPerMethod));
             }
         }
     }

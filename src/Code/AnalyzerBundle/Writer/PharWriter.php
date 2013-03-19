@@ -5,72 +5,51 @@ namespace Code\AnalyzerBundle\Writer;
 use Code\AnalyzerBundle\Model\NodeInterface;
 use Code\AnalyzerBundle\Model\ResultModel;
 use Code\AnalyzerBundle\Model\SmellModel;
+use Code\AnalyzerBundle\Serializer\SerializerInterface;
+use Code\AnalyzerBundle\Source\Storage\PharStorage;
 
 class PharWriter
 {
     /**
-     * @var string
+     * @var SerializerInterface
      */
-    private $dataDir;
+    private $serializer;
 
     /**
-     * @param string $rootDir
+     * @param SerializerInterface $serializer
      */
-    public function __construct($rootDir)
+    public function __construct(SerializerInterface $serializer)
     {
-        $this->dataDir = $rootDir . '/data';
+        $this->serializer = $serializer;
     }
 
     /**
-     * @param ResultModel $result
+     * @inheritDoc
      */
-    public function createPhar(ResultModel $result)
+    public function write(ResultModel $result, $targetDir, $baseFilename)
     {
-        $phar = new \Phar($this->dataDir . '/test.phar');
-        $phar->setStub(
-            '<?php Phar::mapPhar("result.phar"); __HALT_COMPILER();'
-        );
+        $filename = $targetDir . '/' . $baseFilename . '.phar';
 
-        $references = array();
-        foreach ($result->getSmells() as $smell) {
-            /* @var $smell SmellModel */
+        $phar = new \Phar($filename);
 
-            $nodeReference = $smell->getNodeReference();
-            $references[$nodeReference->getReferenceName()] = $smell->getNodeReference();
-        }
-
-        foreach ($references as $reference) {
-            $node = $result->getNode($reference);
-            $fileNode = $this->findRootNode($result, $node);
-
-            $source = file_get_contents($fileNode->getFullQualifiedName());
-            $sourceFilename = 'source/' . sha1($fileNode->getFullQualifiedName()) . '.sha1';
+        foreach ($result->getSources() as $source) {
+            $content = $source->getContent();
+            $sourceFilename = 'source/' . $source->getHash() . '.sha1';
             $phar->addFromString(
                 $sourceFilename,
-                $source
+                $content
             );
 
-            $fileNode->setSourceFilename('phar://result.phar/' . $sourceFilename);
+            $storage = new PharStorage($sourceFilename);
+            $source->setStorage($storage);
         }
 
-        $phar->addFromString('result.serialized', serialize($result));
+        $phar->addFromString('load.php', '<?php return unserialize(file_get_contents(__DIR__ . "/result.serialized"));');
 
-        return $phar;
-    }
+        $xml = $this->serializer->serialize($result);
 
-    private function findRootNode(ResultModel $result, NodeInterface $node)
-    {
-        $parentNodeReference = $node->getParentNodeReference();
+        $phar->addFromString('result.xml', $xml);
 
-        if (!$parentNodeReference) {
-            return $node;
-        }
-
-        while ($parentNodeReference) {
-            $node = $result->getNode($parentNodeReference);
-            $parentNodeReference = $node->getParentNodeReference();
-        }
-
-        return $node;
+        return $filename;
     }
 }

@@ -2,7 +2,7 @@
 
 namespace Code\AnalyzerBundle\Analyzer;
 
-use Code\AnalyzerBundle\ResultBuilderInterface;
+use Code\AnalyzerBundle\Model\ResultModel;
 
 class ChainAnalyzer implements AnalyzerInterface
 {
@@ -12,7 +12,7 @@ class ChainAnalyzer implements AnalyzerInterface
     private $analyzers;
 
     /**
-     * @param array $analyzers
+     * @param AnalyzerInterface[] $analyzers
      */
     public function __construct(array $analyzers = array())
     {
@@ -22,12 +22,12 @@ class ChainAnalyzer implements AnalyzerInterface
     /**
      * @inheritDoc
      */
-    public function analyze(ResultBuilderInterface $resultBuilder, $sourceDirectory, $workDirectory)
+    public function analyze(ResultModel $result, $sourceDirectory, $workDirectory)
     {
         foreach ($this->analyzers as $analyzer) {
             /* @var $analyzer AnalyzerInterface */
 
-            $analyzer->analyze($resultBuilder, $sourceDirectory, $workDirectory);
+            $analyzer->analyze($result, $sourceDirectory, $workDirectory);
         }
     }
 }

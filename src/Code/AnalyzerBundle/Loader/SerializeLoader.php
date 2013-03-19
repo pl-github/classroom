@@ -2,38 +2,26 @@
 
 namespace Code\AnalyzerBundle\Loader;
 
-use Code\AnalyzerBundle\Model\ClassesModel;
-use Code\BuildBundle\Build;
-use Code\ProjectBundle\Project;
+use Code\AnalyzerBundle\Model\ResultModel;
 
 class SerializeLoader implements LoaderInterface
 {
     /**
-     * @var string
+     * @inheritDoc
      */
-    private $dataDir;
-
-    /**
-     * @param string $rootDir
-     */
-    public function __construct($rootDir)
+    public function load($filename)
     {
-        $this->dataDir = $rootDir . '/data';
+        $data = file_get_contents($filename);
+        $result = unserialize($data);
+
+        return $result;
     }
 
     /**
      * @inheritDoc
      */
-    public function load(Project $project, $version)
+    public function supports($filename)
     {
-        $projectId = $project->getId();
-
-        $filename = $this->dataDir . '/' . $projectId . '/build/' . $version . '.serialized';
-
-        $data = file_get_contents($filename);
-
-        $classes = unserialize($data);
-
-        return $classes;
+        return 'serialized' === pathinfo($filename, PATHINFO_EXTENSION);
     }
 }

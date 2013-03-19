@@ -2,16 +2,16 @@
 
 namespace Code\AnalyzerBundle\Analyzer;
 
-use Code\AnalyzerBundle\ResultBuilderInterface;
+use Code\AnalyzerBundle\Model\ResultModel;
 
 interface AnalyzerInterface
 {
     /**
      * Analyze
      *
-     * @param ResultBuilderInterface $resultBuilder
-     * @param string                 $sourceDirectory
-     * @param string                 $workDirectory
+     * @param ResultModel $result
+     * @param string      $sourceDirectory
+     * @param string      $workDirectory
      */
-    public function analyze(ResultBuilderInterface $resultBuilder, $sourceDirectory, $workDirectory);
+    public function analyze(ResultModel $result, $sourceDirectory, $workDirectory);
 }

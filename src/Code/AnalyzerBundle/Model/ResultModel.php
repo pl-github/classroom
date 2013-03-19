@@ -3,53 +3,30 @@
 namespace Code\AnalyzerBundle\Model;
 
 use Code\AnalyzerBundle\Node\NodeInterface;
-use Code\AnalyzerBundle\Node\NodeReference;
+use Code\AnalyzerBundle\Smell\SmellInterface;
+use Code\AnalyzerBundle\Source\SourceInterface;
 
 class ResultModel
 {
     /**
-     * @var array
+     * @var NodeInterface[]
      */
     private $nodes = array();
 
     /**
-     * @var array
+     * @var Smell[]
      */
     private $smells = array();
 
     /**
-     * @var array
+     * @var Source[]
      */
-    private $incomingReferences = array();
+    private $sources = array();
 
     /**
      * @var array
      */
-    private $outgoingReferences = array();
-
-    /**
-     * @param array $classes
-     */
-    public function __construct(array $nodes = array(), array $smells = array())
-    {
-        foreach ($nodes as $node) {
-            $this->addNode($node);
-        }
-
-        foreach ($smells as $smell) {
-            $this->addSmell($smell);
-        }
-    }
-
-    /**
-     * Return id
-     *
-     * @return string
-     */
-    public function getId()
-    {
-        return spl_object_hash($this);
-    }
+    private $references = array();
 
     /**
      * @inheritDoc
@@ -62,116 +39,243 @@ class ResultModel
     /**
      * Return incoming references
      *
-     * @param string|NodeInterface|NodeReference $fullQualifiedName
+     * @param string $type
+     * @param NodeInterface|Referencable|string $hash
      * @return array
      */
-    public function getIncomingReferences($fullQualifiedName)
+    public function getIncoming($type, $hash)
     {
-        if ($fullQualifiedName instanceof NodeInterface) {
-            $fullQualifiedName = $fullQualifiedName->getFullQualifiedName();
-        } elseif ($fullQualifiedName instanceof NodeReference) {
-            $fullQualifiedName = $fullQualifiedName->getReferenceName();
-        }
+        $hash = $this->extractHash($hash);
 
-        return $this->incomingReferences[$fullQualifiedName];
+        return $this->references['incoming'][$type][$hash];
     }
 
     /**
      * Return outgoing references
      *
-     * @param string|NodeInterface|NodeReference $fullQualifiedName
-     * @return NodeReference
+     * @param string $type
+     * @param NodeInterface|Referencable|string $hash
+     * @return Reference
      */
-    public function getOutgoingReference($fullQualifiedName)
+    public function getOutgoing($type, $hash)
     {
-        if ($fullQualifiedName instanceof NodeInterface) {
-            $fullQualifiedName = $fullQualifiedName->getFullQualifiedName();
-        } elseif ($fullQualifiedName instanceof NodeReference) {
-            $fullQualifiedName = $fullQualifiedName->getReferenceName();
-        }
+        $hash = $this->extractHash($hash);
 
-        return $this->outgoingReferences[$fullQualifiedName];
+        return $this->references['outgoing'][$type][$hash];
+    }
+
+    /**
+     * Return references
+     *
+     * @return array
+     */
+    public function getReferences()
+    {
+        return $this->references;
     }
 
     /**
      * Add node
      *
-     * @param NodeInterface $node
+     * @param NodeInterface                    $node
+     * @param Referencable|Referencable|string $referenceTo
      * @return $this
+     * @throws \Exception
      */
-    public function addNode(NodeInterface $node)
+    public function addNode(NodeInterface $node, $referenceTo = null)
     {
-        $nodeId = $node->getFullQualifiedName();
+        $nodeHash = $node->getHash();
 
-        $this->nodes[$nodeId] = $node;
+        $this->nodes[$nodeHash] = $node;
 
-        $parentNodeReference = $node->getParentNodeReference();
-        if ($parentNodeReference) {
-            $parentNodeId = $parentNodeReference->getReferenceName();
-            $this->incomingReferences[$parentNodeId][] = new NodeReference($node);
-            $this->outgoingReferences[$nodeId] = $parentNodeReference;
+        if ($referenceTo) {
+            $referenceHash = $this->extractHash($referenceTo);
+
+            $this->references['incoming']['node'][$referenceHash][] = new Reference($node);
+            $this->references['outgoing']['node'][$nodeHash] = new Reference($referenceTo);
         }
 
         return $this;
     }
 
     /**
-     * Return class by full qualified name
+     * Return node
      *
-     * @param string|NodeInterface|NodeReference $fullQualifiedName
-     * @return NodeInterface
+     * @param Referencable|Referencable|string $hash
+     * @return NodeInterface|null
      */
-    public function getNode($fullQualifiedName)
+    public function getNode($hash)
     {
-        if ($fullQualifiedName instanceof NodeInterface) {
-            $fullQualifiedName = $fullQualifiedName->getFullQualifiedName();
-        } elseif ($fullQualifiedName instanceof NodeReference) {
-            $fullQualifiedName = $fullQualifiedName->getReferenceName();
-        }
+        $hash = $this->extractHash($hash);
 
-        if (!$this->hasNode($fullQualifiedName)) {
+        if (!$this->hasNode($hash)) {
             return null;
         }
 
-        return $this->nodes[$fullQualifiedName];
+        return $this->nodes[$hash];
     }
 
     /**
      * Is this node set?
      *
-     * @param string|NodeInterface|NodeReference $fullQualifiedName
+     * @param Referencable|Referencable|string $hash
      * @return boolean
      */
-    public function hasNode($fullQualifiedName)
+    public function hasNode($hash)
     {
-        if ($fullQualifiedName instanceof NodeInterface) {
-            $fullQualifiedName = $fullQualifiedName->getFullQualifiedName();
-        } elseif ($fullQualifiedName instanceof NodeReference) {
-            $fullQualifiedName = $fullQualifiedName->getReferenceName();
-        }
+        $hash = $this->extractHash($hash);
 
-        return !empty($this->nodes[$fullQualifiedName]);
+        return !empty($this->nodes[$hash]);
     }
 
     /**
      * Add smell
      *
-     * @param SmellModel $smell
+     * @param SmellInterface                   $smell
+     * @param Referencable|Referencable|string $referenceTo
      * @return $this
      */
-    public function addSmell(SmellModel $smell)
+    public function addSmell(SmellInterface $smell, $referenceTo = null)
     {
-        $this->smells[] = $smell;
+        $smellHash = $smell->getHash();
+
+        $this->smells[$smellHash] = $smell;
+
+        if ($referenceTo) {
+            $referenceHash = $this->extractHash($referenceTo);
+
+            $this->references['incoming']['smell'][$referenceHash][] = new Reference($smell);
+            $this->references['outgoing']['smell'][$smellHash] = new Reference($referenceTo);
+        }
+    }
+
+    /**
+     * Return smell
+     *
+     * @param Referencable|Referencable|string $hash
+     * @return SmellInterface|null
+     */
+    public function getSmell($hash)
+    {
+        $hash = $this->extractHash($hash);
+
+        if (!$this->hasSmell($hash)) {
+            return null;
+        }
+
+        return $this->smells[$hash];
+    }
+
+    /**
+     * Is this smell set?
+     *
+     * @param Referencable|Referencable|string $hash
+     * @return boolean
+     */
+    public function hasSmell($hash)
+    {
+        $hash = $this->extractHash($hash);
+
+        return !empty($this->smells[$hash]);
     }
 
     /**
      * Return smells
      *
-     * @return array
+     * @return SmellInterface[]
      */
     public function getSmells()
     {
         return $this->smells;
+    }
+
+    /**
+     * Add source
+     *
+     * @param SourceInterface                  $source
+     * @param Referencable|Referencable|string $referenceTo
+     * @return $this
+     */
+    public function addSource(SourceInterface $source, $referenceTo = null)
+    {
+        $sourceHash = $source->getHash();
+
+        $this->sources[$sourceHash] = $source;
+
+        if ($referenceTo) {
+            $referenceHash = $this->extractHash($referenceTo);
+
+            $this->references['incoming']['source'][$referenceHash] = new Reference($source);
+            $this->references['outgoing']['source'][$sourceHash] = new Reference($referenceTo);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Return source
+     *
+     * @param Referencable|Referencable|string $hash
+     * @return SourceInterface|null
+     */
+    public function getSource($hash)
+    {
+        $hash = $this->extractHash($hash);
+
+        if (!$this->hasSource($hash)) {
+            return null;
+        }
+
+        return $this->sources[$hash];
+    }
+
+    /**
+     * Is this source set?
+     *
+     * @param Referencable|Referencable|string $hash
+     * @return boolean
+     */
+    public function hasSource($hash)
+    {
+        $hash = $this->extractHash($hash);
+
+        return !empty($this->sources[$hash]);
+    }
+
+    /**
+     * Return sources
+     *
+     * @return SourceInterface[]
+     */
+    public function getSources()
+    {
+        return $this->sources;
+    }
+
+    /**
+     * Add single reference
+     *
+     * @param string $dir
+     * @param string $type
+     * @param string $hash
+     * @param string $referenceHash
+     */
+    public function addSingleReference($dir, $type, $hash, $referenceHash)
+    {
+        $this->references[$dir][$type][$hash] = new Reference($referenceHash);
+    }
+
+    /**
+     * Add multi reference
+     *
+     * @param string $dir
+     * @param string $type
+     * @param string $hash
+     * @param string $referenceHash
+     */
+    public function addMultiReference($dir, $type, $hash, $referenceHash)
+    {
+        $this->references[$dir][$type][$hash][] = new Reference($referenceHash);
     }
 
     /**
@@ -200,5 +304,49 @@ class ResultModel
         #}
 
         return $score;
+    }
+
+    /**
+     * Extract and return hash
+     *
+     * @param Reference|Referencable|string $referenceTo
+     * @return string
+     * @throws \Exception
+     */
+    private function extractHash($referenceTo)
+    {
+        if ($referenceTo instanceof Reference) {
+            $referenceHash = $referenceTo->getReferenceHash();
+        } elseif ($referenceTo instanceof Referencable) {
+            $referenceHash = $referenceTo->getHash();
+        } elseif (is_string($referenceTo)) {
+            $referenceHash = $referenceTo;
+        } else {
+            $msg = 'Neither a node reference nor a node interface nor a string (' . gettype($referenceTo) . ')';
+            throw new \Exception($msg);
+        }
+
+        return $referenceHash;
+    }
+
+    /**
+     * Extract and return hash
+     *
+     * @param NodeInterface|string $node
+     * @return string
+     * @throws \Exception
+     */
+    private function extractName($node)
+    {
+        if ($node instanceof NodeInterface) {
+            $nodeName = $node->getName();
+        } elseif (is_string($node)) {
+            $nodeName = $node;
+        } else {
+            $msg = 'Neither a node interface nor a string (' . gettype($node) . ')';
+            throw new \Exception($msg);
+        }
+
+        return $nodeName;
     }
 }

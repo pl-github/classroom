@@ -1,8 +1,8 @@
 <?php
 
-namespace Code\MetricsBundle\Tests\Pdepend\PdependProcessor;
+namespace Code\PhpAnalyzerBundle\Tests\Pdepend\PdependProcessor;
 
-use Code\MetricsBundle\Pdepend\PdependProcessor;
+use Code\PhpAnalyzerBundle\Pdepend\PdependProcessor;
 use org\bovigo\vfs\vfsStream;
 use Code\AnalyzerBundle\Model\ClassesModel;
 

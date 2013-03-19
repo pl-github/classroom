@@ -1,11 +1,11 @@
 <?php
 
-namespace Code\CodeStyleBundle\Tests\Phpcs;
+namespace Code\PhpAnalyzerBundle\Tests\Phpcs;
 
-use Code\CodeStyleBundle\Phpcs\PhpcsProcessor;
+use Code\PhpAnalyzerBundle\Phpcs\PhpcsProcessor;
 use org\bovigo\vfs\vfsStream;
 
-class PhpcpdParserTest extends \PHPUnit_Framework_TestCase
+class PhpcsParserTest extends \PHPUnit_Framework_TestCase
 {
     public function testProcess()
     {

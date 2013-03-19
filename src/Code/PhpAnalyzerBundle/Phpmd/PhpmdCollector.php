@@ -1,14 +1,14 @@
 <?php
 
-namespace Code\PhpAnalyzerBundle\Phpcs;
+namespace Code\PhpAnalyzerBundle\Phpmd;
 
-use Code\AnalyzerBundle\Analyzer\Runner\RunnerInterface;
+use Code\AnalyzerBundle\Analyzer\Collector\CollectorInterface;
 use Code\AnalyzerBundle\ProcessExecutor;
 use Symfony\Component\HttpKernel\Log\LoggerInterface;
 use Symfony\Component\Process\ProcessBuilder;
 use Symfony\Component\Process\Process;
 
-class PhpcsRunner implements RunnerInterface
+class PhpmdCollector implements CollectorInterface
 {
     /**
      * @var ProcessExecutor
@@ -23,47 +23,47 @@ class PhpcsRunner implements RunnerInterface
     /**
      * @var string
      */
-    private $phpcsExecutable;
+    private $phpmdExecutable;
 
     /**
      * @param ProcessExecutor $processExecutor
      * @param LoggerInterface $logger
-     * @param string          $phpcsExecutable
+     * @param string          $phpmdExecutable
      */
-    public function __construct(ProcessExecutor $processExecutor, LoggerInterface $logger, $phpcsExecutable)
+    public function __construct(ProcessExecutor $processExecutor, LoggerInterface $logger, $phpmdExecutable)
     {
         $this->processExecutor = $processExecutor;
         $this->logger = $logger;
-        $this->phpcsExecutable = $phpcsExecutable;
+        $this->phpmdExecutable = $phpmdExecutable;
     }
 
     /**
      * @inheritDoc
      */
-    public function run($sourceDirectory, $workDirectory)
+    public function collect($sourceDirectory, $workDirectory)
     {
-        $phpcsFilename = $this->ensureDirectoryWritable($workDirectory) . '/phpcs.xml';
+        $phpmdFilename = $this->ensureDirectoryWritable($workDirectory) . '/phpmd.xml';
+        #return $phpmdFilename;
 
-        if (file_exists($phpcsFilename) && !unlink($phpcsFilename)) {
-            throw new \Exception('Can\'t unlink ' . $phpcsFilename);
+        if (file_exists($phpmdFilename) && !unlink($phpmdFilename)) {
+            throw new \Exception('Can\'t unlink ' . $phpmdFilename);
         }
 
         $processBuilder = new ProcessBuilder();
-        $processBuilder
-            ->add($this->phpcsExecutable)
-            ->add('--extensions=php')
-            ->add('--standard=PSR1')
-            ->add('--standard=PSR2')
-            ->add('--report-xml=' . $phpcsFilename)
-            ->add($sourceDirectory);
+        $processBuilder->add($this->phpmdExecutable)
+            ->add($sourceDirectory)
+            ->add('xml')
+            ->add('codesize,unusedcode,naming')
+            ->add('--suffixes')->add('php')
+            ->add('--reportfile')->add($phpmdFilename);
 
         $process = $processBuilder->getProcess();
 
         $this->logger->debug($process->getCommandLine());
 
-        $this->processExecutor->execute($process, 1);
+        $this->processExecutor->execute($process, 2);
 
-        return $phpcsFilename;
+        return $phpmdFilename;
     }
 
     /**

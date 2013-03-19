@@ -2,6 +2,9 @@
 
 namespace Code\PhpAnalyzerBundle\Command;
 
+use Code\AnalyzerBundle\Analyzer\AnalyzerInterface;
+use Code\AnalyzerBundle\Model\SmellModel;
+use Code\AnalyzerBundle\Writer\XmlWriter;
 use Code\BuildBundle\Build;
 use Code\PhpAnalyzerBundle\ResultBuilder;
 use Code\ProjectBundle\Project;
@@ -39,27 +42,48 @@ class AnalyzeCommand extends ContainerAwareCommand
         $resultBuilder = $this->getContainer()->get('code.php_analyzer.result_builder');
         /* @var $resultBuilder ResultBuilder */
 
-        //$project = $projectRepository->findOneBy(array('name' => $projectId));
+        $analyzer = $this->getContainer()->get('code.php_analyzer.analyzer');
+        /* @var $analyzer AnalyzerInterface */
 
-        $result = $resultBuilder->createResult(
+        $tsStart = microtime(true);
+
+        $result = $resultBuilder->bla(
+            $analyzer,
             '/opt/www/code/symfony/src/Code',
             '/opt/www/code/symfony/app/data/code/work'
         );
 
-        foreach ($result->getNodes() as $nodeId => $node) {
-            /* @var $smell NodeInterface */
-            echo '[node] ' . $nodeId . ' => ' . get_class($node) . PHP_EOL;
-        }
+        //foreach ($result->getNodes() as $nodeId => $node) {
+        //    /* @var $smell NodeInterface */
+        //    echo '[node] ' . $nodeId . ' => ' . get_class($node) . PHP_EOL;
+        //}
 
-        foreach ($result->getSmells() as $smellId => $smell) {
+        foreach ($result->getSmells() as $smell) {
             /* @var $smell SmellModel */
-            echo '[smell] ' . $smellId . ' => ' . $smell->getRule() . ' ' .
-                $smell->getSourceRange()->getBeginLine() . '-' . $smell->getSourceRange()->getEndLine() . PHP_EOL;
+            $sourceRange = $smell->getSourceRange();
+            $beginLine = $sourceRange->getBeginLine();
+            $endLine = $sourceRange->getEndLine();
 
-            $node = $result->getNode($smell->getNodeReference());
-            echo '  ' . $node->getFullQualifiedName().PHP_EOL;
+            $classReference = $result->getOutgoing('smell', $smell);
+            $classNode = $result->getNode($classReference);
+            $fileReference = $result->getOutgoing('node', $classNode);
+            $fileNode = $result->getNode($fileReference);
+
+            $sourceReference = $result->getIncoming('source', $fileNode);
+            $source = $result->getSource($sourceReference);
+
+            echo '[smell] ' . $smell->getRule() . ' in ' . $classNode->getFullQualifiedName() . ':' .
+                 $beginLine . ($beginLine != $endLine ? '-' . $endLine : '') . PHP_EOL;
+
+            echo '<code> ' . PHP_EOL . $source->getRange($sourceRange) . PHP_EOL . '</code>' . PHP_EOL;
         }
 
-        $output->writeln('Analyze for ' . $projectId . ' finished.');
+        $duration = microtime(true) - $tsStart;
+
+        $output->writeln(
+            'Analyze run for ' . $projectId . ' finished, ' .
+            number_format($duration, 2) . ' s, ' .
+            number_format(memory_get_usage() / 1024 / 1024, 2) . ' mb'
+        );
     }
 }

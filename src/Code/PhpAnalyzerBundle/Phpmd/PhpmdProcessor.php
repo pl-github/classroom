@@ -3,30 +3,17 @@
 namespace Code\PhpAnalyzerBundle\Phpmd;
 
 use Code\AnalyzerBundle\Analyzer\Processor\ProcessorInterface;
-use Code\AnalyzerBundle\Model\SourceRange;
-use Code\AnalyzerBundle\Model\SmellModel;
 use Code\AnalyzerBundle\ReflectionService;
-use Code\AnalyzerBundle\ResultBuilderInterface;
+use Code\AnalyzerBundle\Smell\Smell;
+use Code\AnalyzerBundle\Source\SourceRange;
+use Code\AnalyzerBundle\Model\ResultModel;
 
 class PhpmdProcessor implements ProcessorInterface
 {
     /**
-     * @var ReflectionService
-     */
-    private $reflectionService;
-
-    /**
-     * @param ReflectionService $reflectionService
-     */
-    public function __construct(ReflectionService $reflectionService)
-    {
-        $this->reflectionService = $reflectionService;
-    }
-
-    /**
      * @inheritDoc
      */
-    public function process(ResultBuilderInterface $resultBuilder, $filename)
+    public function process(ResultModel $result, $filename)
     {
         if (!file_exists($filename)) {
             throw new \Exception('phpmd report xml file not found.');
@@ -38,18 +25,15 @@ class PhpmdProcessor implements ProcessorInterface
         //$pmdVersion = (string)$pmdAttributes['version'];
         //$pmdTimestamp = new \DateTime($pmdAttributes['timestamp']);
 
-        foreach ($xml->file as $fileNode) {
-            $fileAttributes = $fileNode->attributes();
+        foreach ($xml->file as $xmlFileNode) {
+            $fileAttributes = $xmlFileNode->attributes();
             $fileName = (string)$fileAttributes['name'];
 
-            //$className = $this->reflectionService->getClassNameForFile($fileName);
-            //$namespaceName = $this->reflectionService->getNamespaceNameForFile($fileName);
+            $fileNode = $result->getNode($fileName);
+            $classNode = $result->getNode(current($result->getIncoming('node', $fileNode)));
 
-            $fileResultNode = $resultBuilder->getNode($fileName);
-            $classResultReference = current($resultBuilder->getIncomingReferences($fileResultNode));
-
-            foreach ($fileNode->violation as $violationNode) {
-                $violationAttributes = $violationNode->attributes();
+            foreach ($xmlFileNode->violation as $xmlViolationNode) {
+                $violationAttributes = $xmlViolationNode->attributes();
                 $violationBeginLine = (string)$violationAttributes['beginline'];
                 $violationEndLine = (string)$violationAttributes['endline'];
                 $violationRule = (string)$violationAttributes['rule'];
@@ -57,12 +41,12 @@ class PhpmdProcessor implements ProcessorInterface
                 //$violationExternalInfoUrl = (string)$violationAttributes['externalInfoUrl'];
                 //$violationPriority = (string)$violationAttributes['priority'];
 
-                $violationText = (string)$violationNode;
+                $violationText = (string)$xmlViolationNode;
 
                 $sourceRange = new SourceRange($violationBeginLine, $violationEndLine);
 
-                $smell = new SmellModel($classResultReference, 'Mess', $violationRule, $violationText, $sourceRange, 1);
-                $resultBuilder->addSmell($smell);
+                $smell = new Smell('Mess', $violationRule, $violationText, $sourceRange, 1);
+                $result->addSmell($smell, $classNode);
             }
         }
     }

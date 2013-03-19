@@ -1,8 +1,8 @@
 <?php
 
-namespace Code\CopyPasteDetectionBundle\Tests\Phpcs;
+namespace Code\PhpAnalyzerBundle\Tests\Phpcs;
 
-use Code\CopyPasteDetectionBundle\Phpcpd\PhpcpdRunner;
+use Code\PhpAnalyzerBundle\Phpcpd\PhpcpdRunner;
 use org\bovigo\vfs\vfsStream;
 
 class PhpcpdRunnerTest extends \PHPUnit_Framework_TestCase

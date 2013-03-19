@@ -2,10 +2,11 @@
 
 namespace Code\PhpAnalyzerBundle\Node;
 
-use Code\AnalyzerBundle\Model\MetricModel;
+use Code\AnalyzerBundle\Metric\Measurable;
+use Code\AnalyzerBundle\Metric\MetricInterface;
 use Code\AnalyzerBundle\Node\NodeInterface;
 
-class PhpFileNode implements NodeInterface
+class PhpFileNode implements NodeInterface, Measurable
 {
     /**
      * @var string
@@ -18,29 +19,11 @@ class PhpFileNode implements NodeInterface
     private $metrics = array();
 
     /**
-     * @var string
-     */
-    private $sourceFilename;
-
-    /**
      * @param string $name
-     * @param string $sourceFilename
-     * @param array  $metrics
      */
-    public function __construct($name, array $metrics = array())
+    public function __construct($name)
     {
         $this->name = $name;
-        $this->metrics = $metrics;
-    }
-
-    /**
-     * Return id
-     *
-     * @return string
-     */
-    public function getId()
-    {
-        return $this->name;
     }
 
     /*+
@@ -54,40 +37,13 @@ class PhpFileNode implements NodeInterface
     /**
      * @inheritDoc
      */
-    public function getFullQualifiedName()
+    public function getHash()
     {
-        $name = $this->getName();
-
-        return $name;
+        return $this->getName();
     }
 
     /**
      * @inheritDoc
-     */
-    public function getParentNodeReference()
-    {
-        return null;
-    }
-
-    public function setSourceFilename($sourceFilename)
-    {
-        $this->sourceFilename = $sourceFilename;
-    }
-
-    public function getSourceFilename()
-    {
-        return $this->sourceFilename;
-    }
-
-    public function getContent()
-    {
-        return file_get_contents($this->sourceFilename);
-    }
-
-    /**
-     * Return metrics
-     *
-     * @return array
      */
     public function getMetrics()
     {
@@ -95,9 +51,7 @@ class PhpFileNode implements NodeInterface
     }
 
     /**
-     * Is at least one metric set?
-     *
-     * @return boolean
+     * @inheritDoc
      */
     public function hasMetrics()
     {
@@ -105,12 +59,9 @@ class PhpFileNode implements NodeInterface
     }
 
     /**
-     * Add metric
-     *
-     * @param MetricModel $metric
-     * @return $this
+     * @inheritDoc
      */
-    public function addMetric(MetricModel $metric)
+    public function addMetric(MetricInterface $metric)
     {
         $this->metrics[$metric->getKey()] = $metric;
 
@@ -118,10 +69,7 @@ class PhpFileNode implements NodeInterface
     }
 
     /**
-     * Return single metric
-     *
-     * @param string $key
-     * @return MetricModel
+     * @inheritDoc
      */
     public function getMetric($key)
     {
@@ -133,10 +81,7 @@ class PhpFileNode implements NodeInterface
     }
 
     /**
-     * Is this metric set?
-     *
-     * @param string $key
-     * @return boolean
+     * @inheritDoc
      */
     public function hasMetric($key)
     {

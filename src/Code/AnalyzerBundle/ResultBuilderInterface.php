@@ -2,11 +2,14 @@
 
 namespace Code\AnalyzerBundle;
 
+use Code\AnalyzerBundle\Analyzer\AnalyzerInterface;
+
 interface ResultBuilderInterface
 {
     /**
-     * @param $sourceDirectory
-     * @param $workDirectory
+     * @param AnalyzerInterface $analyzer
+     * @param string            $sourceDirectory
+     * @param string            $workDirectory
      */
-    public function createResult($sourceDirectory, $workDirectory);
+    public function bla(AnalyzerInterface $analyzer, $sourceDirectory, $workDirectory);
 }

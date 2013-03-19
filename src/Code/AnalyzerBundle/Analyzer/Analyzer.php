@@ -2,16 +2,16 @@
 
 namespace Code\AnalyzerBundle\Analyzer;
 
-use Code\AnalyzerBundle\Analyzer\Runner\RunnerInterface;
+use Code\AnalyzerBundle\Analyzer\Collector\CollectorInterface;
 use Code\AnalyzerBundle\Analyzer\Processor\ProcessorInterface;
-use Code\AnalyzerBundle\ResultBuilderInterface;
+use Code\AnalyzerBundle\Model\ResultModel;
 
 class Analyzer implements AnalyzerInterface
 {
     /**
-     * @var RunnerInterface
+     * @var CollectorInterface
      */
-    private $runner;
+    private $collector;
 
     /**
      * @var ProcessorInterface
@@ -19,22 +19,22 @@ class Analyzer implements AnalyzerInterface
     private $processor;
 
     /**
-     * @param RunnerInterface    $runner
+     * @param CollectorInterface $collector
      * @param ProcessorInterface $processor
      */
-    public function __construct(RunnerInterface $runner, ProcessorInterface $processor)
+    public function __construct(CollectorInterface $collector, ProcessorInterface $processor)
     {
-        $this->runner    = $runner;
+        $this->collector = $collector;
         $this->processor = $processor;
     }
 
     /**
      * @inheritDoc
      */
-    public function analyze(ResultBuilderInterface $resultBuilder, $sourceDirectory, $workDirectory)
+    public function analyze(ResultModel $result, $sourceDirectory, $workDirectory)
     {
-        $filename = $this->runner->run($sourceDirectory, $workDirectory);
-        $classes = $this->processor->process($resultBuilder, $filename);
+        $data = $this->collector->collect($sourceDirectory, $workDirectory);
+        $classes = $this->processor->process($result, $data);
 
         return $classes;
     }
