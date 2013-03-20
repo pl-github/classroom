@@ -4,7 +4,6 @@ namespace Code\BuildBundle\Entity;
 
 use Code\AnalyzerBundle\Model\ClassesModel;
 use Code\ProjectBundle\Project;
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -55,6 +54,12 @@ class Build
      * @ORM\Column(type = "date")
      */
     protected $createdAt;
+
+    /**
+     * @var \DateTime
+     * @ORM\Column(type = "date")
+     */
+    protected $builtAt;
 
     /**
      * Return ID

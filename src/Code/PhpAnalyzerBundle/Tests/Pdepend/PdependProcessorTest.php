@@ -2,6 +2,8 @@
 
 namespace Code\PhpAnalyzerBundle\Tests\Pdepend\PdependProcessor;
 
+use Code\AnalyzerBundle\Model\ResultModel;
+use Code\PhpAnalyzerBundle\Node\PhpClassNode;
 use Code\PhpAnalyzerBundle\Pdepend\PdependProcessor;
 use org\bovigo\vfs\vfsStream;
 use Code\AnalyzerBundle\Model\ClassesModel;
@@ -47,36 +49,32 @@ EOL;
 
         $processor = new PdependProcessor($reflectionServiceMock);
 
-        $classes = $processor->process(vfsStream::url('root/pdepend.xml'));
+        $result = new ResultModel();
+        $result->addNode(new PhpClassNode('package1\\class1'));
+        $result->addNode(new PhpClassNode('package2\\class2'));
 
-        $this->assertEquals(2, count($classes->getClasses()));
+        $processor->process($result, vfsStream::url('root/pdepend.xml'));
 
-        return $classes;
+        return $result;
     }
 
     /**
      * @depends testProcess
-     * @param ClassesModel $classes
+     * @param ResultModel $result
      */
-    public function testClass1(ClassesModel $classes)
+    public function testClass1(ResultModel $result)
     {
-        $classes = $classes->getClasses();
-        $class = $classes['package1\class1'];
-        /* @var $class ClassModel */
-
-        $this->assertEquals('class1', $class->getName());
+        $class = $result->getNode('package1\\class1');
+        $this->assertTrue($class->hasMetrics());
     }
 
     /**
      * @depends testProcess
-     * @param ClassesModel $classes
+     * @param ResultModel $result
      */
-    public function testClass2(ClassesModel $classes)
+    public function testClass2(ResultModel $result)
     {
-        $classes = $classes->getClasses();
-        $class = $classes['package2\class2'];
-        /* @var $class ClassModel */
-
-        $this->assertEquals('class2', $class->getName());
+        $class = $result->getNode('package2\\class2');
+        $this->assertTrue($class->hasMetrics());
     }
 }

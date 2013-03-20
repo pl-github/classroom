@@ -8,7 +8,7 @@ use Code\AnalyzerBundle\Model\ResultModel;
 use Code\AnalyzerBundle\Model\SmellModel;
 use Code\AnalyzerBundle\Serializer\SerializerInterface;
 
-class FileWriter
+class FileWriter implements WriterInterface
 {
     /**
      * @var SerializerInterface
@@ -26,13 +26,20 @@ class FileWriter
     /**
      * @inheritDoc
      */
-    public function write(ResultModel $result, $targetDir, $baseFilename)
+    public function write(ResultModel $result, $filename)
     {
         $data = $this->serializer->serialize($result);
 
-        $filename = $targetDir . '/' . $baseFilename . '.xml';
         file_put_contents($filename, $data);
 
         return $filename;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function supports($filename)
+    {
+        return $this->serializer->getType() === pathinfo($filename, PATHINFO_EXTENSION);
     }
 }

@@ -69,5 +69,7 @@ class PdependProcessor implements ProcessorInterface
                 $classResultNode->addMetric(new Metric('complexityPerMethod', $complexityPerMethod));
             }
         }
+
+        $result->addArtifact($filename);
     }
 }

@@ -2,10 +2,10 @@
 
 namespace Code\PhpAnalyzerBundle\Tests\Phpcs;
 
-use Code\PhpAnalyzerBundle\Phpcpd\PhpcpdRunner;
+use Code\PhpAnalyzerBundle\Phpcpd\PhpcpdCollector;
 use org\bovigo\vfs\vfsStream;
 
-class PhpcpdRunnerTest extends \PHPUnit_Framework_TestCase
+class PhpcpdCollectorTest extends \PHPUnit_Framework_TestCase
 {
     public function testRun()
     {
@@ -18,7 +18,7 @@ class PhpcpdRunnerTest extends \PHPUnit_Framework_TestCase
         $loggerMock = $this->getMockBuilder('Symfony\Component\HttpKernel\Log\LoggerInterface')
             ->getMock();
 
-        $runner = new PhpcpdRunner(
+        $collector = new PhpcpdCollector(
             $processExecutorMock,
             $loggerMock,
             'phpcs'
@@ -29,7 +29,7 @@ class PhpcpdRunnerTest extends \PHPUnit_Framework_TestCase
             ->method('execute')
             ->with($this->isInstanceOf('Symfony\Component\Process\Process'));
 
-        $filename = $runner->run('sourceDir', 'workDir');
+        $filename = $collector->collect('sourceDir', 'workDir');
 
         $this->assertEquals($filename, 'workDir/phpcpd.xml');
     }

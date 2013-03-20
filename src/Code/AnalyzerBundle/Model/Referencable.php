@@ -11,4 +11,12 @@ interface Referencable
      */
     public function getHash();
 
+    /*+
+     * Set hash
+     *
+     * @param string $hash
+     * @return $this
+     */
+    public function setHash($hash);
+
 }

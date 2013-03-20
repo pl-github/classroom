@@ -3,6 +3,9 @@
 namespace Code\PhpAnalyzerBundle\Tests\Phpmd\PhpmdProcessor;
 
 use Code\AnalyzerBundle\Model\ClassesModel;
+use Code\AnalyzerBundle\Model\ResultModel;
+use Code\PhpAnalyzerBundle\Node\PhpClassNode;
+use Code\PhpAnalyzerBundle\Node\PhpFileNode;
 use Code\PhpAnalyzerBundle\Phpmd\PhpmdProcessor;
 use org\bovigo\vfs\vfsStream;
 
@@ -36,7 +39,7 @@ EOL;
 
         $reflectionServiceMock
             ->expects($this->any())
-            ->method('getClassnameForFile')
+            ->method('getClassNameForFile')
             ->will($this->returnArgument(0));
 
         $reflectionServiceMock
@@ -46,38 +49,25 @@ EOL;
 
         $processor = new PhpmdProcessor($reflectionServiceMock);
 
-        $classes = $processor->process(vfsStream::url('root/phpmd.xml'));
+        $result = new ResultModel();
+        $fileNode1 = new PhpFileNode('file1.php');
+        $fileNode2 = new PhpFileNode('file2.php');
+        $result->addNode($fileNode1);
+        $result->addNode($fileNode2);
+        $result->addNode(new PhpClassNode('class1'), $fileNode1);
+        $result->addNode(new PhpClassNode('class2'), $fileNode2);
 
-        $this->assertEquals(2, count($classes->getClasses()));
+        $processor->process($result, vfsStream::url('root/phpmd.xml'));
 
-        return $classes;
+        return $result;
     }
 
     /**
      * @depends testProcess
-     * @param ClassesModel $classes
+     * @param ResultModel $result
      */
-    public function testClass1(ClassesModel $classes)
+    public function testClass1(ResultModel $result)
     {
-        $classes = $classes->getClasses();
-        $class = $classes['file1.php'];
-        /* @var $class ClassModel */
-
-        $this->assertEquals('file1.php', $class->getName());
-        $this->assertEquals(1, count($class->getSmells()));
-    }
-
-    /**
-     * @depends testProcess
-     * @param ClassesModel $classes
-     */
-    public function testClass2(ClassesModel $classes)
-    {
-        $classes = $classes->getClasses();
-        $class = $classes['file2.php'];
-        /* @var $class ClassModel */
-
-        $this->assertEquals('file2.php', $class->getName());
-        $this->assertEquals(2, count($class->getSmells()));
+        $this->assertTrue($result->hasSmells());
     }
 }

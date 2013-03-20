@@ -15,6 +15,8 @@ class ProcessExecutor
      */
     public function execute(Process $process, $allowedExitStatusCode)
     {
+        $process->setTimeout(120);
+
         $exitStatusCode = $process->run();
 
         if (!$process->isSuccessful() && $exitStatusCode != $allowedExitStatusCode) {

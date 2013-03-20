@@ -8,6 +8,17 @@ use Code\AnalyzerBundle\Source\SourceInterface;
 
 class ResultModel
 {
+    const REFERENCE_TYPE_NODE = 'node';
+    const REFERENCE_TYPE_SMELL = 'smell';
+    const REFERENCE_TYPE_SOURCE = 'source';
+
+    const REFERENCE_DIR_NODE_CHILDREN = 'children';
+    const REFERENCE_DIR_NODE_PARENT = 'parent';
+    const REFERENCE_DIR_SMELL_TO_NODE = 'smellToNode';
+    const REFERENCE_DIR_NODE_TO_SMELLS = 'nodeToSmells';
+    const REFERENCE_DIR_SOURCE_TO_NODE = 'sourceToNode';
+    const REFERENCE_DIR_NODE_TO_SOURCE = 'nodeToSource';
+
     /**
      * @var NodeInterface[]
      */
@@ -29,39 +40,16 @@ class ResultModel
     private $references = array();
 
     /**
+     * @var array
+     */
+    private $artifacts = array();
+
+    /**
      * @inheritDoc
      */
     public function getNodes()
     {
         return $this->nodes;
-    }
-
-    /**
-     * Return incoming references
-     *
-     * @param string $type
-     * @param NodeInterface|Referencable|string $hash
-     * @return array
-     */
-    public function getIncoming($type, $hash)
-    {
-        $hash = $this->extractHash($hash);
-
-        return $this->references['incoming'][$type][$hash];
-    }
-
-    /**
-     * Return outgoing references
-     *
-     * @param string $type
-     * @param NodeInterface|Referencable|string $hash
-     * @return Reference
-     */
-    public function getOutgoing($type, $hash)
-    {
-        $hash = $this->extractHash($hash);
-
-        return $this->references['outgoing'][$type][$hash];
     }
 
     /**
@@ -91,8 +79,18 @@ class ResultModel
         if ($referenceTo) {
             $referenceHash = $this->extractHash($referenceTo);
 
-            $this->references['incoming']['node'][$referenceHash][] = new Reference($node);
-            $this->references['outgoing']['node'][$nodeHash] = new Reference($referenceTo);
+            $this->addMultiReference(
+                self::REFERENCE_TYPE_NODE,
+                self::REFERENCE_DIR_NODE_CHILDREN,
+                $referenceHash,
+                $node
+            );
+            $this->addSingleReference(
+                self::REFERENCE_TYPE_NODE,
+                self::REFERENCE_DIR_NODE_PARENT,
+                $nodeHash,
+                $referenceTo
+            );
         }
 
         return $this;
@@ -129,6 +127,23 @@ class ResultModel
     }
 
     /**
+     * Remove node
+     *
+     * @param NodeInterface $node
+     * @return $this
+     */
+    public function removeNode(NodeInterface $node)
+    {
+        $nodeHash = $node->getHash();
+
+        unset($this->nodes[$nodeHash]);
+
+        $this->removeReferences($node);
+
+        return $this;
+    }
+
+    /**
      * Add smell
      *
      * @param SmellInterface                   $smell
@@ -144,8 +159,18 @@ class ResultModel
         if ($referenceTo) {
             $referenceHash = $this->extractHash($referenceTo);
 
-            $this->references['incoming']['smell'][$referenceHash][] = new Reference($smell);
-            $this->references['outgoing']['smell'][$smellHash] = new Reference($referenceTo);
+            $this->addMultiReference(
+                self::REFERENCE_TYPE_SMELL,
+                self::REFERENCE_DIR_NODE_TO_SMELLS,
+                $referenceHash,
+                $smell
+            );
+            $this->addSingleReference(
+                self::REFERENCE_TYPE_SMELL,
+                self::REFERENCE_DIR_SMELL_TO_NODE,
+                $smellHash,
+                $referenceTo
+            );
         }
     }
 
@@ -180,6 +205,23 @@ class ResultModel
     }
 
     /**
+     * Remove smell
+     *
+     * @param Referencable|Referencable|string $hash
+     * @return $this
+     */
+    public function removeSmell($hash)
+    {
+        $hash = $this->extractHash($hash);
+
+        unset($this->smells[$hash]);
+
+        $this->removeReferences($hash);
+
+        return $this;
+    }
+
+    /**
      * Return smells
      *
      * @return SmellInterface[]
@@ -187,6 +229,16 @@ class ResultModel
     public function getSmells()
     {
         return $this->smells;
+    }
+
+    /**
+     * Are smells available?
+     *
+     * @return boolean
+     */
+    public function hasSmells()
+    {
+        return count($this->smells) > 0;
     }
 
     /**
@@ -205,8 +257,18 @@ class ResultModel
         if ($referenceTo) {
             $referenceHash = $this->extractHash($referenceTo);
 
-            $this->references['incoming']['source'][$referenceHash] = new Reference($source);
-            $this->references['outgoing']['source'][$sourceHash] = new Reference($referenceTo);
+            $this->addSingleReference(
+                self::REFERENCE_TYPE_SOURCE,
+                self::REFERENCE_DIR_NODE_TO_SOURCE,
+                $referenceHash,
+                $source
+            );
+            $this->addSingleReference(
+                self::REFERENCE_TYPE_SOURCE,
+                self::REFERENCE_DIR_SOURCE_TO_NODE,
+                $sourceHash,
+                $referenceTo
+            );
         }
 
         return $this;
@@ -243,6 +305,23 @@ class ResultModel
     }
 
     /**
+     * Remove source
+     *
+     * @param Referencable|Referencable|string $hash
+     * @return $this
+     */
+    public function removeSource($hash)
+    {
+        $hash = $this->extractHash($hash);
+
+        unset($this->source[$hash]);
+
+        $this->removeReferences($hash);
+
+        return $this;
+    }
+
+    /**
      * Return sources
      *
      * @return SourceInterface[]
@@ -253,29 +332,138 @@ class ResultModel
     }
 
     /**
+     * Are sources available?
+     *
+     * @return boolean
+     */
+    public function hasSources()
+    {
+        return count($this->sources) > 0;
+    }
+
+    /**
      * Add single reference
      *
-     * @param string $dir
      * @param string $type
+     * @param string $dir
      * @param string $hash
      * @param string $referenceHash
+     * @return $this
      */
-    public function addSingleReference($dir, $type, $hash, $referenceHash)
+    public function addSingleReference($type, $dir, $hash, $referenceHash)
     {
-        $this->references[$dir][$type][$hash] = new Reference($referenceHash);
+        $this->references[$type][$dir][$hash] = new Reference($referenceHash);
+
+        return $this;
     }
 
     /**
      * Add multi reference
      *
-     * @param string $dir
      * @param string $type
+     * @param string $dir
      * @param string $hash
      * @param string $referenceHash
+     * @return $this
      */
-    public function addMultiReference($dir, $type, $hash, $referenceHash)
+    public function addMultiReference($type, $dir, $hash, $referenceHash)
     {
-        $this->references[$dir][$type][$hash][] = new Reference($referenceHash);
+        $this->references[$type][$dir][$hash][] = new Reference($referenceHash);
+
+        return $this;
+    }
+
+    /**
+     * Return incoming references
+     *
+     * @param string $dir
+     * @param string $type
+     * @param NodeInterface|Referencable|string $hash
+     * @return array
+     */
+    public function getReference($type, $dir, $hash)
+    {
+        $hash = $this->extractHash($hash);
+
+        return $this->references[$type][$dir][$hash];
+    }
+
+    /**
+     * @param string                            $type
+     * @param string                            $dir
+     * @param NodeInterface|Referencable|string $hash
+     * @return boolean
+     */
+    public function hasReference($type, $dir, $hash)
+    {
+        $hash = $this->extractHash($hash);
+
+        return !empty($this->references[$type][$dir][$hash]);
+    }
+
+    /**
+     * Remove alle references to hash
+     *
+     * @param $removeHash
+     */
+    public function removeReferences($removeHash)
+    {
+        $removeHash = $this->extractHash($removeHash);
+
+        foreach ($this->references as $type => $typeReferences) {
+            foreach ($typeReferences as $direction => $directionReferences) {
+                foreach ($directionReferences as $hash => $referenceHashes) {
+                    if ($removeHash === $hash) {
+#echo 'key hit: ' . $type . ' / ' . $direction . ' / ' . $hash . PHP_EOL;
+                        unset($this->references[$type][$direction][$hash]);
+                        continue;
+                    }
+
+                    if (is_array($referenceHashes)) {
+                        foreach ($referenceHashes as $referenceHashKey => $referenceHash) {
+                            $referenceHashString = $this->extractHash($referenceHash);
+#echo 'check: ' . $type . ' / ' . $direction . ' / ' . $removeHash . ' === ' . $referenceHashString . PHP_EOL;
+
+                            if ($removeHash === $referenceHashString) {
+#echo 'multi target hit: ' . $type . ' / ' . $direction . ' / ' . $hash . PHP_EOL;
+                                unset($this->references[$type][$direction][$hash][$referenceHashKey]);
+                            }
+                        }
+                    } else {
+                        $referenceHashString = $this->extractHash($referenceHashes);
+#echo 'check: ' . $type . ' / ' . $direction . ' / ' . $removeHash . ' === ' . $referenceHashString . PHP_EOL;
+
+                        if ($removeHash === $referenceHashString) {
+#echo 'single target hit: ' . $type . ' / ' . $direction . ' / ' . $hash . PHP_EOL;
+                            unset($this->references[$type][$direction][$hash]);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Add build artifact
+     *
+     * @param string $filename
+     * @return $this
+     */
+    public function addArtifact($filename)
+    {
+        $this->artifacts[] = $filename;
+
+        return $this;
+    }
+
+    /**
+     * Return artifacts
+     *
+     * @return array
+     */
+    public function getArtifacts()
+    {
+        return $this->artifacts;
     }
 
     /**

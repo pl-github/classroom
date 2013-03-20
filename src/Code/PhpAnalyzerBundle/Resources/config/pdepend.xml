@@ -17,7 +17,6 @@
         </service>
 
         <service id="code.php_analyzer.pdepend.processor" class="Code\PhpAnalyzerBundle\Pdepend\PdependProcessor">
-            <argument type="service" id="code.analyzer.reflection_service" />
         </service>
 
         <service id="code.php_analyzer.pdepend.analyzer" class="Code\AnalyzerBundle\Analyzer\Analyzer">

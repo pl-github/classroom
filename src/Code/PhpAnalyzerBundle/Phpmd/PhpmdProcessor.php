@@ -30,7 +30,7 @@ class PhpmdProcessor implements ProcessorInterface
             $fileName = (string)$fileAttributes['name'];
 
             $fileNode = $result->getNode($fileName);
-            $classNode = $result->getNode(current($result->getIncoming('node', $fileNode)));
+            $classNode = $result->getNode(current($result->getReference('node', 'children', $fileNode)));
 
             foreach ($xmlFileNode->violation as $xmlViolationNode) {
                 $violationAttributes = $xmlViolationNode->attributes();
@@ -39,15 +39,17 @@ class PhpmdProcessor implements ProcessorInterface
                 $violationRule = (string)$violationAttributes['rule'];
                 //$violationRuleset = (string)$violationAttributes['ruleset'];
                 //$violationExternalInfoUrl = (string)$violationAttributes['externalInfoUrl'];
-                //$violationPriority = (string)$violationAttributes['priority'];
+                $violationPriority = (string)$violationAttributes['priority'];
 
                 $violationText = (string)$xmlViolationNode;
 
                 $sourceRange = new SourceRange($violationBeginLine, $violationEndLine);
 
-                $smell = new Smell('Mess', $violationRule, $violationText, $sourceRange, 1);
+                $smell = new Smell('Mess', $violationRule, $violationText, $sourceRange, $violationPriority);
                 $result->addSmell($smell, $classNode);
             }
         }
+
+        $result->addArtifact($filename);
     }
 }

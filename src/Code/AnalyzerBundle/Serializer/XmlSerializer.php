@@ -48,6 +48,10 @@ class XmlSerializer implements SerializerInterface
             $xmlSmell = $dom->createElement('smell');
             $xmlSmells->appendChild($xmlSmell);
 
+            $xmlClass = $dom->createAttribute('class');
+            $xmlClass->value = get_class($smell);
+            $xmlSmell->appendChild($xmlClass);
+
             $xmlHash = $dom->createAttribute('hash');
             $xmlHash->value = $smell->getHash();
             $xmlSmell->appendChild($xmlHash);
@@ -73,19 +77,19 @@ class XmlSerializer implements SerializerInterface
             $xmlSmell->appendChild($xmlEndLine);
         }
 
-        foreach ($result->getReferences() as $dir => $dirReferences) {
-            foreach ($dirReferences as $type => $typeReferences) {
-                foreach ($typeReferences as $referenceKey => $references) {
+        foreach ($result->getReferences() as $type => $typeReferences) {
+            foreach ($typeReferences as $direction => $directionReferences) {
+                foreach ($directionReferences as $referenceKey => $references) {
                     $xmlReference = $dom->createElement('reference');
                     $xmlReferences->appendChild($xmlReference);
-
-                    $xmlDir = $dom->createAttribute('dir');
-                    $xmlDir->value = $dir;
-                    $xmlReference->appendChild($xmlDir);
 
                     $xmlType = $dom->createAttribute('type');
                     $xmlType->value = $type;
                     $xmlReference->appendChild($xmlType);
+
+                    $xmlDirection = $dom->createAttribute('direction');
+                    $xmlDirection->value = $direction;
+                    $xmlReference->appendChild($xmlDirection);
 
                     $xmlKey = $dom->createAttribute('hash');
                     $xmlKey->value = $referenceKey;
@@ -112,12 +116,32 @@ class XmlSerializer implements SerializerInterface
             $xmlHash->value = $source->getHash();
             $xmlSource->appendChild($xmlHash);
 
-            $xmlSource->appendChild($dom->createTextNode($source->getContent()));
+            $xmlClass = $dom->createAttribute('class');
+            $xmlClass->value = get_class($source);
+            $xmlSource->appendChild($xmlClass);
+
+            $xmlStorageClass = $dom->createAttribute('storageClass');
+            $xmlStorageClass->value = get_class($source->getStorage());
+            $xmlSource->appendChild($xmlStorageClass);
+
+            switch (get_class($source->getStorage())) {
+                case 'Code\AnalyzerBundle\Source\Storage\FilesystemStorage':
+                    $xmlSource->appendChild($dom->createTextNode($source->getStorage()->getFilename()));
+                    break;
+                case 'Code\AnalyzerBundle\Source\Storage\StringStorage':
+                    $xmlSource->appendChild($dom->createTextNode($source->getStorage()->getContent()));
+                    break;
+                default:
+                    throw new \Exception('Unknown storage');
+            }
         }
 
         return $dom->saveXML();
     }
 
+    /**
+     * @inheritDoc
+     */
     public function deserialize($data)
     {
         $result = new ResultModel();
@@ -127,24 +151,27 @@ class XmlSerializer implements SerializerInterface
         foreach ($xml->nodes->node as $xmlNode) {
             $nodeAttr = $xmlNode->attributes();
             $name = (string)$nodeAttr['name'];
-            $class = (string)$nodeAttr['class'];
+            $classname = (string)$nodeAttr['class'];
 
-            $node = new $class($name);
+            $node = new $classname($name);
             $result->addNode($node);
         }
 
         foreach ($xml->sources->source as $xmlSource) {
             $sourceAttr = $xmlSource->attributes();
             $hash = (string)$sourceAttr['hash'];
+            $classname = (string)$sourceAttr['class'];
+            $storageClassname = (string)$sourceAttr['storageClass'];
 
-            $storage = new StringStorage((string)$xmlSource);
-            $source = new Source($storage);
+            $storage = new $storageClassname((string)$xmlSource);
+            $source = new $classname($storage);
             $source->setHash($hash);
             $result->addSource($source);
         }
 
         foreach ($xml->smells->smell as $xmlSmell) {
             $smellAttr = $xmlSmell->attributes();
+            $classname = (string)$smellAttr['class'];
             $hash = (string)$smellAttr['hash'];
             $origin = (string)$smellAttr['origin'];
             $rule = (string)$smellAttr['rule'];
@@ -153,42 +180,50 @@ class XmlSerializer implements SerializerInterface
             $endLine = (integer)$smellAttr['endLine'];
 
             $sourceRange = new SourceRange($beginLine, $endLine);
-            $smell = new Smell($origin, $rule, '', $sourceRange, $score);
+            $smell = new $classname($origin, $rule, '', $sourceRange, $score);
             $smell->setHash($hash);
             $result->addSmell($smell);
         }
 
         foreach ($xml->references->reference as $xmlReference) {
             $referenceAttr = $xmlReference->attributes();
-            $dir = (string)$referenceAttr['dir'];
             $type = (string)$referenceAttr['type'];
+            $direction = (string)$referenceAttr['direction'];
             $hash = (string)$referenceAttr['hash'];
 
             foreach ($xmlReference->referenceHash as $xmlReferenceHash) {
                 $referenceHash = (string)$xmlReferenceHash;
 
                 if ($type === 'node') {
-                    $reference = $result->getNode($referenceHash);
-                    if ($dir === 'incoming') {
-                        $result->addMultiReference($dir, $type, $hash, $reference);
+                    $nodeReference = $result->getNode($referenceHash);
+                    if ($direction === 'children') {
+                        $result->addMultiReference($type, $direction, $hash, $nodeReference);
+                    } elseif ($direction === 'parent') {
+                        $result->addSingleReference($type, $direction, $hash, $nodeReference);
                     } else {
-                        $result->addSingleReference($dir, $type, $hash, $reference);
+                        throw new \Exception('Unknown reference direction ' . $direction);
                     }
                 } elseif ($type === 'smell') {
-                    if ($dir === 'incoming') {
-                        $reference = $result->getSmell($referenceHash);
-                        $result->addMultiReference($dir, $type, $hash, $reference);
+                    if ($direction === 'nodeToSmells') {
+                        $smellReference = $result->getSmell($referenceHash);
+                        $result->addMultiReference($type, $direction, $hash, $smellReference);
+                    } elseif ($direction === 'smellToNode') {
+                        $nodeReference = $result->getNode($referenceHash);
+                        $result->addSingleReference($type, $direction, $hash, $nodeReference);
                     } else {
-                        $reference = $result->getNode($referenceHash);
-                        $result->addSingleReference($dir, $type, $hash, $reference);
+                        throw new \Exception('Unknown reference direction ' . $direction);
                     }
                 } elseif ($type === 'source') {
-                    if ($dir === 'incoming') {
-                        $reference = $result->getSource($referenceHash);
+                    if ($direction === 'nodeToSource') {
+                        $sourceReference = $result->getSource($referenceHash);
+                        $result->addSingleReference($type, $direction, $hash, $sourceReference);
+                    } elseif ($direction === 'sourceToNode') {
+                        $nodeReference = $result->getNode($referenceHash);
+                        $result->addSingleReference($type, $direction, $hash, $nodeReference);
                     } else {
-                        $reference = $result->getNode($referenceHash);
+                        throw new \Exception('Unknown reference direction ' . $direction);
                     }
-                    $result->addSingleReference($dir, $type, $hash, $reference);
+
                 }
             }
         }

@@ -6,13 +6,6 @@ use Code\AnalyzerBundle\Model\Referencable;
 
 interface SmellInterface extends Referencable
 {
-    /**
-     * Return id
-     *
-     * @return string
-     */
-    public function getId();
-
     /*+
      * Return origin
      *

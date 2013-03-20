@@ -3,9 +3,25 @@
 namespace Code\AnalyzerBundle\Source;
 
 use Code\AnalyzerBundle\Model\Referencable;
+use Code\AnalyzerBundle\Source\Storage\StorageInterface;
 
 interface SourceInterface extends Referencable
 {
+    /**
+     * Set storage
+     *
+     * @param StorageInterface $storage
+     * @return $this
+     */
+    public function setStorage(StorageInterface $storage);
+
+    /**
+     * Return storage
+     *
+     * @return StorageInterface
+     */
+    public function getStorage();
+
     /*+
      * Return content
      *

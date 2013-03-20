@@ -1,11 +1,11 @@
 <?php
 
-namespace Code\PhpAnalyzerBundle\Tests\Pdepend;
+namespace Code\PhpAnalyzerBundle\Tests\Phpcs;
 
-use Code\PhpAnalyzerBundle\Pdepend\PdependRunner;
+use Code\PhpAnalyzerBundle\Phpcs\PhpcsCollector;
 use org\bovigo\vfs\vfsStream;
 
-class PdependRunnerTest extends \PHPUnit_Framework_TestCase
+class PhpcsCollectorTest extends \PHPUnit_Framework_TestCase
 {
     public function testRun()
     {
@@ -18,10 +18,10 @@ class PdependRunnerTest extends \PHPUnit_Framework_TestCase
         $loggerMock = $this->getMockBuilder('Symfony\Component\HttpKernel\Log\LoggerInterface')
             ->getMock();
 
-        $runner = new PdependRunner(
+        $collector = new PhpcsCollector(
             $processExecutorMock,
             $loggerMock,
-            'pdepend'
+            'phpcs'
         );
 
         $processExecutorMock
@@ -29,8 +29,8 @@ class PdependRunnerTest extends \PHPUnit_Framework_TestCase
             ->method('execute')
             ->with($this->isInstanceOf('Symfony\Component\Process\Process'));
 
-        $filename = $runner->run('sourceDir', 'workDir');
+        $filename = $collector->collect('sourceDir', 'workDir');
 
-        $this->assertEquals($filename, 'workDir/pdepend.xml');
+        $this->assertEquals($filename, 'workDir/phpcs.xml');
     }
 }

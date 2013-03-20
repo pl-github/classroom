@@ -6,9 +6,9 @@ use Code\AnalyzerBundle\Model\NodeInterface;
 use Code\AnalyzerBundle\Model\ResultModel;
 use Code\AnalyzerBundle\Model\SmellModel;
 use Code\AnalyzerBundle\Serializer\SerializerInterface;
-use Code\AnalyzerBundle\Source\Storage\PharStorage;
+use Code\AnalyzerBundle\Source\Storage\FilesystemStorage;
 
-class PharWriter
+class PharWriter implements WriterInterface
 {
     /**
      * @var SerializerInterface
@@ -26,30 +26,62 @@ class PharWriter
     /**
      * @inheritDoc
      */
-    public function write(ResultModel $result, $targetDir, $baseFilename)
+    public function write(ResultModel $result, $filename)
     {
-        $filename = $targetDir . '/' . $baseFilename . '.phar';
+        if (!\Phar::canWrite()) {
+            throw new \Exception('PharWriter needs PHAR write support enabled. Set phar.readonly = Off in your php.ini');
+        }
+
+        if (file_exists($filename)) {
+            unlink($filename);
+        }
 
         $phar = new \Phar($filename);
 
         foreach ($result->getSources() as $source) {
-            $content = $source->getContent();
-            $sourceFilename = 'source/' . $source->getHash() . '.sha1';
-            $phar->addFromString(
-                $sourceFilename,
-                $content
-            );
-
-            $storage = new PharStorage($sourceFilename);
-            $source->setStorage($storage);
+            $storage = $source->getStorage();
+            $sourceFilename = 'source/' . $source->getHash() . '.txt';
+            switch (get_class($storage)) {
+                case 'Code\AnalyzerBundle\Source\Storage\FilesystemStorage':
+                    $phar->addFile($storage->getFilename(), $sourceFilename);
+                    $storage->setFilename($sourceFilename);
+                    break;
+                case 'Code\AnalyzerBundle\Source\Storage\StringStorage':
+                    $content = $source->getContent();
+                    $phar->addFromString(
+                        $sourceFilename,
+                        $content
+                    );
+                    $storage = new FilesystemStorage($sourceFilename);
+                    $source->setStorage($storage);
+                    break;
+                default:
+                    throw new \Exception('Unknown storage.');
+            }
         }
 
-        $phar->addFromString('load.php', '<?php return unserialize(file_get_contents(__DIR__ . "/result.serialized"));');
+        foreach ($result->getArtifacts() as $artifact) {
+            $phar->addFile($artifact, 'artifact/' . basename($artifact));
+        }
 
-        $xml = $this->serializer->serialize($result);
+        $data = $this->serializer->serialize($result);
 
-        $phar->addFromString('result.xml', $xml);
+        $phar->addFromString('result.' . $this->serializer->getType(), $data);
+
+        if (\Phar::canCompress(\Phar::BZ2)) {
+            $phar->compressFiles(\Phar::BZ2);
+        } elseif (\Phar::canCompress(\Phar::GZ)) {
+            $phar->compressFiles(\Phar::GZ);
+        }
 
         return $filename;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function supports($filename)
+    {
+        return 'phar' === pathinfo($filename, PATHINFO_EXTENSION);
     }
 }

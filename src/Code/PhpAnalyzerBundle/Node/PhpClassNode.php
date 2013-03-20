@@ -4,10 +4,11 @@ namespace Code\PhpAnalyzerBundle\Node;
 
 use Code\AnalyzerBundle\Metric\Measurable;
 use Code\AnalyzerBundle\Metric\MetricInterface;
+use Code\AnalyzerBundle\Node\Gradable;
 use Code\AnalyzerBundle\Node\NodeInterface;
 use Code\AnalyzerBundle\Node\NodeReference;
 
-class PhpClassNode implements NodeInterface, Measurable
+class PhpClassNode implements NodeInterface, Measurable, Gradable
 {
     /**
      * @var string
@@ -38,9 +39,31 @@ class PhpClassNode implements NodeInterface, Measurable
     /**
      * @inheritDoc
      */
+    public function getGrade()
+    {
+        return $this->grade;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setGrade($grade)
+    {
+        $this->grade = $grade;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function getHash()
     {
         return $this->getName();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setHash($hash) {
     }
 
     /**

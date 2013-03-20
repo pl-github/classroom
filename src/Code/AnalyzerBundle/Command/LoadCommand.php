@@ -3,10 +3,8 @@
 namespace Code\AnalyzerBundle\Command;
 
 use Code\AnalyzerBundle\Analyzer\AnalyzerInterface;
-use Code\AnalyzerBundle\Loader\PharLoader;
-use Code\AnalyzerBundle\Loader\SerializeLoader;
-use Code\AnalyzerBundle\Loader\XmlLoader;
 use Code\PhpAnalyzerBundle\ResultBuilder;
+use Code\AnalyzerBundle\Loader\LoaderInterface;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -24,9 +22,8 @@ class LoadCommand extends ContainerAwareCommand
             ->setName('code:analyzer:load')
             ->setDescription('Load and output')
             ->addArgument('filename', InputArgument::REQUIRED, 'Filename')
-            ->addOption('xml', null, InputOption::VALUE_NONE, 'Write xml')
-            ->addOption('phar', null, InputOption::VALUE_NONE, 'Write phar')
-            ->addOption('serialize', null, InputOption::VALUE_NONE, 'Write serialized');
+            ->addOption('smells', null, InputOption::VALUE_NONE, 'Show smells')
+            ->addOption('source', null, InputOption::VALUE_NONE, 'Show source');
     }
 
     /**
@@ -35,38 +32,40 @@ class LoadCommand extends ContainerAwareCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $filename = $input->getArgument('filename');
+        $showSmells = $input->getOption('smells');
+        $showSource = $input->getOption('source');
 
-        if ($input->getOption('xml')) {
-            $loader = $this->getContainer()->get('code.analyzer.loader.xml');
-            /* @var $loader XmlLoader */
-        } elseif ($input->getOption('phar')) {
-            $loader = $this->getContainer()->get('code.analyzer.loader.phar');
-            /* @var $loader PharLoader */
-        } else {
-            $loader = $this->getContainer()->get('code.analyzer.loader.serialize');
-            /* @var $loader SerializeLoader */
-        }
+        $loader = $this->getContainer()->get('code.analyzer.loader');
+        /* @var $loader LoaderInterface */
 
         $result = $loader->load($filename);
 
-        foreach ($result->getSmells() as $smell) {
-            /* @var $smell SmellModel */
-            $sourceRange = $smell->getSourceRange();
-            $beginLine = $sourceRange->getBeginLine();
-            $endLine = $sourceRange->getEndLine();
+        if ($showSmells) {
+            foreach ($result->getSmells() as $smell) {
+                /* @var $smell SmellModel */
+                $sourceRange = $smell->getSourceRange();
+                $beginLine = $sourceRange->getBeginLine();
+                $endLine = $sourceRange->getEndLine();
 
-            $classReference = $result->getOutgoing('smell', $smell);
-            $classNode = $result->getNode($classReference);
-            $fileReference = $result->getOutgoing('node', $classNode);
-            $fileNode = $result->getNode($fileReference);
+                $classReference = $result->getReference('smell', 'smellToNode', $smell);
+                $classNode = $result->getNode($classReference);
+                $output->writeln(
+                    '[smell] <comment>' . $smell->getRule() . '</comment> in <info>' . $classNode->getName() . ' </info>' .
+                    'line ' . $beginLine . ($beginLine != $endLine ? ':' . $endLine : '')
+                );
 
-            $sourceReference = $result->getIncoming('source', $fileNode);
-            $source = $result->getSource($sourceReference);
+                if ($showSource) {
+                    $fileReference = $result->getReference('node', 'parent', $classNode);
+                    $fileNode = $result->getNode($fileReference);
 
-            echo '[smell] ' . $smell->getRule() . ' in ' . $classNode->getName() . ':' .
-                $beginLine . ($beginLine != $endLine ? '-' . $endLine : '') . PHP_EOL;
+                    $sourceReference = $result->getReference('source', 'nodeToSource', $fileNode);
+                    $source = $result->getSource($sourceReference);
 
-            echo '<code> ' . PHP_EOL . $source->getRange($sourceRange) . PHP_EOL . '</code>' . PHP_EOL;
+                    $output->writeln(trim($source->getRange($sourceRange)) . PHP_EOL);
+                }
+            }
+        } else {
+            $output->writeln(count($result->getSmells()) . ' smells.');
         }
 
         $output->writeln(

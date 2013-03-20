@@ -15,7 +15,7 @@
         </service>
 
         <service id="code.php_analyzer.base.processor" class="Code\PhpAnalyzerBundle\Base\BaseProcessor">
-            <argument type="service" id="code.analyzer.reflection_service" />
+            <argument type="service" id="code.php_analyzer.reflection_service" />
         </service>
 
         <service id="code.php_analyzer.base.analyzer" class="Code\AnalyzerBundle\Analyzer\Analyzer">

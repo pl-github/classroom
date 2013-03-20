@@ -1,6 +1,6 @@
 <?php
 
-namespace Code\ProjectBundle\Tests\Build\VersionStrategy;
+namespace Code\RepositoryBundle\Tests\Build\VersionStrategy;
 
 use Code\ProjectBundle\Project;
 use Code\RepositoryBundle\VersionStrategy\IncrementalVersionStrategy;

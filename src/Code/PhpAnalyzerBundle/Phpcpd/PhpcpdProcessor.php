@@ -38,7 +38,7 @@ class PhpcpdProcessor implements ProcessorInterface
 
             foreach ($duplication['files'] as $path => $line) {
                 $fileNode = $result->getNode($path);
-                $classNode = $result->getNode(current($result->getIncoming('node', $fileNode)));
+                $classNode = $result->getNode(current($result->getReference('node', 'children', $fileNode)));
 
                 $metric = new Metric('duplication', $lines);
                 $classNode->addMetric($metric);
@@ -57,6 +57,8 @@ class PhpcpdProcessor implements ProcessorInterface
                 $result->addSmell($smell, $classNode);
             }
         }
+
+        $result->addArtifact($filename);
     }
 
     private function processDuplications($filename)

@@ -6,7 +6,7 @@
 
     <services>
 
-        <service id="code.php_analyzer.result_builder" class="Code\PhpAnalyzerBundle\ResultBuilder">
+        <service id="code.php_analyzer.reflection_service" class="Code\PhpAnalyzerBundle\ReflectionService">
         </service>
 
         <service id="code.php_analyzer.analyzer" class="Code\AnalyzerBundle\Analyzer\ChainAnalyzer">
@@ -18,5 +18,11 @@
                 <argument type="service" id="code.php_analyzer.pdepend.analyzer" />
             </argument>
         </service>
+
+        <service id="code.php_analyzer.result_builder" class="Code\PhpAnalyzerBundle\ResultBuilder">
+            <argument type="service" id="code.php_analyzer.analyzer" />
+            <argument type="service" id="code.php_analyzer.filter" />
+        </service>
+
     </services>
 </container>

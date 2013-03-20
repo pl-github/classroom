@@ -34,16 +34,18 @@ class Source implements SourceInterface
         return $this->hash;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function setHash($hash)
     {
         $this->hash = $hash;
+
+        return $this;
     }
 
     /**
-     * Set storage
-     *
-     * @param StorageInterface $storage
-     * @return $this
+     * @inheritDoc
      */
     public function setStorage(StorageInterface $storage)
     {
@@ -53,9 +55,7 @@ class Source implements SourceInterface
     }
 
     /**
-     * Return storage
-     *
-     * @return StorageInterface
+     * @inheritDoc
      */
     public function getStorage()
     {

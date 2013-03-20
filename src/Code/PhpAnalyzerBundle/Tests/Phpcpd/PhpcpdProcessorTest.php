@@ -2,6 +2,9 @@
 
 namespace Code\PhpAnalyzerBundle\Tests\Phpcpd\PhpcpdProcessor;
 
+use Code\AnalyzerBundle\Model\ResultModel;
+use Code\PhpAnalyzerBundle\Node\PhpClassNode;
+use Code\PhpAnalyzerBundle\Node\PhpFileNode;
 use Code\PhpAnalyzerBundle\Phpcpd\PhpcpdProcessor;
 use org\bovigo\vfs\vfsStream;
 
@@ -44,83 +47,34 @@ EOL;
 
         $processor = new PhpcpdProcessor($reflectionServiceMock);
 
-        $classes = $processor->process(vfsStream::url('root/pmd-cpd.xml'));
+        $result = new ResultModel();
+        $fileNode1 = new PhpFileNode('file1.php');
+        $fileNode2 = new PhpFileNode('file2.php');
+        $fileNode3 = new PhpFileNode('file3.php');
+        $fileNode4 = new PhpFileNode('file4.php');
+        $fileNode5 = new PhpFileNode('file5.php');
+        $result->addNode($fileNode1);
+        $result->addNode($fileNode2);
+        $result->addNode($fileNode3);
+        $result->addNode($fileNode4);
+        $result->addNode($fileNode5);
+        $result->addNode(new PhpClassNode('class1'), $fileNode1);
+        $result->addNode(new PhpClassNode('class2'), $fileNode2);
+        $result->addNode(new PhpClassNode('class3'), $fileNode3);
+        $result->addNode(new PhpClassNode('class4'), $fileNode4);
+        $result->addNode(new PhpClassNode('class5'), $fileNode5);
 
-        $this->assertInstanceOf('Code\AnalyzerBundle\Model\ClassesModel', $classes);
+        $processor->process($result, vfsStream::url('root/pmd-cpd.xml'));
 
-        return $classes;
+        return $result;
     }
 
     /**
      * @depends testProcess
-     * @param ClassesModel $result
+     * @param ResultModel $result
      */
-    public function testClasses($result)
+    public function testClasses(ResultModel $result)
     {
-        $classes = $result->getClasses();
-        $this->assertSame(5, count($classes));
-
-        return $classes;
-    }
-
-    /**
-     * @depends testClasses
-     * @param array $classes
-     */
-    public function testClass1(array $classes)
-    {
-        $class = $classes['file1.php'];
-        $this->assertInstanceOf('Code\AnalyzerBundle\Model\ClassModel', $class);
-        $this->assertEquals(1, count($class->getSmells()));
-
-        return $class;
-    }
-
-    /**
-     * @depends testClasses
-     * @param array $classes
-     */
-    public function testClass2(array $classes)
-    {
-        $class = $classes['file2.php'];
-
-        $this->assertInstanceOf('Code\AnalyzerBundle\Model\ClassModel', $class);
-        $this->assertEquals(1, count($class->getSmells()));
-    }
-
-    /**
-     * @depends testClasses
-     * @param array $classes
-     */
-    public function testClass3(array $classes)
-    {
-        $class = $classes['file3.php'];
-
-        $this->assertInstanceOf('Code\AnalyzerBundle\Model\ClassModel', $class);
-        $this->assertEquals(1, count($class->getSmells()));
-    }
-
-    /**
-     * @depends testClasses
-     * @param array $classes
-     */
-    public function testClass4(array $classes)
-    {
-        $class = $classes['file4.php'];
-
-        $this->assertInstanceOf('Code\AnalyzerBundle\Model\ClassModel', $class);
-        $this->assertEquals(1, count($class->getSmells()));
-    }
-
-    /**
-     * @depends testClasses
-     * @param array $classes
-     */
-    public function testClass5(array $classes)
-    {
-        $class = $classes['file5.php'];
-
-        $this->assertInstanceOf('Code\AnalyzerBundle\Model\ClassModel', $class);
-        $this->assertEquals(1, count($class->getSmells()));
+        $this->assertTrue($result->hasSmells());
     }
 }

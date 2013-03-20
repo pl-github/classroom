@@ -62,19 +62,14 @@ class Smell implements SmellInterface
         return $this->hash;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function setHash($hash)
     {
         $this->hash = $hash;
-    }
 
-    /**
-     * Return id
-     *
-     * @return string
-     */
-    public function getId()
-    {
-        return spl_object_hash($this);
+        return $this;
     }
 
     /*+

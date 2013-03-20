@@ -45,6 +45,12 @@ class PhpFileNode implements NodeInterface, Measurable
     /**
      * @inheritDoc
      */
+    public function setHash($hash) {
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function getMetrics()
     {
         return $this->metrics;

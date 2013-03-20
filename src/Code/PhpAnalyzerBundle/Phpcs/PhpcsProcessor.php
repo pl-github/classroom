@@ -29,7 +29,7 @@ class PhpcsProcessor implements ProcessorInterface
             //$warning = (string)$fileAttributes['warnings'];
 
             $fileNode = $result->getNode($name);
-            $classNode = $result->getNode(current($result->getIncoming('node', $fileNode)));
+            $classNode = $result->getNode(current($result->getReference('node', 'children', $fileNode)));
 
             if (isset($xmlFileNode->warning)) {
                 foreach ($xmlFileNode->warning as $xmlWarningNode) {
@@ -71,11 +71,13 @@ class PhpcsProcessor implements ProcessorInterface
                         'CodeStyleError',
                         $message,
                         $sourceRange,
-                        1
+                        2
                     );
                     $result->addSmell($smell, $classNode);
                 }
             }
         }
+
+        $result->addArtifact($filename);
     }
 }

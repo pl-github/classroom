@@ -17,7 +17,6 @@
         </service>
 
         <service id="code.php_analyzer.phpcs.processor" class="Code\PhpAnalyzerBundle\Phpcs\PhpcsProcessor">
-            <argument type="service" id="code.analyzer.reflection_service" />
         </service>
 
         <service id="code.php_analyzer.phpcs.analyzer" class="Code\AnalyzerBundle\Analyzer\Analyzer">

@@ -3,6 +3,7 @@
 namespace Code\AnalyzerBundle\Loader;
 
 use Code\AnalyzerBundle\Model\ResultModel;
+use Code\AnalyzerBundle\Serializer\SerializerInterface;
 
 class PharLoader implements LoaderInterface
 {
@@ -24,8 +25,15 @@ class PharLoader implements LoaderInterface
      */
     public function load($filename)
     {
-        $data = file_get_contents('phar://' . $filename . '/result.serialized');
+        $pharFilename = 'phar://' . $filename;
+
+        $data = file_get_contents($pharFilename . '/result.' . $this->serializer->getType());
         $result = $this->serializer->deserialize($data);
+        /* @var $result ResultModel */
+
+        foreach ($result->getSources() as $source) {
+            $source->getStorage()->setFilename($pharFilename . '/' . $source->getStorage()->getFilename());
+        }
 
         return $result;
     }

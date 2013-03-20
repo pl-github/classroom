@@ -2,10 +2,10 @@
 
 namespace Code\PhpAnalyzerBundle\Tests\Phpcs;
 
-use Code\PhpAnalyzerBundle\Phpmd\PhpmdRunner;
+use Code\PhpAnalyzerBundle\Phpmd\PhpmdCollector;
 use org\bovigo\vfs\vfsStream;
 
-class PhpmdRunnerTest extends \PHPUnit_Framework_TestCase
+class PhpmdCollectorTest extends \PHPUnit_Framework_TestCase
 {
     public function testRun()
     {
@@ -18,7 +18,7 @@ class PhpmdRunnerTest extends \PHPUnit_Framework_TestCase
         $loggerMock = $this->getMockBuilder('Symfony\Component\HttpKernel\Log\LoggerInterface')
             ->getMock();
 
-        $runner = new PhpmdRunner(
+        $collector = new PhpmdCollector(
             $processExecutorMock,
             $loggerMock,
             'phpmd'
@@ -29,7 +29,7 @@ class PhpmdRunnerTest extends \PHPUnit_Framework_TestCase
             ->method('execute')
             ->with($this->isInstanceOf('Symfony\Component\Process\Process'));
 
-        $filename = $runner->run('sourceDir', 'workDir');
+        $filename = $collector->collect('sourceDir', 'workDir');
 
         $this->assertEquals($filename, 'workDir/phpmd.xml');
     }

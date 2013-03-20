@@ -2,10 +2,7 @@
 
 namespace Code\AnalyzerBundle\Serializer;
 
-use Code\AnalyzerBundle\Model\NodeInterface;
-use Code\AnalyzerBundle\Model\Reference;
 use Code\AnalyzerBundle\Model\ResultModel;
-use Code\AnalyzerBundle\Model\SmellModel;
 
 interface SerializerInterface
 {
@@ -15,6 +12,13 @@ interface SerializerInterface
      * @param ResultModel $result
      */
     public function serialize(ResultModel $result);
+
+    /**
+     * Deserialize data into result
+     *
+     * @param string $data
+     */
+    public function deserialize($data);
 
     /**
      * Return type

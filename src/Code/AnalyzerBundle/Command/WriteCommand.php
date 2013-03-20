@@ -5,6 +5,7 @@ namespace Code\AnalyzerBundle\Command;
 use Code\AnalyzerBundle\Analyzer\AnalyzerInterface;
 use Code\AnalyzerBundle\Writer\PharWriter;
 use Code\AnalyzerBundle\Writer\SerializeWriter;
+use Code\AnalyzerBundle\Writer\WriterInterface;
 use Code\AnalyzerBundle\Writer\XmlWriter;
 use Code\PhpAnalyzerBundle\ResultBuilder;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
@@ -24,10 +25,7 @@ class WriteCommand extends ContainerAwareCommand
             ->setName('code:analyzer:write')
             ->setDescription('Analyze and write')
             ->addArgument('sourceDirectory', InputArgument::REQUIRED, 'Source directory')
-            ->addArgument('targetFilename', InputArgument::REQUIRED, 'Target filename')
-            ->addOption('xml', null, InputOption::VALUE_NONE, 'Write xml')
-            ->addOption('phar', null, InputOption::VALUE_NONE, 'Write phar')
-            ->addOption('serialize', null, InputOption::VALUE_NONE, 'Write serialized');
+            ->addArgument('filename', InputArgument::REQUIRED, 'Filename');
     }
 
     /**
@@ -36,50 +34,45 @@ class WriteCommand extends ContainerAwareCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $sourceDirectory = $input->getArgument('sourceDirectory');
-        $targetFilename = $input->getArgument('targetFilename');
+        $filename = $input->getArgument('filename');
 
-        if ($input->getOption('xml')) {
-            $writer = $this->getContainer()->get('code.analyzer.writer.xml');
-            /* @var $writer XmlWriter */
-        } elseif ($input->getOption('phar')) {
-            $writer = $this->getContainer()->get('code.analyzer.writer.phar');
-            /* @var $writer PharWriter */
-        } else {
-            $writer = $this->getContainer()->get('code.analyzer.writer.serialize');
-            /* @var $writer SerializeWriter */
-        }
-
-        $entityManager = $this->getContainer()->get('doctrine.orm.entity_manager');
-        /* @var $entityManager EntityManager */
-        $projectRepository = $entityManager->getRepository('Code\ProjectBundle\Entity\Project');
+        $writer = $this->getContainer()->get('code.analyzer.writer');
+        /* @var $writer WriterInterface */
 
         $resultBuilder = $this->getContainer()->get('code.php_analyzer.result_builder');
         /* @var $resultBuilder ResultBuilder */
 
-        $analyzer = $this->getContainer()->get('code.php_analyzer.analyzer');
-        /* @var $analyzer AnalyzerInterface */
 
-        $tsStart = microtime(true);
-
-        $result = $resultBuilder->bla(
-            $analyzer,
+        $output->write('building... ');
+        $tsBuildStart = microtime(true);
+        $result = $resultBuilder->build(
             $sourceDirectory,
             '/opt/www/code/symfony/app/data/code/work'
         );
+        $tsBuildEnd = microtime(true);
+        $output->writeln('done ('.number_format($tsBuildEnd - $tsBuildStart, 2).' s)');
 
         //foreach ($result->getNodes() as $nodeId => $node) {
         //    /* @var $smell NodeInterface */
         //    echo '[node] ' . $nodeId . ' => ' . get_class($node) . PHP_EOL;
         //}
 
-        echo $writer->write($result, dirname($targetFilename), basename($targetFilename)) . PHP_EOL;
+        $output->write('writing...');
+        $tsWriteStart = microtime(true);
+        $writer->write($result, $filename);
+        $tsWriteEnd = microtime(true);
+        $output->writeln('done ('.number_format($tsWriteEnd - $tsWriteStart, 2).' s)');
 
-        $duration = microtime(true) - $tsStart;
+        $duration = $tsWriteEnd - $tsBuildStart;
 
         $output->writeln(
-            'Analyze run for ' . $sourceDirectory . ' finished, result written, ' .
-            number_format($duration, 2) . ' s, ' .
-            number_format(memory_get_usage() / 1024 / 1024, 2) . ' mb'
+            'Analyze run for ' . $sourceDirectory . ' finished, result written in ' . $filename . ', '.
+            'filesize ' . number_format(filesize($filename) / 1024, 2) . ' kb'
+        );
+        $output->writeln(
+            'Duration ' . number_format($duration, 2) . ' s, '.
+            'memory usage ' . number_format(memory_get_usage() / 1024 / 1024, 2) . ' mb, ' .
+            'memory peak usage ' . number_format(memory_get_peak_usage() / 1024 / 1024, 2) . ' mb'
         );
     }
 }

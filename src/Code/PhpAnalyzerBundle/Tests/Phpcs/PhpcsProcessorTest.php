@@ -2,6 +2,9 @@
 
 namespace Code\PhpAnalyzerBundle\Tests\Phpcs;
 
+use Code\AnalyzerBundle\Model\ResultModel;
+use Code\PhpAnalyzerBundle\Node\PhpClassNode;
+use Code\PhpAnalyzerBundle\Node\PhpFileNode;
 use Code\PhpAnalyzerBundle\Phpcs\PhpcsProcessor;
 use org\bovigo\vfs\vfsStream;
 
@@ -20,9 +23,6 @@ class PhpcsParserTest extends \PHPUnit_Framework_TestCase
  <file name="file2.php" errors="0" warnings="2">
   <warning line="15" column="1" source="source3" severity="5">message4</warning>
   <warning line="17" column="1" source="source4" severity="5">message5</warning>
- </file>
- <file name="file3.php" errors="1" warnings="0">
-  <error line="15" column="1" source="source5" severity="5">mesage6</error>
  </file>
 </phpcs>
 EOL;
@@ -45,59 +45,25 @@ EOL;
 
         $processor = new PhpcsProcessor($reflectionServiceMock);
 
-        $classes = $processor->process(vfsStream::url('root/phpcs.xml'));
+        $result = new ResultModel();
+        $fileNode1 = new PhpFileNode('file1.php');
+        $fileNode2 = new PhpFileNode('file2.php');
+        $result->addNode($fileNode1);
+        $result->addNode($fileNode2);
+        $result->addNode(new PhpClassNode('class1'), $fileNode1);
+        $result->addNode(new PhpClassNode('class2'), $fileNode2);
 
-        $this->assertInstanceOf('Code\AnalyzerBundle\Model\ClassesModel', $classes);
+        $processor->process($result, vfsStream::url('root/phpcs.xml'));
 
-        return $classes;
+        return $result;
     }
 
     /**
      * @depends testProcess
-     * @param ClassesModel $result
+     * @param ResultModel $result
      */
-    public function testClasses($result)
+    public function testClasses(ResultModel $result)
     {
-        $classes = $result->getClasses();
-        $this->assertSame(3, count($classes));
-
-        return $classes;
-    }
-
-    /**
-     * @depends testClasses
-     * @param array $classes
-     */
-    public function testClass1(array $classes)
-    {
-        $class = $classes['file1.php'];
-        $this->assertInstanceOf('Code\AnalyzerBundle\Model\ClassModel', $class);
-        $this->assertEquals(3, count($class->getSmells()));
-
-        return $class;
-    }
-
-    /**
-     * @depends testClasses
-     * @param array $classes
-     */
-    public function testClass2(array $classes)
-    {
-        $class = $classes['file2.php'];
-
-        $this->assertInstanceOf('Code\AnalyzerBundle\Model\ClassModel', $class);
-        $this->assertEquals(2, count($class->getSmells()));
-    }
-
-    /**
-     * @depends testClasses
-     * @param array $classes
-     */
-    public function testClass3(array $classes)
-    {
-        $class = $classes['file3.php'];
-
-        $this->assertInstanceOf('Code\AnalyzerBundle\Model\ClassModel', $class);
-        $this->assertEquals(1, count($class->getSmells()));
+        $this->assertTrue($result->hasSmells());
     }
 }
