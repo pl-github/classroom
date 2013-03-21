@@ -21,6 +21,11 @@ class PhpClassNode implements NodeInterface, Measurable, Gradable
     private $metrics = array();
 
     /**
+     * @var string
+     */
+    private $grade = null;
+
+    /**
      * @param string $name
      */
     public function __construct($name)

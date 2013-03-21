@@ -1,19 +1,21 @@
 <?php
 
-namespace Code\BuildBundle\Entity;
+namespace Code\ProjectBundle\Entity;
 
-use Code\AnalyzerBundle\Model\ClassesModel;
 use Code\ProjectBundle\Project;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity
- * @ORM\Table(name = "code_build", indexes = {
- *     @ORM\Index(columns = {"version"}),
+ * @ORM\Table(name = "code_project_revision", indexes = {
+ *     @ORM\Index(columns = {"revision"}),
  * })
  */
-class Build
+class Revision
 {
+    const STATUS_NEW = 0;
+    const STATUS_BUILT = 1;
+
     /**
      * @ORM\Id
      * @ORM\GeneratedValue(strategy = "AUTO")
@@ -35,7 +37,13 @@ class Build
      * @var mixed
      * @ORM\Column(type = "string")
      */
-    protected $version;
+    protected $revision;
+
+    /**
+     * @var integer
+     * @ORM\Column(type = "integer")
+     */
+    protected $status;
 
     /**
      * @var float
@@ -95,24 +103,47 @@ class Build
     }
 
     /**
-     * Return version
+     * Return revision
      *
      * @return mixed
      */
-    public function getVersion()
+    public function getRevision()
     {
-        return $this->version;
+        return $this->revision;
     }
 
     /**
      * Set version
      *
-     * @param mixed $version
+     * @param mixed $revision
      * @return $this
      */
-    public function setVersion($version)
+    public function setRevision($revision)
     {
-        $this->version = $version;
+        $this->revision = $revision;
+
+        return $this;
+    }
+
+    /**
+     * Return status
+     *
+     * @return integer
+     */
+    public function getStatus()
+    {
+        return $this->status;
+    }
+
+    /**
+     * Set status
+     *
+     * @param integer $status
+     * @return $this
+     */
+    public function setStatus($status)
+    {
+        $this->status = $status;
 
         return $this;
     }

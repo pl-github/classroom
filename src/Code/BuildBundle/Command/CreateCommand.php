@@ -2,9 +2,9 @@
 
 namespace Code\BuildBundle\Command;
 
-use Code\BuildBundle\Build;
 use Code\BuildBundle\Builder;
 use Code\BuildBundle\Comparer\Comparer;
+use Code\BuildBundle\Entity\Build;
 use Doctrine\ORM\EntityManager;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputArgument;
@@ -12,7 +12,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class BuildCommand extends ContainerAwareCommand
+class CreateCommand extends ContainerAwareCommand
 {
     protected $name;
 
@@ -22,7 +22,7 @@ class BuildCommand extends ContainerAwareCommand
     protected function configure()
     {
         $this
-            ->setName('code:build:build')
+            ->setName('code:build:create')
             ->setDescription('Create build')
             ->addArgument('projectId', InputArgument::REQUIRED);
     }
@@ -41,6 +41,18 @@ class BuildCommand extends ContainerAwareCommand
         $projectRepository = $entityManager->getRepository('Code\ProjectBundle\Entity\Project');
         $buildRepository = $entityManager->getRepository('Code\BuildBundle\Entity\Build');
 
+        $project = $projectRepository->findOneBy(array('name' => $projectId));
+
+        $build = new Build();
+        $build
+            ->setProject($project)
+            ->setStatus(Build::STATUS_NEW)
+            ->setRevision(1)
+            ->setCreateAt(new \DateTime());
+
+        $entityManager->persist($build);
+        $entityManager->flush($build);
+
         $builder = $this->getContainer()->get('code.build.builder');
         /* @var $builder Builder */
 
@@ -51,8 +63,6 @@ class BuildCommand extends ContainerAwareCommand
         /* @var $changeLoader ChangeLoaderInterface */
         $changeWriter = $this->getContainer()->get('code.project.change.writer');
         /* @var $changeWriter ChangeWriterInterface */
-
-        $project = $projectRepository->findOneBy(array('name' => $projectId));
 
         $build = $builder->build($project);
 

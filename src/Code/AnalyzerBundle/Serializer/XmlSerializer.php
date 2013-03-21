@@ -2,10 +2,12 @@
 
 namespace Code\AnalyzerBundle\Serializer;
 
+use Code\AnalyzerBundle\Metric\Measurable;
 use Code\AnalyzerBundle\Model\NodeInterface;
 use Code\AnalyzerBundle\Model\Reference;
 use Code\AnalyzerBundle\Model\ResultModel;
 use Code\AnalyzerBundle\Model\SmellModel;
+use Code\AnalyzerBundle\Node\Gradable;
 use Code\AnalyzerBundle\Smell\Smell;
 use Code\AnalyzerBundle\Source\Source;
 use Code\AnalyzerBundle\Source\SourceRange;
@@ -42,6 +44,31 @@ class XmlSerializer implements SerializerInterface
             $xmlName = $dom->createAttribute('name');
             $xmlName->value = $node->getHash();
             $xmlNode->appendChild($xmlName);
+
+            if ($node instanceof Gradable) {
+                $xmlGrade = $dom->createAttribute('grade');
+                $xmlGrade->value = $node->getGrade();
+                $xmlNode->appendChild($xmlGrade);
+            }
+
+            if ($node instanceof Measurable) {
+                foreach ($node->getMetrics() as $metric) {
+                    $xmlMetric = $dom->createElement('metric');
+                    $xmlNode->appendChild($xmlMetric);
+
+                    $xmlMetricClass = $dom->createAttribute('class');
+                    $xmlMetricClass->value = get_class($metric);
+                    $xmlMetric->appendChild($xmlMetricClass);
+
+                    $xmlMetricKey = $dom->createAttribute('key');
+                    $xmlMetricKey->value = $metric->getKey();
+                    $xmlMetric->appendChild($xmlMetricKey);
+
+                    $xmlMetricValue = $dom->createAttribute('value');
+                    $xmlMetricValue->value = $metric->getValue();
+                    $xmlMetric->appendChild($xmlMetricValue);
+                }
+            }
         }
 
         foreach ($result->getSmells() as $smell) {
@@ -154,6 +181,24 @@ class XmlSerializer implements SerializerInterface
             $classname = (string)$nodeAttr['class'];
 
             $node = new $classname($name);
+
+            if ($node instanceof Gradable) {
+                $grade = (string)$nodeAttr['grade'];
+                $node->setGrade($grade);
+            }
+
+            if ($node instanceof Measurable) {
+                foreach ($xmlNode->metric as $xmlMetric) {
+                    $metricAttr = $xmlMetric->attributes();
+                    $classname = (string)$metricAttr['class'];
+                    $key = (string)$metricAttr['key'];
+                    $value = (string)$metricAttr['value'];
+
+                    $metric = new $classname($key, $value);
+                    $node->addMetric($metric);
+                }
+            }
+
             $result->addNode($node);
         }
 

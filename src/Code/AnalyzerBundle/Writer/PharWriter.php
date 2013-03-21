@@ -37,6 +37,7 @@ class PharWriter implements WriterInterface
         }
 
         $phar = new \Phar($filename);
+        $phar->startBuffering();
 
         foreach ($result->getSources() as $source) {
             $storage = $source->getStorage();
@@ -68,11 +69,15 @@ class PharWriter implements WriterInterface
 
         $phar->addFromString('result.' . $this->serializer->getType(), $data);
 
+        $phar->stopBuffering();
+
         if (\Phar::canCompress(\Phar::BZ2)) {
-            $phar->compressFiles(\Phar::BZ2);
+            $phar->compress(\Phar::BZ2, 'phar');
         } elseif (\Phar::canCompress(\Phar::GZ)) {
-            $phar->compressFiles(\Phar::GZ);
+            $phar->compress(\Phar::GZ, 'phar');
         }
+
+        unset($phar);
 
         return $filename;
     }

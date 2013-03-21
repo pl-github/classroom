@@ -15,7 +15,14 @@
             <argument type="collection" />
         </service>
 
+        <service id="code.analyzer.gpa_calculator" class="Code\AnalyzerBundle\Grader\GpaCalculator">
+        </service>
+
+        <service id="code.analyzer.grader" class="Code\AnalyzerBundle\Grader\Grader">
+        </service>
+
         <service id="code.analyzer.filter.grade" class="Code\AnalyzerBundle\Filter\GradeFilter">
+            <argument type="service" id="code.analyzer.grader" />
         </service>
     </services>
 </container>
