@@ -2,10 +2,12 @@
         '%kernel.root_dir%/Resources/public/js/jquery-1.9.1.js'
         '%kernel.root_dir%/Resources/public/js/bootstrap.js'
         '%kernel.root_dir%/Resources/public/js/d3.v3.js' %}
+    <script type="text/javascript" src="{{ asset_url }}"></script>
 {% endjavascripts %}
 
 {% javascripts output='js/compiled/jquery-ui.js' filter='?yui_js'
         '%kernel.root_dir%/Resources/public/js/jquery-ui/jquery.ui.core.js'
-        '%kernel.root_dir%/Resources/public/js/jquery-ui/jquery.ui.widget.js' %}
+        '%kernel.root_dir%/Resources/public/js/jquery-ui/jquery.ui.widget.js'
+        '%kernel.root_dir%/Resources/public/js/chart.breakdown.js' %}
     <script type="text/javascript" src="{{ asset_url }}"></script>
 {% endjavascripts %}

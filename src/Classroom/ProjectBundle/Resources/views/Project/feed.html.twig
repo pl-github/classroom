@@ -1,68 +1,33 @@
 {% if 0 %}
     <div style="float: right;">
-    <div class="well">
-        <div><i class="icon-align-left"></i> Breakdown</div>
-        <div class="graph-breakdown"></div>
-        {% for score, count in build.getBreakdown %}
-            <div><span class="badge badge-score-{{ score }}">{{ score }}</span> {{ count }}</div>
-        {% endfor %}
-    </div>
-
-    <div class="well">
-        <div><i class="icon-fire"></i> Hotspots</div>
-        {% for hotspot in build.getHotspots %}
-            <div><span class="badge badge-score-{{ hotspot.score }}">{{ hotspot.score }}</span> <a href="{{ url("classroom_class", {projectId: project.id, className: hotspot.fullQualifiedName}) }}">{{ hotspot.name }}</a></div>
-        {% endfor %}
-    </div>
-    </div>
+        <div class="well">
+            <div><i class="icon-align-left"></i> Breakdown</div>
+            <div class="graph-breakdown"></div>
+            {% for score, count in build.getBreakdown %}
+                <div><span class="badge badge-score-{{ score }}">{{ score }}</span> {{ count }}</div>
+            {% endfor %}
+        </div>
     
+        <div class="well">
+            <div><i class="icon-fire"></i> Hotspots</div>
+            {% for hotspot in build.getHotspots %}
+                <div><span class="badge badge-score-{{ hotspot.score }}">{{ hotspot.score }}</span> <a href="{{ url("code_class", {projectId: project.id, className: hotspot.fullQualifiedName}) }}">{{ hotspot.name }}</a></div>
+            {% endfor %}
+        </div>
+    </div>    
     <script>
         $(function() {
-            var data = {{ build.getBreakdown|json_encode }},    
-                width = 186,
-                height = 186,
-                radius = (Math.min(width, height) / 2),
-                color, arc, pie, svg;
-            
-            color = d3.scale.ordinal()
-                .range(["green", "greenyellow", "yellow", "orange", "orangered", "red", "darkred"]);
-                
-            arc = d3.svg.arc()
-                .outerRadius(radius - 5)
-                .innerRadius(radius - 25);
-                
-            var arcOver = d3.svg.arc()
-                    .outerRadius(radius)
-                    .innerRadius(radius - 20);
-                
-            pie = d3.layout.pie()
-                .sort(null)
-                .value(function(d) { return d; });
+            var data = [73,10,8,5,1], //{{ build.getBreakdown|json_encode }},
+                baseLink = '{{ url("code_project_classes", {projectId: project.id}) }}';
 
-            svg = d3.select(".graph-breakdown").append("svg")
-                .attr("width", width)
-                .attr("height", height)
-              .append("g")
-                .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
-                
-            var g = svg.selectAll(".arc")
-                .data(pie(data))
-                .enter().append("g")
-                    .attr("class", "arc")
-                    .on("mouseover", function(d) {
-                        d3.select(this).select('path').transition()
-                           .duration(350)
-                           .attr("d", arcOver);
-                    })
-                    .on("mouseout", function(d) {
-                        d3.select(this).select('path').transition()
-                           .duration(350)
-                           .attr("d", arc);
-                    });
-                    
-            var path = g.append("path")
-                .attr("d", arc)
-                .style("fill", function(d, index) { return color(index); });
+// 1xA = 4
+// 3xA + 1xC = 3.5
+// 1xC = 2.0
+
+            $('.graph-breakdown').breakdown({
+                data: data,
+                gpa: 4.2
+            });
         });
     </script>
     
