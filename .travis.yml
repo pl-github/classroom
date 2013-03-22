@@ -8,5 +8,5 @@ before_script: composer install --dev
 script: phpunit -c app
 
 notifications:
-  - hipchat:
-    - secure: "TQ08kkUNCMt7k6QLzlss0rJIaVR3jaGZi4yhlBlsDmWIpqLbwiwpUu9wA3XQ\nzUspsXOSTff5CrsyCeEAutPww0YTutYzZbbQGYLUCdfwW0XKjXuYOqruRtr+\niLoaEMV/N+ebhTh2R6KR
+  hipchat:
+    secure: "TQ08kkUNCMt7k6QLzlss0rJIaVR3jaGZi4yhlBlsDmWIpqLbwiwpUu9wA3XQ\nzUspsXOSTff5CrsyCeEAutPww0YTutYzZbbQGYLUCdfwW0XKjXuYOqruRtr+\niLoaEMV/N+ebhTh2R6KR
