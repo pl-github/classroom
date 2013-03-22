@@ -96,6 +96,6 @@ class Source implements SourceInterface
         $endLine = $range->getEndLine();
         $length = $endLine - $beginLine;
 
-        return array_slice($contentLines, $beginLine, $length);
+        return array_slice($contentLines, $beginLine, $length, true);
     }
 }

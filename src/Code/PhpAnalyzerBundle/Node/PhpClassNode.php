@@ -68,7 +68,8 @@ class PhpClassNode implements NodeInterface, Measurable, Gradable
     /**
      * @inheritDoc
      */
-    public function setHash($hash) {
+    public function setHash($hash)
+    {
     }
 
     /**

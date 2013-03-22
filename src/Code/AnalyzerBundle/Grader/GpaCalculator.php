@@ -19,6 +19,7 @@ class GpaCalculator
     /**
      * Calculate GPA
      *
+     * @param ResultModel $result
      * @return float
      */
     public function calculate(ResultModel $result)
@@ -34,8 +35,7 @@ class GpaCalculator
     {
         $map = array('A' => 0, 'B' => 0, 'C' => 0, 'D' => 0, 'F' => 0);
 
-        foreach ($result->getNodes() as $node)
-        {
+        foreach ($result->getNodes() as $node) {
             if (!$node instanceof Gradable) {
                 continue;
             }
@@ -49,8 +49,7 @@ class GpaCalculator
     public function mapToGpaScore(array $map)
     {
         $score = 0;
-        foreach ($map as $grade => $count)
-        {
+        foreach ($map as $grade => $count) {
             $score += $this->gradeToGpaScore($grade) * $count;
         }
         return $score;

@@ -21,6 +21,11 @@ class SourceRange
     public function __construct($beginLine, $endLine = null)
     {
         $this->beginLine = $beginLine;
+
+        if ($endLine === null) {
+            $endLine = $beginLine;
+        }
+
         $this->endLine = $endLine;
     }
 

@@ -18,5 +18,4 @@ interface Referencable
      * @return $this
      */
     public function setHash($hash);
-
 }

@@ -53,6 +53,6 @@ class FilesystemStorage implements StorageInterface
      */
     public function getContentAsArray()
     {
-        return file($this->filename);
+        return file($this->filename, FILE_IGNORE_NEW_LINES);
     }
 }

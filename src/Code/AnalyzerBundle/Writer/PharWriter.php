@@ -29,7 +29,8 @@ class PharWriter implements WriterInterface
     public function write(ResultModel $result, $filename)
     {
         if (!\Phar::canWrite()) {
-            throw new \Exception('PharWriter needs PHAR write support enabled. Set phar.readonly = Off in your php.ini');
+            $msg = 'PharWriter needs PHAR write support enabled. Set phar.readonly = Off in your php.ini';
+            throw new \Exception($msg);
         }
 
         if (file_exists($filename)) {
@@ -72,9 +73,11 @@ class PharWriter implements WriterInterface
         $phar->stopBuffering();
 
         if (\Phar::canCompress(\Phar::BZ2)) {
-            $phar->compress(\Phar::BZ2, 'phar');
+            $phar->compress(\Phar::BZ2);
+            rename($filename . '.bz2', $filename);
         } elseif (\Phar::canCompress(\Phar::GZ)) {
-            $phar->compress(\Phar::GZ, 'phar');
+            $phar->compress(\Phar::GZ);
+            rename($filename . '.gz', $filename);
         }
 
         unset($phar);

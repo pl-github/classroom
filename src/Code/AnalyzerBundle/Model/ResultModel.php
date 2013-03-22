@@ -414,7 +414,6 @@ class ResultModel
             foreach ($typeReferences as $direction => $directionReferences) {
                 foreach ($directionReferences as $hash => $referenceHashes) {
                     if ($removeHash === $hash) {
-#echo 'key hit: ' . $type . ' / ' . $direction . ' / ' . $hash . PHP_EOL;
                         unset($this->references[$type][$direction][$hash]);
                         continue;
                     }
@@ -422,19 +421,15 @@ class ResultModel
                     if (is_array($referenceHashes)) {
                         foreach ($referenceHashes as $referenceHashKey => $referenceHash) {
                             $referenceHashString = $this->extractHash($referenceHash);
-#echo 'check: ' . $type . ' / ' . $direction . ' / ' . $removeHash . ' === ' . $referenceHashString . PHP_EOL;
 
                             if ($removeHash === $referenceHashString) {
-#echo 'multi target hit: ' . $type . ' / ' . $direction . ' / ' . $hash . PHP_EOL;
                                 unset($this->references[$type][$direction][$hash][$referenceHashKey]);
                             }
                         }
                     } else {
                         $referenceHashString = $this->extractHash($referenceHashes);
-#echo 'check: ' . $type . ' / ' . $direction . ' / ' . $removeHash . ' === ' . $referenceHashString . PHP_EOL;
 
                         if ($removeHash === $referenceHashString) {
-#echo 'single target hit: ' . $type . ' / ' . $direction . ' / ' . $hash . PHP_EOL;
                             unset($this->references[$type][$direction][$hash]);
                         }
                     }

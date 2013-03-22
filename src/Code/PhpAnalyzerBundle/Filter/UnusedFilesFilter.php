@@ -15,8 +15,7 @@ class UnusedFilesFilter implements FilterInterface
     {
         $references = $result->getReferences();
 
-        foreach ($result->getNodes() as $node)
-        {
+        foreach ($result->getNodes() as $node) {
             $hash = $node->getHash();
 
             if ($node instanceof PhpClassNode) {

@@ -28,6 +28,7 @@ class LoadCommand extends ContainerAwareCommand
             ->addArgument('filename', InputArgument::REQUIRED, 'Filename')
             ->addOption('smells', null, InputOption::VALUE_NONE, 'Show smells')
             ->addOption('source', null, InputOption::VALUE_NONE, 'Show source')
+            ->addOption('rule', null, InputOption::VALUE_REQUIRED, 'Smell rule filter')
             ->addOption('score', null, InputOption::VALUE_NONE, 'Show score');
     }
 
@@ -39,6 +40,7 @@ class LoadCommand extends ContainerAwareCommand
         $filename = $input->getArgument('filename');
         $showSmells = $input->getOption('smells');
         $showSource = $input->getOption('source');
+        $rule = $input->getOption('rule');
         $showScore = $input->getOption('score');
 
         $loader = $this->getContainer()->get('code.analyzer.loader');
@@ -50,17 +52,17 @@ class LoadCommand extends ContainerAwareCommand
 
         $output->writeln(
             'Load finished, ' .
-                number_format($tsEnd - $tsStart, 2) . ' s, ' .
-                number_format(memory_get_usage() / 1024 / 1024, 2) . ' mb'
+            number_format($tsEnd - $tsStart, 2) . ' s, ' .
+            number_format(memory_get_usage() / 1024 / 1024, 2) . ' mb'
         );
 
         if ($showSmells) {
-            $this->showSmells($output, $result, $showSource);
+            $this->showSmells($output, $result, $showSource, $rule);
         } elseif ($showScore) {
             $this->showScore($output, $result);
+        } else {
+            $this->showGpa($output, $result);
         }
-
-        $this->showGpa($output, $result);
     }
 
     private function showGpa(OutputInterface $output, ResultModel $result)
@@ -133,7 +135,7 @@ class LoadCommand extends ContainerAwareCommand
         }
     }
 
-    private function showSmells(OutputInterface $output, ResultModel $result, $showSource = false)
+    private function showSmells(OutputInterface $output, ResultModel $result, $showSource = false, $rule = null)
     {
         foreach ($result->getSmells() as $smell) {
             /* @var $smell SmellModel */
@@ -141,11 +143,16 @@ class LoadCommand extends ContainerAwareCommand
             $beginLine = $sourceRange->getBeginLine();
             $endLine = $sourceRange->getEndLine();
 
+            if ($rule && stripos($smell->getRule(), $rule) === false) {
+                continue;
+            }
+
             $classReference = $result->getReference('smell', 'smellToNode', $smell);
             $classNode = $result->getNode($classReference);
             $output->writeln(
-                '[smell] <comment>' . $smell->getRule() . '</comment> in <info>' . $classNode->getName() . ' </info>' .
-                    'line ' . $beginLine . ($beginLine != $endLine ? ':' . $endLine : '')
+                '[smell] <comment>' . $smell->getRule() . '</comment> (' . $smell->getScore() . ') '.
+                'in <info>' . $classNode->getName() . ' </info>' .
+                'line ' . $beginLine . ($beginLine != $endLine ? ':' . $endLine : '')
             );
 
             if ($showSource) {
@@ -155,7 +162,10 @@ class LoadCommand extends ContainerAwareCommand
                 $sourceReference = $result->getReference('source', 'nodeToSource', $fileNode);
                 $source = $result->getSource($sourceReference);
 
-                $output->writeln(trim($source->getRange($sourceRange)) . PHP_EOL);
+                $lines = $source->getRangeAsArray($sourceRange);
+                foreach ($lines as $lineNo => $line) {
+                    $output->writeln(str_pad($lineNo + 1, 6, ' ', STR_PAD_LEFT) . ': ' . $line);
+                }
             }
         }
     }
