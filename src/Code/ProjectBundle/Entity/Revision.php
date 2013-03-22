@@ -2,7 +2,6 @@
 
 namespace Code\ProjectBundle\Entity;
 
-use Code\ProjectBundle\Project;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
