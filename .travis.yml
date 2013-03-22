@@ -9,4 +9,4 @@ script: phpunit -c app
 
 notifications:
   hipchat:
-    secure: "TQ08kkUNCMt7k6QLzlss0rJIaVR3jaGZi4yhlBlsDmWIpqLbwiwpUu9wA3XQ\nzUspsXOSTff5CrsyCeEAutPww0YTutYzZbbQGYLUCdfwW0XKjXuYOqruRtr+\niLoaEMV/N+ebhTh2R6KR
+    secure: "ml3nIiWRpoGjia+Q7t1Zd5KO7BR4lDtLRZOamQseFBxyzpM014/uq+tSPl3U\ndawtiKw1lCGyR8QQ0ZrhVS/0XhWoUUafibgO7db76yaNXm6tjiKF6x/y0AzQ\nWudMnthDWMwv0SKHWehTJJkkxKlb+0igGEPXnoNlBMEPPAWnVlI="
