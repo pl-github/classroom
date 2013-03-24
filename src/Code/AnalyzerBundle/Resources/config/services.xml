@@ -23,6 +23,7 @@
 
         <service id="code.analyzer.filter.grade" class="Code\AnalyzerBundle\Filter\GradeFilter">
             <argument type="service" id="code.analyzer.grader" />
+            <argument type="service" id="code.analyzer.gpa_calculator" />
         </service>
     </services>
 </container>

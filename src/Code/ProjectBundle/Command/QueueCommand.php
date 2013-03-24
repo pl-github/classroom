@@ -1,8 +1,8 @@
 <?php
 
-namespace Code\BuildBundle\Command;
+namespace Code\ProjectBundle\Command;
 
-use Code\BuildBundle\Build;
+use Code\ProjectBundle\Entity\Revision;
 use JMS\JobQueueBundle\Entity\Job;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
@@ -18,9 +18,9 @@ class QueueCommand extends ContainerAwareCommand
     protected function configure()
     {
         $this
-            ->setName('code:build:queue')
-            ->setDescription('Queue build')
-            ->addArgument('projectId');
+            ->setName('code:project:queue')
+            ->setDescription('Queue revision')
+            ->addArgument('revisionId');
     }
 
     /**
@@ -28,14 +28,14 @@ class QueueCommand extends ContainerAwareCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $projectId = $input->getArgument('projectId');
+        $revisionId = $input->getArgument('revisionId');
 
         $entityManager = $this->getContainer()->get('doctrine.orm.entity_manager');
 
-        $job = new Job('code:build:build', array($projectId));
+        $job = new Job('code:project:build-revision', array($revisionId));
         $entityManager->persist($job);
         $entityManager->flush($job);
 
-        $output->writeln('Build for ' . $projectId . ' queued.');
+        $output->writeln('Build for revision id ' . $revisionId . ' queued.');
     }
 }

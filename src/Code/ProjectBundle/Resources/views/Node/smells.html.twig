@@ -15,7 +15,7 @@
                     {%  endfor %}
                     </div>
                 {% endif %}
-                <pre class="pre-scrollable" style="margin-left: 15px; margin-right: 15px;">{{ smell.source.sourceString|raw }}</pre>
+                <pre class="pre-scrollable" style="margin-left: 15px; margin-right: 15px;">{{ smell.source.content|raw }}</pre>
             {% else %}
                 <div class="alert alert-error" style="margin-left: 15px; margin-right: 15px;">No source found.</div>
             {% endif %}

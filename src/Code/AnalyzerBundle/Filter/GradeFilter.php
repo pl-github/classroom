@@ -2,6 +2,7 @@
 
 namespace Code\AnalyzerBundle\Filter;
 
+use Code\AnalyzerBundle\Grader\GpaCalculator;
 use Code\AnalyzerBundle\Grader\GraderInterface;
 use Code\AnalyzerBundle\Model\ResultModel;
 use Code\AnalyzerBundle\Node\Gradable;
@@ -14,11 +15,18 @@ class GradeFilter implements FilterInterface
     private $grader;
 
     /**
-     * @param GraderInterface $grader
+     * @var GpaCalculator
      */
-    public function __construct(GraderInterface $grader)
+    private $gpaCalculator;
+
+    /**
+     * @param GraderInterface $grader
+     * @param GpaCalculator   $gpaCalculator
+     */
+    public function __construct(GraderInterface $grader, GpaCalculator $gpaCalculator)
     {
         $this->grader = $grader;
+        $this->gpaCalculator = $gpaCalculator;
     }
 
     /**
@@ -44,5 +52,7 @@ class GradeFilter implements FilterInterface
 
             $node->setGrade($grade);
         }
+
+        $result->setGpa($this->gpaCalculator->calculate($result));
     }
 }

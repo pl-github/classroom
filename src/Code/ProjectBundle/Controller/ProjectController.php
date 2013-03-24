@@ -2,100 +2,126 @@
 
 namespace Code\ProjectBundle\Controller;
 
-use Code\ProjectBundle\Build\Loader\LoaderInterface as BuilderLoaderInterface;
-use Code\ProjectBundle\Change\Loader\LoaderInterface as ChangeLoaderInterface;
-use Code\ProjectBundle\Project;
+use Code\AnalyzerBundle\Loader\LoaderInterface;
+use Code\PhpAnalyzerBundle\Node\PhpClassNode;
+use Code\ProjectBundle\Entity\Revision;
+use Code\ProjectBundle\Entity\Project;
 use Code\ProjectBundle\Loader\LoaderInterface as ProjectLoaderInterface;
+use Doctrine\ORM\EntityManager;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
- * @Route("/project/{projectId}")
+ * @Route("/project/{projectKey}")
  */
 class ProjectController extends Controller
 {
-    private function getProject($projectId)
+    private function getProject($projectKey)
     {
-        $projectLoader = $this->container->get('code.project.loader');
-        /* @var $projectLoader ProjectLoaderInterface */
+        $entityManager = $this->get('doctrine.orm.entity_manager');
+        /* @var $entityManager EntityManager */
 
-        $project = $projectLoader->load($projectId);
+        $repository = $entityManager->getRepository('Code\ProjectBundle\Entity\Project');
+        $project = $repository->findOneBy(array('key' => $projectKey));
 
         return $project;
     }
 
-    private function getLatestBuild(Project $project)
+    private function getLatestRevisionForProject(Project $project)
     {
-        $buildLoader = $this->container->get('code.project.build.loader');
-        /* @var $buildLoader BuilderLoaderInterface */
+        $entityManager = $this->get('doctrine.orm.entity_manager');
+        /* @var $entityManager EntityManager */
 
-        if (!$project->getLatestBuildVersion()) {
-            return null;
-        }
+        $repository = $entityManager->getRepository('Code\ProjectBundle\Entity\Revision');
+        $revision = $repository->findOneBy(array('project' => $project));
 
-        $build = $buildLoader->load($project, $project->getLatestBuildVersion());
+        return $revision;
+    }
 
-        return $build;
+    private function getResultForRevision(Revision $revision)
+    {
+        $loader = $this->get('code.analyzer.loader');
+        /* @var $loader LoaderInterface */
+
+        $result = $loader->load($revision->getResultFilename());
+
+        return $result;
     }
 
     /**
      * @Route("", name="code_project")
      * @Template()
      */
-    public function indexAction(Request $request, $projectId)
+    public function indexAction(Request $request, $projectKey)
     {
         $card = $request->query->get('card');
 
-        $project = $this->getProject($projectId);
-        $build = $this->getLatestBuild($project);
+        $project = $this->getProject($projectKey);
+        $revision = $this->getLatestRevisionForProject($project);
 
-        return array('card' => $card, 'project' => $project, 'build' => $build);
+        return array('card' => $card, 'project' => $project, 'revision' => $revision);
     }
 
     /**
      * @Route("/feed", name="code_project_feed")
      * @Template()
      */
-    public function feedAction($projectId)
+    public function feedAction($projectKey)
     {
-        $changeLoader = $this->container->get('code.project.change.loader');
-        /* @var $changeLoader ChangesLoaderInterface */
+        $project = $this->getProject($projectKey);
+        $revision = $this->getLatestRevisionForProject($project);
 
-        $project = $this->getProject($projectId);
-        $build = $this->getLatestBuild($project);
-        $changes = $changeLoader->load($project);
-        $changes = array_reverse($changes->getChanges());
-
-        return array('project' => $project, 'changes' => $changes, 'build' => $build);
+        return array('project' => $project, 'changes' => array(), 'revision' => $revision);
     }
 
     /**
      * @Route("/smells", name="code_project_smells")
      * @Template()
      */
-    public function smellsAction($projectId)
+    public function smellsAction($projectKey)
     {
-        $project = $this->getProject($projectId);
-        $build = $this->getLatestBuild($project);
+        $project = $this->getProject($projectKey);
+        $revision = $this->getLatestRevisionForProject($project);
+        $result = $this->getResultForRevision($revision);
 
-        $classes = $build->getClasses();
+        $smells = array();
+        foreach ($result->getSmells() as $smell) {
+            $classNode = $result->getNode($result->getReference('smell', 'smellToNode', $smell));
+            $smells[] = array(
+                'origin' => $smell->getOrigin(),
+                'rule' => $smell->getRule(),
+                'nodeName' => $classNode->getName(),
+            );
+        }
 
-        return array('project' => $project, 'build' => $build, 'classes' => $classes);
+        return array('project' => $project, 'revision' => $revision, 'smells' => $smells);
     }
 
     /**
      * @Route("/classes", name="code_project_classes")
      * @Template()
      */
-    public function classesAction($projectId)
+    public function nodesAction($projectKey)
     {
-        $project = $this->getProject($projectId);
-        $build = $this->getLatestBuild($project);
+        $project = $this->getProject($projectKey);
+        $revision = $this->getLatestRevisionForProject($project);
+        $result = $this->getResultForRevision($revision);
 
-        $classes = $build->getClasses();
+        $nodes = array();
+        foreach ($result->getNodes() as $node) {
+            if (!$node instanceof PhpClassNode) {
+                continue;
+            }
+            $nodes[] = array(
+                'nodeName' => $node->getName(),
+                'grade' => $node->getGrade(),
+                'numSmells' => $result->hasReference('smell', 'nodeToSmells', $node) ? count($result->getReference('smell', 'nodeToSmells', $node)) : 0,
+                'metrics' => $node->getMetrics(),
+            );
+        }
 
-        return array('project' => $project, 'classes' => $classes);
+        return array('project' => $project, 'revision' => $revision, 'nodes' => $nodes);
     }
 }

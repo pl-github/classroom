@@ -11,7 +11,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class ListCommand extends ContainerAwareCommand
+class ListProjectsCommand extends ContainerAwareCommand
 {
     protected $name;
 
@@ -21,7 +21,7 @@ class ListCommand extends ContainerAwareCommand
     protected function configure()
     {
         $this
-            ->setName('code:project:list')
+            ->setName('code:project:list-projects')
             ->setDescription('list projects')
             ->addArgument('filter', InputArgument::OPTIONAL);
     }

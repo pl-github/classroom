@@ -7,5 +7,5 @@ code_project:
     type: annotation
 
 code_class:
-    resource: "@CodeProjectBundle/Controller/ClassController.php"
+    resource: "@CodeProjectBundle/Controller/NodeController.php"
     type: annotation

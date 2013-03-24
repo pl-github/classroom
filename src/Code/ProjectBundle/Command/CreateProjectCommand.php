@@ -11,7 +11,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class CreateCommand extends ContainerAwareCommand
+class CreateProjectCommand extends ContainerAwareCommand
 {
     protected $name;
 
@@ -21,8 +21,9 @@ class CreateCommand extends ContainerAwareCommand
     protected function configure()
     {
         $this
-            ->setName('code:project:create')
+            ->setName('code:project:create-project')
             ->setDescription('Create project')
+            ->addArgument('key', InputArgument::REQUIRED)
             ->addArgument('name', InputArgument::REQUIRED)
             ->addArgument('type', InputArgument::REQUIRED)
             ->addArgument('url', InputArgument::REQUIRED)
@@ -34,7 +35,8 @@ class CreateCommand extends ContainerAwareCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $name = $input->getArgument('name');
+        $projectKey = $input->getArgument('key');
+        $projectName = $input->getArgument('name');
         $type = $input->getArgument('type');
         $url = $input->getArgument('url');
         $libDir = $input->getArgument('libDir');
@@ -49,7 +51,8 @@ class CreateCommand extends ContainerAwareCommand
             ->setProject($project);
 
         $project
-            ->setName($name)
+            ->setKey($projectKey)
+            ->setName($projectName)
             ->setRepositoryConfig($repositoryConfig);
 
         $entityManager = $this->getContainer()->get('doctrine.orm.entity_manager');
@@ -59,5 +62,7 @@ class CreateCommand extends ContainerAwareCommand
         $entityManager->persist($project);
 
         $entityManager->flush();
+
+        $output->writeln('New project' . $projectKey . ' created.');
     }
 }

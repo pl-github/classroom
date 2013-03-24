@@ -1,9 +1,9 @@
 <?php
 
-namespace Code\BuildBundle\Comparer;
+namespace Code\ProjectBundle\Comparer;
 
 use Code\AnalyzerBundle\Model\ClassModel;
-use Code\BuildBundle\Build;
+use Code\ProjectBundle\Entity\Revision;
 use Code\ProjectBundle\Change\ChangeSet;
 use Code\ProjectBundle\Change\NewClassChange;
 use Code\ProjectBundle\Change\ClassRemovedChange;

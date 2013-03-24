@@ -1,0 +1,22 @@
+<div>
+    <table class="table table-hover">
+        <tr>
+            <td>Class</td>
+            <td>score</td>
+            <td>WMC</td>
+            <td>Methods</td>
+            <td>Smells</td>
+        </tr>
+    {% for node in nodes %}
+        <tr>
+            <td>
+                <div class="classname"><a href="{{ url("code_node", {projectKey: project.key, nodeName: node.nodeName}) }}">{{ node.nodeName }}</a></div>
+            </td>
+            <td><span class="badge badge-grade-{{ node.grade }}">{{ node.grade }}</span></td>
+            <td>{% if node.metrics.complexity is defined %}{{ node.metrics.complexity.value }}{% else %}0{% endif %}</td>
+            <td>{% if node.metrics.methods is defined %}{{ node.metrics.methods.value }}{% else %}0{% endif %}</td>
+            <td>{{ node.numSmells }}</td>
+        </tr>
+    {% endfor %}
+    </table>
+</div>

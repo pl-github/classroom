@@ -8,6 +8,17 @@
         <service id="code.project.merge.classes_merge" class="Code\ProjectBundle\Merger\ClassesMerger">
         </service>
 
+        <service id="code.project.data_dir_factory" class="Code\ProjectBundle\DataDirFactory">
+            <argument>%kernel.root_dir%</argument>
+        </service>
+
+        <service id="code.project.builder" class="Code\ProjectBundle\Builder">
+            <argument type="service" id="code.php_analyzer.result_builder" />
+            <argument type="service" id="code.analyzer.writer" />
+            <argument type="service" id="code.repository.factory" />
+            <argument type="service" id="code.project.data_dir_factory" />
+        </service>
+
         <service id="code.project.change.loader" class="Code\ProjectBundle\Change\Loader\SerializeLoader">
             <argument>%kernel.root_dir%</argument>
         </service>
@@ -16,5 +27,7 @@
             <argument>%kernel.root_dir%</argument>
         </service>
 
+        <service id="code.project.comparer" class="Code\ProjectBundle\Comparer\Comparer">
+        </service>
     </services>
 </container>

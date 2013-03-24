@@ -20,7 +20,6 @@ class AppKernel extends Kernel
             new JMS\DiExtraBundle\JMSDiExtraBundle($this),
             new JMS\SecurityExtraBundle\JMSSecurityExtraBundle(),
             new Code\ProjectBundle\CodeProjectBundle(),
-            new Code\BuildBundle\CodeBuildBundle(),
             new Code\AnalyzerBundle\CodeAnalyzerBundle(),
             new Code\RepositoryBundle\CodeRepositoryBundle(),
             new Code\PhpAnalyzerBundle\CodePhpAnalyzerBundle(),

@@ -34,9 +34,15 @@ class Revision
 
     /**
      * @var mixed
-     * @ORM\Column(type = "string")
+     * @ORM\Column(type = "string", nullable = true)
      */
     protected $revision;
+
+    /**
+     * @var string
+     * @ORM\Column(type = "string", nullable = true)
+     */
+    protected $resultFilename;
 
     /**
      * @var integer
@@ -46,13 +52,13 @@ class Revision
 
     /**
      * @var float
-     * @ORM\Column(type = "float")
+     * @ORM\Column(type = "float", nullable = true)
      */
     protected $gpa;
 
     /**
      * @var integer
-     * @ORM\Column(type = "bigint")
+     * @ORM\Column(type = "bigint", nullable = true)
      */
     protected $runTime;
 
@@ -64,7 +70,7 @@ class Revision
 
     /**
      * @var \DateTime
-     * @ORM\Column(type = "date")
+     * @ORM\Column(type = "date", nullable = true)
      */
     protected $builtAt;
 
@@ -120,6 +126,29 @@ class Revision
     public function setRevision($revision)
     {
         $this->revision = $revision;
+
+        return $this;
+    }
+
+    /**
+     * Return result filename
+     *
+     * @return string
+     */
+    public function getResultFilename()
+    {
+        return $this->resultFilename;
+    }
+
+    /**
+     * Set result filename
+     *
+     * @param string $resultFilename
+     * @return $this
+     */
+    public function setResultFilename($resultFilename)
+    {
+        $this->resultFilename = $resultFilename;
 
         return $this;
     }
@@ -212,6 +241,29 @@ class Revision
     public function setCreateAt(\DateTime $createdAt)
     {
         $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    /**
+     * Return built at
+     *
+     * @return \DateTime
+     */
+    public function getBuiltAt()
+    {
+        return $this->builtAt;
+    }
+
+    /**
+     * Set built at
+     *
+     * @param \DateTime $builtAt
+     * @return $this
+     */
+    public function setBuiltAt(\DateTime $builtAt)
+    {
+        $this->builtAt = $builtAt;
 
         return $this;
     }

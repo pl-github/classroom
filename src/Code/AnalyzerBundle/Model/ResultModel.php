@@ -20,6 +20,16 @@ class ResultModel
     const REFERENCE_DIR_NODE_TO_SOURCE = 'nodeToSource';
 
     /**
+     * @var float
+     */
+    private $gpa = null;
+
+    /**
+     * @var float
+     */
+    private $builtAt = null;
+
+    /**
      * @var NodeInterface[]
      */
     private $nodes = array();
@@ -45,21 +55,45 @@ class ResultModel
     private $artifacts = array();
 
     /**
-     * @inheritDoc
+     * Set GPA
+     *
+     * @param float $gpa
+     * @return $this
      */
-    public function getNodes()
+    public function setGpa($gpa)
     {
-        return $this->nodes;
+        $this->gpa = $gpa;
     }
 
     /**
-     * Return references
+     * Return GPA
      *
-     * @return array
+     * @return float
      */
-    public function getReferences()
+    public function getGpa()
     {
-        return $this->references;
+        return $this->gpa;
+    }
+
+    /**
+     * Set built at
+     *
+     * @param \DateTime $builtAt
+     * @return $this
+     */
+    public function setBuiltAt(\DateTime $builtAt)
+    {
+        $this->builtAt = $builtAt;
+    }
+
+    /**
+     * Return built at
+     *
+     * @return \DateTime
+     */
+    public function getBuiltAt()
+    {
+        return $this->builtAt;
     }
 
     /**
@@ -141,6 +175,26 @@ class ResultModel
         $this->removeReferences($node);
 
         return $this;
+    }
+
+    /**
+     * Return nodes
+     *
+     * @return NodeInterface[]
+     */
+    public function getNodes()
+    {
+        return $this->nodes;
+    }
+
+    /**
+     * Are nodes set?
+     *
+     * @return boolean
+     */
+    public function hasNodes()
+    {
+        return count($this->nodes) > 0;
     }
 
     /**
@@ -399,6 +453,16 @@ class ResultModel
         $hash = $this->extractHash($hash);
 
         return !empty($this->references[$type][$dir][$hash]);
+    }
+
+    /**
+     * Return references
+     *
+     * @return array
+     */
+    public function getReferences()
+    {
+        return $this->references;
     }
 
     /**

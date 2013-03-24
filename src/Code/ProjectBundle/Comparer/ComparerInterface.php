@@ -1,8 +1,8 @@
 <?php
 
-namespace Code\BuildBundle\Comparer;
+namespace Code\ProjectBundle\Comparer;
 
-use Code\BuildBundle\Build;
+use Code\ProjectBundle\Entity\Revision;
 
 interface ComparerInterface
 {

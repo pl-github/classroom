@@ -42,7 +42,7 @@ class PdependCollector implements CollectorInterface
      */
     public function collect($sourceDirectory, $workDirectory)
     {
-        $pdependFilename = $this->ensureDirectoryWritable($workDirectory) . '/pdepend.xml';
+        $pdependFilename = $workDirectory . '/pdepend.xml';
         #return $pdependFilename;
 
         if (file_exists($pdependFilename) && !unlink($pdependFilename)) {
@@ -61,25 +61,5 @@ class PdependCollector implements CollectorInterface
         $this->processExecutor->execute($process, 1);
 
         return $pdependFilename;
-    }
-
-    /**
-     * Ensure directory exists and is writable
-     *
-     * @param string $directory
-     * @return string
-     * @throws \Exception
-     */
-    private function ensureDirectoryWritable($directory)
-    {
-        if (!file_exists($directory) && !mkdir($directory, 0777, true)) {
-            throw new \Exception('Can\'t create data dir');
-        }
-
-        if (!is_writable($directory)) {
-            throw new \Exception('Data dir not writable');
-        }
-
-        return $directory;
     }
 }

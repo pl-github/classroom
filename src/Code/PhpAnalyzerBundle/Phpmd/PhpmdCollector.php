@@ -42,7 +42,7 @@ class PhpmdCollector implements CollectorInterface
      */
     public function collect($sourceDirectory, $workDirectory)
     {
-        $phpmdFilename = $this->ensureDirectoryWritable($workDirectory) . '/phpmd.xml';
+        $phpmdFilename = $workDirectory . '/phpmd.xml';
         #return $phpmdFilename;
 
         if (file_exists($phpmdFilename) && !unlink($phpmdFilename)) {
@@ -64,25 +64,5 @@ class PhpmdCollector implements CollectorInterface
         $this->processExecutor->execute($process, 2);
 
         return $phpmdFilename;
-    }
-
-    /**
-     * Ensure directory exists and is writable
-     *
-     * @param string $directory
-     * @return string
-     * @throws \Exception
-     */
-    private function ensureDirectoryWritable($directory)
-    {
-        if (!file_exists($directory) && !mkdir($directory, 0777, true)) {
-            throw new \Exception('Can\'t create data dir');
-        }
-
-        if (!is_writable($directory)) {
-            throw new \Exception('Data dir not writable');
-        }
-
-        return $directory;
     }
 }

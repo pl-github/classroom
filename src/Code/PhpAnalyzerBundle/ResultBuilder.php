@@ -39,6 +39,7 @@ class ResultBuilder implements ResultBuilderInterface
         $this->analyzer->analyze($result, $sourceDirectory, $workDirectory);
         $this->filter->filter($result);
 
+        $result->setBuiltAt(new \DateTime());
         return $result;
     }
 }

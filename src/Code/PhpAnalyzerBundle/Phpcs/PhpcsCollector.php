@@ -42,7 +42,7 @@ class PhpcsCollector implements CollectorInterface
      */
     public function collect($sourceDirectory, $workDirectory)
     {
-        $phpcsFilename = $this->ensureDirectoryWritable($workDirectory) . '/phpcs.xml';
+        $phpcsFilename = $workDirectory . '/phpcs.xml';
         #return $phpcsFilename;
 
         if (file_exists($phpcsFilename) && !unlink($phpcsFilename)) {
@@ -65,25 +65,5 @@ class PhpcsCollector implements CollectorInterface
         $this->processExecutor->execute($process, 1);
 
         return $phpcsFilename;
-    }
-
-    /**
-     * Ensure directory exists and is writable
-     *
-     * @param string $directory
-     * @return string
-     * @throws \Exception
-     */
-    private function ensureDirectoryWritable($directory)
-    {
-        if (!file_exists($directory) && !mkdir($directory, 0777, true)) {
-            throw new \Exception('Can\'t create data dir');
-        }
-
-        if (!is_writable($directory)) {
-            throw new \Exception('Data dir not writable');
-        }
-
-        return $directory;
     }
 }

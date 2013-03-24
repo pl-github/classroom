@@ -29,6 +29,14 @@ class XmlSerializer implements SerializerInterface
         $xmlSources = $xmlResult->appendChild($dom->createElement('sources'));
         $xmlReferences = $xmlResult->appendChild($dom->createElement('references'));
 
+        $xmlGpa = $dom->createAttribute('gpa');
+        $xmlGpa->value = $result->getGpa();
+        $xmlResult->appendChild($xmlGpa);
+
+        $xmlBuiltAt = $dom->createAttribute('builtAt');
+        $xmlBuiltAt->value = $result->getBuiltAt()->format('c');
+        $xmlResult->appendChild($xmlBuiltAt);
+
         foreach ($result->getNodes() as $node) {
             $xmlNode = $dom->createElement('node');
             $xmlNodes->appendChild($xmlNode);
@@ -174,6 +182,13 @@ class XmlSerializer implements SerializerInterface
         $result = new ResultModel();
 
         $xml = simplexml_load_string($data);
+
+        $xmlAttr = $xml->attributes();
+        $gpa = (string)$xmlAttr['gpa'];
+        $builtAt = (string)$xmlAttr['builtAt'];
+
+        $result->setGpa($gpa);
+        $result->setBuiltAt(new \DateTime($builtAt));
 
         foreach ($xml->nodes->node as $xmlNode) {
             $nodeAttr = $xmlNode->attributes();

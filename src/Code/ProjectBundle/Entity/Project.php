@@ -23,6 +23,12 @@ class Project
      * @var string
      * @ORM\Column(type = "string")
      */
+    protected $key;
+
+    /**
+     * @var string
+     * @ORM\Column(type = "string")
+     */
     protected $name;
 
     /**
@@ -58,6 +64,29 @@ class Project
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * Return key
+     *
+     * @return string
+     */
+    public function getKey()
+    {
+        return $this->key;
+    }
+
+    /**
+     * Set key
+     *
+     * @param string $key
+     * @return $this
+     */
+    public function setKey($key)
+    {
+        $this->key = $key;
+
+        return $this;
     }
 
     /**

@@ -42,7 +42,7 @@ class PhpcpdCollector implements CollectorInterface
      */
     public function collect($sourceDirectory, $workDirectory)
     {
-        $phpcpdFilename = $this->ensureDirectoryWritable($workDirectory) . '/phpcpd.xml';
+        $phpcpdFilename = $workDirectory . '/phpcpd.xml';
         #return $phpcpdFilename;
 
         if (file_exists($phpcpdFilename) && !unlink($phpcpdFilename)) {
@@ -64,25 +64,5 @@ class PhpcpdCollector implements CollectorInterface
         $this->processExecutor->execute($process, 1);
 
         return $phpcpdFilename;
-    }
-
-    /**
-     * Ensure directory exists and is writable
-     *
-     * @param string $directory
-     * @return string
-     * @throws \Exception
-     */
-    private function ensureDirectoryWritable($directory)
-    {
-        if (!file_exists($directory) && !mkdir($directory, 0777, true)) {
-            throw new \Exception('Can\'t create data dir');
-        }
-
-        if (!is_writable($directory)) {
-            throw new \Exception('Data dir not writable');
-        }
-
-        return $directory;
     }
 }
