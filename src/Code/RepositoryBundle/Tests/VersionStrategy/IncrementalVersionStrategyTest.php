@@ -2,7 +2,7 @@
 
 namespace Code\RepositoryBundle\Tests\Build\VersionStrategy;
 
-use Code\ProjectBundle\Project;
+use Code\ProjectBundle\DataDir;
 use Code\RepositoryBundle\VersionStrategy\IncrementalVersionStrategy;
 use org\bovigo\vfs\vfsStream;
 
@@ -12,8 +12,9 @@ class IncrementalVersionStrategyTest extends \PHPUnit_Framework_TestCase
     {
         vfsStream::setup('root');
 
-        $strategy = new IncrementalVersionStrategy(vfsStream::url('root'));
-        $version = $strategy->determineVersion();
+        $dataDir = new DataDir(vfsStream::url('root'));
+        $strategy = new IncrementalVersionStrategy();
+        $version = $strategy->determineVersion($dataDir);
 
         $this->assertEquals(1, $version);
     }
@@ -22,32 +23,10 @@ class IncrementalVersionStrategyTest extends \PHPUnit_Framework_TestCase
     {
         vfsStream::setup('root', 0777, array('version' => '5'));
 
-        $strategy = new IncrementalVersionStrategy(vfsStream::url('root'));
-        $version = $strategy->determineVersion();
+        $dataDir = new DataDir(vfsStream::url('root'));
+        $strategy = new IncrementalVersionStrategy();
+        $version = $strategy->determineVersion($dataDir);
 
         $this->assertEquals(6, $version);
-    }
-
-    /**
-     * @expectedException \Exception
-     */
-    public function testWriteThrowsExceptionOnFailedMkdir()
-    {
-        vfsStream::setup('mkdirRoot', 0);
-
-        $strategy = new IncrementalVersionStrategy(vfsStream::url('mkdirRoot'));
-        $strategy->determineVersion();
-    }
-
-    /**
-     * @expectedException \Exception
-     */
-    public function testWriteThrowsExceptionOnFailedPermissions()
-    {
-        vfsStream::setup('permRoot', 0777, array('data' => array('testProject' => array())));
-        chmod(vfsStream::url('permRoot/data/testProject'), 0);
-
-        $strategy = new IncrementalVersionStrategy(vfsStream::url('permRoot/data/testProject'));
-        $strategy->determineVersion();
     }
 }
