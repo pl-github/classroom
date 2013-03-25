@@ -42,7 +42,7 @@ class XmlSerializerTest extends \PHPUnit_Framework_TestCase
     <node class="Code\PhpAnalyzerBundle\Node\PhpFileNode" hash="class" name="class"/>
   </nodes>
   <smells>
-    <smell class="Code\AnalyzerBundle\Result\Smell\Smell" hash="0b2c4674ea4c715a57d8ca7ab859d0902d5ee3f8" origin="origin" rule="rule" score="5" beginLine="10" endLine="20"/>
+    <smell class="Code\AnalyzerBundle\Result\Smell\Smell" hash="0b2c4674ea4c715a57d8ca7ab859d0902d5ee3f8" origin="origin" rule="rule" score="5" beginLine="10" endLine="20">text</smell>
   </smells>
   <sources>
     <source hash="c02dab12919246ad2f4c22014bdab84a842cb1b6" class="Code\AnalyzerBundle\Result\Source\Source" storageClass="Code\AnalyzerBundle\Result\Source\Storage\StringStorage">content</source>
