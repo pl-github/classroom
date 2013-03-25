@@ -33,5 +33,4 @@ class GradeCounter
 
         return $breakdown;
     }
-
 }

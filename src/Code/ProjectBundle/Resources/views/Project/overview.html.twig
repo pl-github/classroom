@@ -6,7 +6,7 @@
 <div class="well">
     <div><i class="icon-align-left"></i> Breakdown</div>
     {% for grade, count in revision.getBreakdown %}
-        <div><span class="badge badge-grade-{{ grade }}">{{ grade }}</span> {{ count }}</div>
+        <div><a href="{{ url("code_project_nodes", {projectKey: project.key, grade: grade}) }}"><span class="badge badge-grade-{{ grade }}">{{ grade }}</span> {{ count }}</a></div>
     {% endfor %}
 </div>
 

@@ -117,6 +117,9 @@ class XmlSerializer implements SerializerInterface
             $xmlEndLine = $dom->createAttribute('endLine');
             $xmlEndLine->value = $smell->getSourceRange()->getEndLine();
             $xmlSmell->appendChild($xmlEndLine);
+
+            $xmlText = $dom->createTextNode($smell->getText());
+            $xmlSmell->appendChild($xmlText);
         }
 
         foreach ($result->getReferences() as $type => $typeReferences) {
@@ -253,9 +256,10 @@ class XmlSerializer implements SerializerInterface
             $score = (string)$smellAttr['score'];
             $beginLine = (integer)$smellAttr['beginLine'];
             $endLine = (integer)$smellAttr['endLine'];
+            $text = (string)$xmlSmell;
 
             $sourceRange = new SourceRange($beginLine, $endLine);
-            $smell = new $classname($origin, $rule, '', $sourceRange, $score);
+            $smell = new $classname($origin, $rule, $text, $sourceRange, $score);
             $smell->setHash($hash);
             $result->addSmell($smell);
         }

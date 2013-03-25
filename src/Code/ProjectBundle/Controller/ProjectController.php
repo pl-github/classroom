@@ -133,18 +133,26 @@ class ProjectController extends Controller
     }
 
     /**
-     * @Route("/classes", name="code_project_classes")
+     * @Route("/nodes", name="code_project_nodes")
      * @Template()
      */
-    public function nodesAction($projectKey)
+    public function nodesAction(Request $request, $projectKey)
     {
         $project = $this->getProject($projectKey);
         $revision = $this->getLatestRevisionForProject($project);
         $result = $this->getResultForRevision($revision);
 
+        $grade = null;
+        if ($request->query->has('grade')) {
+            $grade = $request->query->get('grade');
+        }
+
         $nodes = array();
         foreach ($result->getNodes() as $node) {
             if (!$node instanceof PhpClassNode) {
+                continue;
+            }
+            if ($grade && $node->getGrade() !== $grade) {
                 continue;
             }
             $nodes[] = array(
