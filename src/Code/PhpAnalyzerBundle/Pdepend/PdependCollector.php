@@ -2,13 +2,13 @@
 
 namespace Code\PhpAnalyzerBundle\Pdepend;
 
-use Code\AnalyzerBundle\Analyzer\Collector\CollectorInterface;
+use Code\AnalyzerBundle\Log\Log;
 use Code\AnalyzerBundle\ProcessExecutor;
 use Symfony\Component\HttpKernel\Log\LoggerInterface;
 use Symfony\Component\Process\ProcessBuilder;
 use Symfony\Component\Process\Process;
 
-class PdependCollector implements CollectorInterface
+class PdependCollector
 {
     /**
      * @var ProcessExecutor
@@ -40,7 +40,7 @@ class PdependCollector implements CollectorInterface
     /**
      * @inheritDoc
      */
-    public function collect($sourceDirectory, $workDirectory)
+    public function collect(Log $log, $sourceDirectory, $workDirectory)
     {
         $pdependFilename = $workDirectory . '/pdepend.xml';
         #return $pdependFilename;
@@ -56,9 +56,13 @@ class PdependCollector implements CollectorInterface
 
         $process = $processBuilder->getProcess();
 
+        $log->addCommand($process->getCommandLine());
         $this->logger->debug($process->getCommandLine());
 
         $this->processExecutor->execute($process, 1);
+
+        $log->addOutput($process->getOutput());
+        $log->addError($process->getErrorOutput());
 
         return $pdependFilename;
     }

@@ -1,9 +1,8 @@
 <?php
 
-namespace Code\PhpAnalyzerBundle\Tests\Phpmd\PhpmdProcessor;
+namespace Code\PhpAnalyzerBundle\Tests\Phpmd;
 
-use Code\AnalyzerBundle\Model\ClassesModel;
-use Code\AnalyzerBundle\Model\ResultModel;
+use Code\AnalyzerBundle\Result\Result;
 use Code\PhpAnalyzerBundle\Node\PhpClassNode;
 use Code\PhpAnalyzerBundle\Node\PhpFileNode;
 use Code\PhpAnalyzerBundle\Phpmd\PhpmdProcessor;
@@ -33,23 +32,9 @@ EOL;
 
         vfsStream::setup('root', 0777, array('phpmd.xml' => $phpmdXml));
 
-        $reflectionServiceMock = $this->getMockBuilder('Code\AnalyzerBundle\ReflectionService')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $processor = new PhpmdProcessor();
 
-        $reflectionServiceMock
-            ->expects($this->any())
-            ->method('getClassNameForFile')
-            ->will($this->returnArgument(0));
-
-        $reflectionServiceMock
-            ->expects($this->any())
-            ->method('getSourceLines')
-            ->will($this->returnValue(array('A', 'B', 'C', 'D')));
-
-        $processor = new PhpmdProcessor($reflectionServiceMock);
-
-        $result = new ResultModel();
+        $result = new Result();
         $fileNode1 = new PhpFileNode('file1.php');
         $fileNode2 = new PhpFileNode('file2.php');
         $result->addNode($fileNode1);
@@ -64,9 +49,9 @@ EOL;
 
     /**
      * @depends testProcess
-     * @param ResultModel $result
+     * @param Result $result
      */
-    public function testClass1(ResultModel $result)
+    public function testClass1(Result $result)
     {
         $this->assertTrue($result->hasSmells());
     }

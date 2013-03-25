@@ -1,12 +1,11 @@
 <?php
 
-namespace Code\PhpAnalyzerBundle\Tests\Pdepend\PdependProcessor;
+namespace Code\PhpAnalyzerBundle\Tests\Pdepend;
 
-use Code\AnalyzerBundle\Model\ResultModel;
+use Code\AnalyzerBundle\Result\Result;
 use Code\PhpAnalyzerBundle\Node\PhpClassNode;
 use Code\PhpAnalyzerBundle\Pdepend\PdependProcessor;
 use org\bovigo\vfs\vfsStream;
-use Code\AnalyzerBundle\Model\ClassesModel;
 
 class PdependProcessorTest extends \PHPUnit_Framework_TestCase
 {
@@ -38,18 +37,9 @@ EOL;
 
         vfsStream::setup('root', 0777, array('pdepend.xml' => $pdependXml));
 
-        $reflectionServiceMock = $this->getMockBuilder('Code\AnalyzerBundle\ReflectionService')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $processor = new PdependProcessor();
 
-        $reflectionServiceMock
-            ->expects($this->any())
-            ->method('getClassnameForFile')
-            ->will($this->returnArgument(0));
-
-        $processor = new PdependProcessor($reflectionServiceMock);
-
-        $result = new ResultModel();
+        $result = new Result();
         $result->addNode(new PhpClassNode('package1\\class1'));
         $result->addNode(new PhpClassNode('package2\\class2'));
 
@@ -60,9 +50,9 @@ EOL;
 
     /**
      * @depends testProcess
-     * @param ResultModel $result
+     * @param Result $result
      */
-    public function testClass1(ResultModel $result)
+    public function testClass1(Result $result)
     {
         $class = $result->getNode('package1\\class1');
         $this->assertTrue($class->hasMetrics());
@@ -70,9 +60,9 @@ EOL;
 
     /**
      * @depends testProcess
-     * @param ResultModel $result
+     * @param Result $result
      */
-    public function testClass2(ResultModel $result)
+    public function testClass2(Result $result)
     {
         $class = $result->getNode('package2\\class2');
         $this->assertTrue($class->hasMetrics());

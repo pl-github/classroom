@@ -2,8 +2,8 @@
 
 namespace Code\AnalyzerBundle\Grader;
 
-use Code\AnalyzerBundle\Node\NodeInterface;
-use Code\AnalyzerBundle\Smell\SmellInterface;
+use Code\AnalyzerBundle\Result\Node\NodeInterface;
+use Code\AnalyzerBundle\Result\Smell\SmellInterface;
 
 interface GraderInterface
 {

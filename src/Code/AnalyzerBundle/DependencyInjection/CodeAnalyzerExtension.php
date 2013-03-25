@@ -22,5 +22,6 @@ class CodeAnalyzerExtension extends Extension
         $loader->load('services.xml');
         $loader->load('loaders.xml');
         $loader->load('writers.xml');
+        $loader->load('post_processors.xml');
     }
 }

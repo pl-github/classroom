@@ -2,7 +2,7 @@
 
 namespace Code\AnalyzerBundle\Loader;
 
-use Code\AnalyzerBundle\Model\ResultModel;
+use Code\AnalyzerBundle\Result\Result;
 
 interface LoaderInterface
 {
@@ -10,7 +10,7 @@ interface LoaderInterface
      * Load result
      *
      * @param string $filename
-     * @return ResultModel
+     * @return Result
      */
     public function load($filename);
 

@@ -2,7 +2,7 @@
 
 namespace Code\AnalyzerBundle\Loader;
 
-use Code\AnalyzerBundle\Model\ResultModel;
+use Code\AnalyzerBundle\Result\Result;
 use Code\AnalyzerBundle\Serializer\SerializerInterface;
 
 class PharLoader implements LoaderInterface
@@ -29,7 +29,7 @@ class PharLoader implements LoaderInterface
 
         $data = file_get_contents($pharFilename . '/result.' . $this->serializer->getType());
         $result = $this->serializer->deserialize($data);
-        /* @var $result ResultModel */
+        /* @var $result Result */
 
         foreach ($result->getSources() as $source) {
             $source->getStorage()->setFilename($pharFilename . '/' . $source->getStorage()->getFilename());

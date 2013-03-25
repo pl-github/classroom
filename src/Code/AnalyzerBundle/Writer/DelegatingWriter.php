@@ -2,8 +2,7 @@
 
 namespace Code\AnalyzerBundle\Writer;
 
-use Code\AnalyzerBundle\Model\ResultModel;
-use Code\AnalyzerBundle\Serializer\SerializerInterface;
+use Code\AnalyzerBundle\Result\Result;
 
 class DelegatingWriter implements WriterInterface
 {
@@ -23,7 +22,7 @@ class DelegatingWriter implements WriterInterface
     /**
      * @inheritDoc
      */
-    public function write(ResultModel $result, $filename)
+    public function write(Result $result, $filename)
     {
         $writer = $this->writerResolver->resolve($filename);
 

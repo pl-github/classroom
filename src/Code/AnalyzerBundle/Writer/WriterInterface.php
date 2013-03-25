@@ -2,18 +2,18 @@
 
 namespace Code\AnalyzerBundle\Writer;
 
-use Code\AnalyzerBundle\Model\ResultModel;
+use Code\AnalyzerBundle\Result\Result;
 
 interface WriterInterface
 {
     /**
      * Write result
      *
-     * @param ResultModel $result
-     * @param string      $filename
+     * @param Result $result
+     * @param string $filename
      * @return string
      */
-    public function write(ResultModel $result, $filename);
+    public function write(Result $result, $filename);
 
     /**
      * Return supported extension

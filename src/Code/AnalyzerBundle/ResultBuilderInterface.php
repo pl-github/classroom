@@ -2,13 +2,17 @@
 
 namespace Code\AnalyzerBundle;
 
+use Code\AnalyzerBundle\Result\Result;
+
 interface ResultBuilderInterface
 {
     /**
-     * Build
+     * Build result
      *
-     * @param string $sourceDirectory
-     * @param string $workDirectory
+     * @param string   $sourceDirectory
+     * @param string   $workingDirectory
+     * @param callable $logCallback
+     * @return Result
      */
-    public function build($sourceDirectory, $workDirectory);
+    public function buildResult($sourceDirectory, $workingDirectory, callable $logCallback = null);
 }

@@ -57,6 +57,18 @@ class Revision
     protected $gpa;
 
     /**
+     * @var array
+     * @ORM\Column(type = "array", nullable = true)
+     */
+    protected $breakdown;
+
+    /**
+     * @var array
+     * @ORM\Column(type = "array", nullable = true)
+     */
+    protected $hotspots;
+
+    /**
      * @var integer
      * @ORM\Column(type = "bigint", nullable = true)
      */
@@ -64,13 +76,13 @@ class Revision
 
     /**
      * @var \DateTime
-     * @ORM\Column(type = "date")
+     * @ORM\Column(type = "datetime")
      */
     protected $createdAt;
 
     /**
      * @var \DateTime
-     * @ORM\Column(type = "date", nullable = true)
+     * @ORM\Column(type = "datetime", nullable = true)
      */
     protected $builtAt;
 
@@ -118,7 +130,7 @@ class Revision
     }
 
     /**
-     * Set version
+     * Set revision
      *
      * @param mixed $revision
      * @return $this
@@ -183,7 +195,7 @@ class Revision
      */
     public function getGpa()
     {
-        return $this->version;
+        return $this->gpa;
     }
 
     /**
@@ -195,6 +207,52 @@ class Revision
     public function setGpa($gpa)
     {
         $this->gpa = $gpa;
+
+        return $this;
+    }
+
+    /**
+     * Return breakdown
+     *
+     * @return array
+     */
+    public function getBreakdown()
+    {
+        return $this->breakdown;
+    }
+
+    /**
+     * Set breakdown
+     *
+     * @param array $breakdown
+     * @return $this
+     */
+    public function setBreakdown(array $breakdown)
+    {
+        $this->breakdown = $breakdown;
+
+        return $this;
+    }
+
+    /**
+     * Return hotspots
+     *
+     * @return array
+     */
+    public function getHotspots()
+    {
+        return $this->hotspots;
+    }
+
+    /**
+     * Set hotspots
+     *
+     * @param array $hotspots
+     * @return $this
+     */
+    public function setHotspots(array $hotspots)
+    {
+        $this->hotspots = $hotspots;
 
         return $this;
     }
@@ -266,52 +324,5 @@ class Revision
         $this->builtAt = $builtAt;
 
         return $this;
-    }
-
-    /**
-     * Return breakdown
-     *
-     * @return array
-     */
-    public function getBreakdown()
-    {
-        $breakdown = array();
-        foreach ($this->getClasses()->getClasses() as $class) {
-            if (!isset($breakdown[$class->getScore()])) {
-                $breakdown[$class->getScore()] = 0;
-            }
-            $breakdown[$class->getScore()]++;
-        }
-
-        ksort($breakdown);
-
-        return $breakdown;
-    }
-
-    /**
-     * Return hotspots
-     *
-     * @param integer $length
-     * @return array
-     */
-    public function getHotspots($length = 8)
-    {
-        $hotspots = array();
-        $scores = array();
-        foreach ($this->getClasses()->getClasses() as $class) {
-            $scores[] = $class->getScore();
-            $hotspots[] = array(
-                'name' => $class->getName(),
-                'fullQualifiedName' => $class->getFullQualifiedName(),
-                'score' => $class->getScore()
-            );
-        }
-
-        array_multisort($scores, $hotspots);
-
-        $hotspots = array_slice($hotspots, -$length);
-        $hotspots = array_reverse($hotspots);
-
-        return $hotspots;
     }
 }

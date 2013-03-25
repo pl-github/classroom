@@ -2,10 +2,7 @@
 
 namespace Code\AnalyzerBundle\Writer;
 
-use Code\AnalyzerBundle\Model\NodeInterface;
-use Code\AnalyzerBundle\Model\Reference;
-use Code\AnalyzerBundle\Model\ResultModel;
-use Code\AnalyzerBundle\Model\SmellModel;
+use Code\AnalyzerBundle\Result\Result;
 use Code\AnalyzerBundle\Serializer\SerializerInterface;
 
 class FileWriter implements WriterInterface
@@ -26,7 +23,7 @@ class FileWriter implements WriterInterface
     /**
      * @inheritDoc
      */
-    public function write(ResultModel $result, $filename)
+    public function write(Result $result, $filename)
     {
         $data = $this->serializer->serialize($result);
 

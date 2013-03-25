@@ -2,21 +2,22 @@
 
 namespace Code\AnalyzerBundle\Serializer;
 
-use Code\AnalyzerBundle\Model\ResultModel;
+use Code\AnalyzerBundle\Result\Result;
 
 interface SerializerInterface
 {
     /**
      * Serialize result
      *
-     * @param ResultModel $result
+     * @param Result $result
      */
-    public function serialize(ResultModel $result);
+    public function serialize(Result $result);
 
     /**
      * Deserialize data into result
      *
      * @param string $data
+     * @return Result
      */
     public function deserialize($data);
 

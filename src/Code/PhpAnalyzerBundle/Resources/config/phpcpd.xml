@@ -17,12 +17,7 @@
         </service>
 
         <service id="code.php_analyzer.phpcpd.processor" class="Code\PhpAnalyzerBundle\Phpcpd\PhpcpdProcessor">
-        </service>
-
-        <service id="code.php_analyzer.phpcpd.analyzer" class="Code\AnalyzerBundle\Analyzer\Analyzer">
             <argument type="service" id="code.php_analyzer.phpcpd.collector" />
-            <argument type="service" id="code.php_analyzer.phpcpd.processor" />
-            <tag name="code.analyzer" />
         </service>
     </services>
 </container>

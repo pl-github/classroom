@@ -2,11 +2,7 @@
 
 namespace Code\AnalyzerBundle\Command;
 
-use Code\AnalyzerBundle\Analyzer\AnalyzerInterface;
-use Code\AnalyzerBundle\Writer\PharWriter;
-use Code\AnalyzerBundle\Writer\SerializeWriter;
 use Code\AnalyzerBundle\Writer\WriterInterface;
-use Code\AnalyzerBundle\Writer\XmlWriter;
 use Code\PhpAnalyzerBundle\ResultBuilder;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputArgument;
@@ -45,7 +41,7 @@ class WriteCommand extends ContainerAwareCommand
 
         $output->write('building... ');
         $tsBuildStart = microtime(true);
-        $result = $resultBuilder->build(
+        $result = $resultBuilder->buildResult(
             $sourceDirectory,
             '/opt/www/code/symfony/app/data/code/work'
         );

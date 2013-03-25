@@ -1,0 +1,21 @@
+<div class="well">
+    <h3>GPA: {{ revision.gpa|number_format(2) }}</h3>
+    Built on {{ revision.createdAt|date }}
+</div>
+
+<div class="well">
+    <div><i class="icon-align-left"></i> Breakdown</div>
+    {% for grade, count in revision.getBreakdown %}
+        <div><span class="badge badge-grade-{{ grade }}">{{ grade }}</span> {{ count }}</div>
+    {% endfor %}
+</div>
+
+{% if 0 %}
+    <div class="well">
+        <div><i class="icon-fire"></i> Hotspots</div>
+        {% for hotspot in build.getHotspots %}
+            <div><span class="badge badge-score-{{ hotspot.score }}">{{ hotspot.score }}</span> <a href="{{ url("code_class", {projectId: project.id, className: hotspot.fullQualifiedName}) }}">{{ hotspot.name }}</a></div>
+        {% endfor %}
+    </div>
+{% endif %}
+

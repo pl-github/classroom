@@ -2,9 +2,6 @@
 
 namespace Code\AnalyzerBundle\Loader;
 
-use Code\AnalyzerBundle\Model\ResultModel;
-use Code\AnalyzerBundle\Serializer\SerializerInterface;
-
 class DelegatingLoader implements LoaderInterface
 {
     /**
@@ -28,7 +25,7 @@ class DelegatingLoader implements LoaderInterface
         $loader = $this->loaderResolver->resolve($filename);
 
         if (false === $loader) {
-            throw new \Exception('No suitable loader found');
+            throw new \Exception('No suitable loader found for ' . basename($filename));
         }
 
         return $loader->load($filename);

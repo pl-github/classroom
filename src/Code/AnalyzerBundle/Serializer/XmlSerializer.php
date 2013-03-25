@@ -2,23 +2,22 @@
 
 namespace Code\AnalyzerBundle\Serializer;
 
-use Code\AnalyzerBundle\Metric\Measurable;
-use Code\AnalyzerBundle\Model\NodeInterface;
-use Code\AnalyzerBundle\Model\Reference;
-use Code\AnalyzerBundle\Model\ResultModel;
-use Code\AnalyzerBundle\Model\SmellModel;
-use Code\AnalyzerBundle\Node\Gradable;
-use Code\AnalyzerBundle\Smell\Smell;
-use Code\AnalyzerBundle\Source\Source;
-use Code\AnalyzerBundle\Source\SourceRange;
-use Code\AnalyzerBundle\Source\Storage\StringStorage;
+use Code\AnalyzerBundle\Grader\Gradable;
+use Code\AnalyzerBundle\Result\Metric\Measurable;
+use Code\AnalyzerBundle\Result\Node\NodeInterface;
+use Code\AnalyzerBundle\Result\Reference\Reference;
+use Code\AnalyzerBundle\Result\Result;
+use Code\AnalyzerBundle\Result\Smell\Smell;
+use Code\AnalyzerBundle\Result\Source\Source;
+use Code\AnalyzerBundle\Result\Source\SourceRange;
+use Code\AnalyzerBundle\Result\Source\Storage\StringStorage;
 
 class XmlSerializer implements SerializerInterface
 {
     /**
      * @inheritDoc
      */
-    public function serialize(ResultModel $result)
+    public function serialize(Result $result)
     {
         $dom = new \DOMDocument('1.0', 'UTF-8');
         $dom->formatOutput = true;
@@ -32,6 +31,14 @@ class XmlSerializer implements SerializerInterface
         $xmlGpa = $dom->createAttribute('gpa');
         $xmlGpa->value = $result->getGpa();
         $xmlResult->appendChild($xmlGpa);
+
+        $xmlBreakdown = $dom->createAttribute('breakdown');
+        $breakdown = array();
+        foreach ($result->getBreakdown() as $grade => $count) {
+            $breakdown[] = $grade . ':' . $count;
+        }
+        $xmlBreakdown->value = implode(',', $breakdown);
+        $xmlResult->appendChild($xmlBreakdown);
 
         $xmlBuiltAt = $dom->createAttribute('builtAt');
         $xmlBuiltAt->value = $result->getBuiltAt()->format('c');
@@ -160,10 +167,10 @@ class XmlSerializer implements SerializerInterface
             $xmlSource->appendChild($xmlStorageClass);
 
             switch (get_class($source->getStorage())) {
-                case 'Code\AnalyzerBundle\Source\Storage\FilesystemStorage':
+                case 'Code\AnalyzerBundle\Result\Source\Storage\FilesystemStorage':
                     $xmlSource->appendChild($dom->createTextNode($source->getStorage()->getFilename()));
                     break;
-                case 'Code\AnalyzerBundle\Source\Storage\StringStorage':
+                case 'Code\AnalyzerBundle\Result\Source\Storage\StringStorage':
                     $xmlSource->appendChild($dom->createTextNode($source->getStorage()->getContent()));
                     break;
                 default:
@@ -179,15 +186,23 @@ class XmlSerializer implements SerializerInterface
      */
     public function deserialize($data)
     {
-        $result = new ResultModel();
+        $result = new Result();
 
         $xml = simplexml_load_string($data);
 
         $xmlAttr = $xml->attributes();
         $gpa = (string)$xmlAttr['gpa'];
+        $breakdown = (string)$xmlAttr['breakdown'];
         $builtAt = (string)$xmlAttr['builtAt'];
 
+        $breakdownImpl = explode(',', $breakdown);
+        $breakdown = array();
+        foreach ($breakdownImpl as $impl) {
+            list($grade, $count) = explode(':', $impl);
+            $breakdown[$grade] = $count;
+        }
         $result->setGpa($gpa);
+        $result->setBreakdown($breakdown);
         $result->setBuiltAt(new \DateTime($builtAt));
 
         foreach ($xml->nodes->node as $xmlNode) {

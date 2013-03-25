@@ -2,7 +2,9 @@
 
 namespace Code\ProjectBundle\Command;
 
+use Code\AnalyzerBundle\Log\Log;
 use Code\ProjectBundle\Builder;
+use Code\ProjectBundle\Entity\Project;
 use Code\ProjectBundle\Entity\Revision;
 use Doctrine\ORM\EntityManager;
 use JMS\JobQueueBundle\Entity\Job;
@@ -41,6 +43,12 @@ class CreateRevisionCommand extends ContainerAwareCommand
         $projectRepository = $entityManager->getRepository('Code\ProjectBundle\Entity\Project');
 
         $project = $projectRepository->findOneBy(array('key' => $projectKey));
+        /* @var $project Project */
+
+        if (!$project) {
+            $output->writeln('<error>Project ' . $projectKey . ' not found.</error>');
+            return 1;
+        }
 
         $revision = new Revision();
         $revision
@@ -50,26 +58,46 @@ class CreateRevisionCommand extends ContainerAwareCommand
         $entityManager->persist($revision);
         $entityManager->flush($revision);
 
-        $output->writeln('New revision for ' . $projectKey . ' created.');
+        $output->writeln('<info>New revision for ' . $projectKey . ' created.</info>');
 
         if (!$now) {
             $job = new Job('code:project:build', array($revision->getId()));
             $entityManager->persist($job);
             $entityManager->flush($job);
 
-            $output->writeln('Build queued.');
-
+            $output->writeln('<info>Build queued.</info>');
         } else {
             $builder = $this->getContainer()->get('code.project.builder');
             /* @var $builder Builder */
 
-            $builder->build($revision);
+            $resultFilename = $builder->build($revision, function($type, $line) use ($output) {
+                switch ($type) {
+                    case Log::TYPE_COMMAND:
+                        $output->writeln('<comment>$ ' . $line . '</comment>');
+                        break;
+                    case Log::TYPE_ERROR:
+                        $output->writeln('<error>' . $line . '</error>');
+                        break;
+                    case Log::TYPE_PROCESS:
+                        $output->writeln('<comment>' . $line . '</comment>');
+                        break;
+                    case Log::TYPE_OUTPUT:
+                    default:
+                        $output->writeln($line);
+                        break;
+                }
+            });
 
             $entityManager->persist($revision);
             $entityManager->flush($revision);
 
-            $output->writeln('Build finished.');
-        }
+            $project->setLatestBuildVersion($revision->getRevision());
 
+            $entityManager->persist($project);
+            $entityManager->flush($project);
+
+            $output->writeln('<info>Build finished.</info>');
+            $output->writeln('<info>Result written to ' . $resultFilename . '</info>');
+        }
     }
 }

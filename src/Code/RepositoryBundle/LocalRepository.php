@@ -31,10 +31,9 @@ class LocalRepository implements RepositoryInterface
     public function __construct(RepositoryConfig $repositoryConfig, DataDir $dataDir)
     {
         $this->sourceDirectory = $repositoryConfig->getUrl();
-        $this->sourceDirectory .= substr($this->sourceDirectory, -1) !== '/' ? '/' : '';
-        $this->sourceDirectory .= $repositoryConfig->getLibDir();
-        $this->versionStrategy = new IncrementalVersionStrategy();
         $this->dataDir = $dataDir;
+
+        $this->versionStrategy = new IncrementalVersionStrategy();
     }
 
     /**

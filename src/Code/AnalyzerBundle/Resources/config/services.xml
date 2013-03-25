@@ -11,19 +11,13 @@
         <service id="code.analyzer.process_executor" class="Code\AnalyzerBundle\ProcessExecutor">
         </service>
 
-        <service id="code.analyzer.chain_analyzer" class="Code\AnalyzerBundle\Analyzer\ChainAnalyzer">
-            <argument type="collection" />
+        <service id="code.analyzer.grade_counter" class="Code\AnalyzerBundle\Grader\GradeCounter">
         </service>
 
-        <service id="code.analyzer.gpa_calculator" class="Code\AnalyzerBundle\Grader\GpaCalculator">
+        <service id="code.analyzer.gpa_calculator" class="Code\AnalyzerBundle\Gpa\GpaCalculator">
         </service>
 
         <service id="code.analyzer.grader" class="Code\AnalyzerBundle\Grader\Grader">
-        </service>
-
-        <service id="code.analyzer.filter.grade" class="Code\AnalyzerBundle\Filter\GradeFilter">
-            <argument type="service" id="code.analyzer.grader" />
-            <argument type="service" id="code.analyzer.gpa_calculator" />
         </service>
     </services>
 </container>

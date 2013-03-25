@@ -1,6 +1,6 @@
 <?php
 
-namespace Code\AnalyzerBundle\Tests\Build\Loader;
+namespace Code\AnalyzerBundle\Tests\Loader;
 
 use Code\AnalyzerBundle\Loader\FileLoader;
 use org\bovigo\vfs\vfsStream;
@@ -16,15 +16,10 @@ class FileLoaderTest extends \PHPUnit_Framework_TestCase
     {
         vfsStream::setup('root', 0777, array('test.out' => 'test'));
 
-        $serializerMock = $this->getMockBuilder('Code\AnalyzerBundle\Serializer\SerializerInterface')
+        $this->serializerMock = $this->getMockBuilder('Code\AnalyzerBundle\Serializer\SerializerInterface')
             ->getMock();
 
-        $serializerMock
-            ->expects($this->once())
-            ->method('deserialize')
-            ->will($this->returnArgument(0));
-
-        $this->loader = new FileLoader($serializerMock);
+        $this->loader = new FileLoader($this->serializerMock);
     }
 
     public function tearDown()
@@ -34,8 +29,25 @@ class FileLoaderTest extends \PHPUnit_Framework_TestCase
 
     public function testLoad()
     {
+        $this->serializerMock
+            ->expects($this->once())
+            ->method('deserialize')
+            ->will($this->returnArgument(0));
+
         $result = $this->loader->load(vfsStream::url('root/test.out'));
 
         $this->assertEquals('test', $result);
+    }
+
+    public function testSupports()
+    {
+        $this->serializerMock
+            ->expects($this->once())
+            ->method('getType')
+            ->will($this->returnValue('xml'));
+
+        $result = $this->loader->supports(vfsStream::url('root/test.xml'));
+
+        $this->assertTrue($result);
     }
 }

@@ -4,9 +4,9 @@ namespace Code\ProjectBundle\Controller;
 
 use Code\AnalyzerBundle\Loader\LoaderInterface;
 use Code\PhpAnalyzerBundle\Node\PhpClassNode;
+use Code\ProjectBundle\DataDirFactory;
 use Code\ProjectBundle\Entity\Revision;
 use Code\ProjectBundle\Entity\Project;
-use Code\ProjectBundle\Loader\LoaderInterface as ProjectLoaderInterface;
 use Doctrine\ORM\EntityManager;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -18,6 +18,10 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class ProjectController extends Controller
 {
+    /**
+     * @param string $projectKey
+     * @return Project
+     */
     private function getProject($projectKey)
     {
         $entityManager = $this->get('doctrine.orm.entity_manager');
@@ -29,23 +33,40 @@ class ProjectController extends Controller
         return $project;
     }
 
+    /**
+     * @param Project $project
+     * @return Revision
+     */
     private function getLatestRevisionForProject(Project $project)
     {
         $entityManager = $this->get('doctrine.orm.entity_manager');
         /* @var $entityManager EntityManager */
 
         $repository = $entityManager->getRepository('Code\ProjectBundle\Entity\Revision');
-        $revision = $repository->findOneBy(array('project' => $project));
+        $revision = $repository->findOneBy(
+            array(
+                'project' => $project,
+                'revision' => $project->getLatestBuildVersion()
+            )
+        );
 
         return $revision;
     }
 
+    /**
+     * @param Revision $revision
+     * @return Result
+     */
     private function getResultForRevision(Revision $revision)
     {
         $loader = $this->get('code.analyzer.loader');
         /* @var $loader LoaderInterface */
 
-        $result = $loader->load($revision->getResultFilename());
+        $dataDirFactory = $this->get('code.project.data_dir_factory');
+        /* @var $dataDirFactory DataDirFactory */
+
+        $dataDir = $dataDirFactory->factory($revision->getProject());
+        $result = $loader->load($dataDir->getBuildFile($revision->getResultFilename()));
 
         return $result;
     }
@@ -62,6 +83,18 @@ class ProjectController extends Controller
         $revision = $this->getLatestRevisionForProject($project);
 
         return array('card' => $card, 'project' => $project, 'revision' => $revision);
+    }
+
+    /**
+     * @Route("/overview", name="code_project_overview")
+     * @Template()
+     */
+    public function overviewAction($projectKey)
+    {
+        $project = $this->getProject($projectKey);
+        $revision = $this->getLatestRevisionForProject($project);
+
+        return array('project' => $project, 'revision' => $revision);
     }
 
     /**

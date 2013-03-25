@@ -4,6 +4,7 @@ namespace Code\ProjectBundle;
 
 use Code\AnalyzerBundle\ResultBuilderInterface;
 use Code\AnalyzerBundle\Writer\WriterInterface;
+use Code\ProjectBundle\Config\ConfigParser;
 use Code\ProjectBundle\Entity\Revision;
 use Code\ProjectBundle\Entity\Project;
 use Code\RepositoryBundle\RepositoryFactory;
@@ -51,8 +52,9 @@ class Builder
      * Build revision
      *
      * @param Revision $revision
+     * @param callable $logCallback
      */
-    public function build(Revision $revision)
+    public function build(Revision $revision, callable $logCallback = null)
     {
         $project = $revision->getProject();
 
@@ -63,13 +65,21 @@ class Builder
 
         $sourceDirectory = $repository->getSourceDirectory();
 
+        $configParser = new ConfigParser();
+        $config = $configParser->parse($sourceDirectory . '/.classroom.yml');
+
         $version = $repository->determineVersion();
+        $targetDirectory = $repository->getSourceDirectory() . $config->getTarget();
+
+        if (!file_exists($targetDirectory)) {
+            throw new \Exception('Target directory ' . $targetDirectory . ' does not exist.');
+        }
 
         $revision->setRevision($version);
 
         $tsStart = microtime(true);
 
-        $result = $this->resultBuilder->build($sourceDirectory, $dataDir->getWorkingDirectory());
+        $result = $this->resultBuilder->buildResult($targetDirectory, $dataDir->getWorkingDirectory(), $logCallback);
         $resultFilename = $this->writer->write($result, $dataDir->getBuildsDirectory() . '/' . $version . '.phar');
 
         $tsEnd = microtime(true);
@@ -80,7 +90,11 @@ class Builder
             ->setRevision($version)
             ->setResultFilename(basename($resultFilename))
             ->setGpa($result->getGpa())
+            ->setBreakdown($result->getBreakdown())
+            //->setHotspots($result->getHotspots())
             ->setRunTime($runTime)
             ->setBuiltAt($result->getBuiltAt());
+
+        return $resultFilename;
     }
 }

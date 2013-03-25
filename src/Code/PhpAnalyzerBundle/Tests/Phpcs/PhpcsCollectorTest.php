@@ -29,7 +29,11 @@ class PhpcsCollectorTest extends \PHPUnit_Framework_TestCase
             ->method('execute')
             ->with($this->isInstanceOf('Symfony\Component\Process\Process'));
 
-        $filename = $collector->collect('sourceDir', 'workDir');
+        $logMock = $this->getMockBuilder('Code\AnalyzerBundle\Log\Log')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $filename = $collector->collect($logMock, 'sourceDir', 'workDir');
 
         $this->assertEquals($filename, 'workDir/phpcs.xml');
     }

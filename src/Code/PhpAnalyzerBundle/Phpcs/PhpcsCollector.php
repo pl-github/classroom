@@ -2,13 +2,13 @@
 
 namespace Code\PhpAnalyzerBundle\Phpcs;
 
-use Code\AnalyzerBundle\Analyzer\Collector\CollectorInterface;
+use Code\AnalyzerBundle\Log\Log;
 use Code\AnalyzerBundle\ProcessExecutor;
 use Symfony\Component\HttpKernel\Log\LoggerInterface;
 use Symfony\Component\Process\ProcessBuilder;
 use Symfony\Component\Process\Process;
 
-class PhpcsCollector implements CollectorInterface
+class PhpcsCollector
 {
     /**
      * @var ProcessExecutor
@@ -40,7 +40,7 @@ class PhpcsCollector implements CollectorInterface
     /**
      * @inheritDoc
      */
-    public function collect($sourceDirectory, $workDirectory)
+    public function collect(Log $log, $sourceDirectory, $workDirectory)
     {
         $phpcsFilename = $workDirectory . '/phpcs.xml';
         #return $phpcsFilename;
@@ -60,9 +60,13 @@ class PhpcsCollector implements CollectorInterface
 
         $process = $processBuilder->getProcess();
 
+        $log->addCommand($process->getCommandLine());
         $this->logger->debug($process->getCommandLine());
 
         $this->processExecutor->execute($process, 1);
+
+        $log->addOutput($process->getOutput());
+        $log->addError($process->getErrorOutput());
 
         return $phpcsFilename;
     }

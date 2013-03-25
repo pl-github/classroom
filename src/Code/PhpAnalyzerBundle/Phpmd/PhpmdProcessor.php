@@ -2,22 +2,37 @@
 
 namespace Code\PhpAnalyzerBundle\Phpmd;
 
-use Code\AnalyzerBundle\Analyzer\Processor\ProcessorInterface;
+use Code\AnalyzerBundle\Processor\ProcessorInterface;
 use Code\AnalyzerBundle\ReflectionService;
-use Code\AnalyzerBundle\Smell\Smell;
-use Code\AnalyzerBundle\Source\SourceRange;
-use Code\AnalyzerBundle\Model\ResultModel;
+use Code\AnalyzerBundle\Result\Result;
+use Code\AnalyzerBundle\Result\Smell\Smell;
+use Code\AnalyzerBundle\Result\Source\SourceRange;
 
 class PhpmdProcessor implements ProcessorInterface
 {
     /**
+     * @var PhpmdCollector
+     */
+    private $collector;
+
+    /**
+     * @param PhpmdCollector $collector
+     */
+    public function __construct(PhpmdCollector $collector)
+    {
+        $this->collector = $collector;
+    }
+
+    /**
      * @inheritDoc
      */
-    public function process(ResultModel $result, $filename)
+    public function process(Result $result)
     {
-        if (!file_exists($filename)) {
-            throw new \Exception('phpmd report xml file not found.');
-        }
+        $filename = $this->collector->collect(
+            $result->getLog(),
+            $result->getSourceDirectory(),
+            $result->getWorkingDirectory()
+        );
 
         $xml = simplexml_load_file($filename);
 

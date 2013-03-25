@@ -32,12 +32,6 @@ class RepositoryConfig
     private $url;
 
     /**
-     * @var string
-     * @ORM\Column(type = "string")
-     */
-    private $libDir;
-
-    /**
      * @var Project
      * @ORM\OneToOne(targetEntity="Code\ProjectBundle\Entity\Project")
      * @ORM\JoinColumn(name="project_id", referencedColumnName="id")
@@ -96,29 +90,6 @@ class RepositoryConfig
     public function setUrl($url)
     {
         $this->url = $url;
-
-        return $this;
-    }
-
-    /**
-     * Return type
-     *
-     * @return string
-     */
-    public function getLibDir()
-    {
-        return $this->libDir;
-    }
-
-    /**
-     * Set lib dir
-     *
-     * @param string $libDir
-     * @return $this
-     */
-    public function setLibDir($libDir)
-    {
-        $this->libDir = $libDir;
 
         return $this;
     }

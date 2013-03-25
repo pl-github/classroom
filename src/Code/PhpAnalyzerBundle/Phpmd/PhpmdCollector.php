@@ -2,13 +2,13 @@
 
 namespace Code\PhpAnalyzerBundle\Phpmd;
 
-use Code\AnalyzerBundle\Analyzer\Collector\CollectorInterface;
+use Code\AnalyzerBundle\Log\Log;
 use Code\AnalyzerBundle\ProcessExecutor;
 use Symfony\Component\HttpKernel\Log\LoggerInterface;
 use Symfony\Component\Process\ProcessBuilder;
 use Symfony\Component\Process\Process;
 
-class PhpmdCollector implements CollectorInterface
+class PhpmdCollector
 {
     /**
      * @var ProcessExecutor
@@ -40,7 +40,7 @@ class PhpmdCollector implements CollectorInterface
     /**
      * @inheritDoc
      */
-    public function collect($sourceDirectory, $workDirectory)
+    public function collect(Log $log, $sourceDirectory, $workDirectory)
     {
         $phpmdFilename = $workDirectory . '/phpmd.xml';
         #return $phpmdFilename;
@@ -59,9 +59,13 @@ class PhpmdCollector implements CollectorInterface
 
         $process = $processBuilder->getProcess();
 
+        $log->addCommand($process->getCommandLine());
         $this->logger->debug($process->getCommandLine());
 
         $this->processExecutor->execute($process, 2);
+
+        $log->addOutput($process->getOutput());
+        $log->addError($process->getErrorOutput());
 
         return $phpmdFilename;
     }

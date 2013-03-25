@@ -26,8 +26,7 @@ class CreateProjectCommand extends ContainerAwareCommand
             ->addArgument('key', InputArgument::REQUIRED)
             ->addArgument('name', InputArgument::REQUIRED)
             ->addArgument('type', InputArgument::REQUIRED)
-            ->addArgument('url', InputArgument::REQUIRED)
-            ->addArgument('libDir', InputArgument::REQUIRED);
+            ->addArgument('url', InputArgument::REQUIRED);
     }
 
     /**
@@ -39,7 +38,6 @@ class CreateProjectCommand extends ContainerAwareCommand
         $projectName = $input->getArgument('name');
         $type = $input->getArgument('type');
         $url = $input->getArgument('url');
-        $libDir = $input->getArgument('libDir');
 
         $repositoryConfig = new RepositoryConfig();
         $project = new Project();
@@ -47,7 +45,6 @@ class CreateProjectCommand extends ContainerAwareCommand
         $repositoryConfig
             ->setType($type)
             ->setUrl($url)
-            ->setLibDir($libDir)
             ->setProject($project);
 
         $project

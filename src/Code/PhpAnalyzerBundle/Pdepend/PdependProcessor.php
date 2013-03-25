@@ -2,21 +2,36 @@
 
 namespace Code\PhpAnalyzerBundle\Pdepend;
 
-use Code\AnalyzerBundle\Analyzer\Processor\ProcessorInterface;
-use Code\AnalyzerBundle\Metric\Metric;
-use Code\AnalyzerBundle\Model\ResultModel;
+use Code\AnalyzerBundle\Processor\ProcessorInterface;
+use Code\AnalyzerBundle\Result\Metric\Metric;
+use Code\AnalyzerBundle\Result\Result;
 use Code\AnalyzerBundle\ReflectionService;
 
 class PdependProcessor implements ProcessorInterface
 {
     /**
+     * @var PdependCollector
+     */
+    private $collector;
+
+    /**
+     * @param PdependCollector $collector
+     */
+    public function __construct(PdependCollector $collector)
+    {
+        $this->collector = $collector;
+    }
+
+    /**
      * @inheritDoc
      */
-    public function process(ResultModel $result, $filename)
+    public function process(Result $result)
     {
-        if (!file_exists($filename)) {
-            throw new \Exception('pdepend summary xml file not found.');
-        }
+        $filename = $this->collector->collect(
+            $result->getLog(),
+            $result->getSourceDirectory(),
+            $result->getWorkingDirectory()
+        );
 
         $xml = simplexml_load_file($filename);
 

@@ -9,19 +9,19 @@
         <service id="code.php_analyzer.reflection_service" class="Code\PhpAnalyzerBundle\ReflectionService">
         </service>
 
-        <service id="code.php_analyzer.analyzer" class="Code\AnalyzerBundle\Analyzer\ChainAnalyzer">
+        <service id="code.php_analyzer.processor" class="Code\AnalyzerBundle\Processor\ChainProcessor">
             <argument type="collection">
-                <argument type="service" id="code.php_analyzer.base.analyzer" />
-                <argument type="service" id="code.php_analyzer.phpcpd.analyzer" />
-                <argument type="service" id="code.php_analyzer.phpcs.analyzer" />
-                <argument type="service" id="code.php_analyzer.phpmd.analyzer" />
-                <argument type="service" id="code.php_analyzer.pdepend.analyzer" />
+                <argument type="service" id="code.php_analyzer.phpcpd.processor" />
+                <argument type="service" id="code.php_analyzer.phpcs.processor" />
+                <argument type="service" id="code.php_analyzer.phpmd.processor" />
+                <argument type="service" id="code.php_analyzer.pdepend.processor" />
             </argument>
         </service>
 
-        <service id="code.php_analyzer.result_builder" class="Code\PhpAnalyzerBundle\ResultBuilder">
-            <argument type="service" id="code.php_analyzer.analyzer" />
-            <argument type="service" id="code.php_analyzer.filter" />
+        <service id="code.php_analyzer.result_builder" class="Code\AnalyzerBundle\ResultBuilder">
+            <argument type="service" id="code.php_analyzer.pre_processor" />
+            <argument type="service" id="code.php_analyzer.processor" />
+            <argument type="service" id="code.php_analyzer.post_processor" />
         </service>
 
     </services>

@@ -2,10 +2,14 @@
 
 namespace Code\AnalyzerBundle\Grader;
 
-use Code\AnalyzerBundle\Node\NodeInterface;
+use Code\AnalyzerBundle\Result\Metric\Measurable;
+use Code\AnalyzerBundle\Result\Node\NodeInterface;
 
 class Grader implements GraderInterface
 {
+    /**
+     * @var array
+     */
     private $scoreToGradeMap = array(
         'A' => 1,
         'B' => 2,
@@ -33,7 +37,7 @@ class Grader implements GraderInterface
         return $grade;
     }
 
-    public function getScore(array $smells)
+    private function getScore(array $smells)
     {
         $score = 0;
         foreach ($smells as $smell) {
@@ -43,18 +47,18 @@ class Grader implements GraderInterface
         return $score;
     }
 
-    public function getLinesOfCode(NodeInterface $node)
+    private function getLinesOfCode(NodeInterface $node)
     {
         $linesOfCode = 0;
 
-        if ($node->hasMetric('linesOfCode')) {
+        if ($node instanceof Measurable && $node->hasMetric('linesOfCode')) {
             $linesOfCode = $node->getMetric('linesOfCode')->getValue();
         }
 
         return $linesOfCode;
     }
 
-    public function getFactor($linesOfCode)
+    private function getFactor($linesOfCode)
     {
         $factor = log($linesOfCode);
 
@@ -65,7 +69,7 @@ class Grader implements GraderInterface
         return $factor;
     }
 
-    public function getWeightedScore($score, $factor)
+    private function getWeightedScore($score, $factor)
     {
         if ($factor < 1) {
             $factor = 1;
@@ -82,7 +86,7 @@ class Grader implements GraderInterface
      * @param float $score
      * @return string
      */
-    public function scoreToGrade($score)
+    private function scoreToGrade($score)
     {
         if ($score <= $this->scoreToGradeMap['A']) {
             $grade = 'A';

@@ -2,23 +2,38 @@
 
 namespace Code\PhpAnalyzerBundle\Phpcpd;
 
-use Code\AnalyzerBundle\Analyzer\Processor\ProcessorInterface;
-use Code\AnalyzerBundle\Metric\Metric;
-use Code\AnalyzerBundle\Smell\Smell;
-use Code\AnalyzerBundle\Source\SourceRange;
+use Code\AnalyzerBundle\Processor\ProcessorInterface;
 use Code\AnalyzerBundle\ReflectionService;
-use Code\AnalyzerBundle\Model\ResultModel;
+use Code\AnalyzerBundle\Result\Metric\Metric;
+use Code\AnalyzerBundle\Result\Result;
+use Code\AnalyzerBundle\Result\Smell\Smell;
+use Code\AnalyzerBundle\Result\Source\SourceRange;
 
 class PhpcpdProcessor implements ProcessorInterface
 {
     /**
+     * @var PhpcpdCollector
+     */
+    private $collector;
+
+    /**
+     * @param PhpcpdCollector $collector
+     */
+    public function __construct(PhpcpdCollector $collector)
+    {
+        $this->collector = $collector;
+    }
+
+    /**
      * @inheritDoc
      */
-    public function process(ResultModel $result, $filename)
+    public function process(Result $result)
     {
-        if (!file_exists($filename)) {
-            throw new \Exception('phpcpd log xml file not found.');
-        }
+        $filename = $this->collector->collect(
+            $result->getLog(),
+            $result->getSourceDirectory(),
+            $result->getWorkingDirectory()
+        );
 
         $duplications = $this->processDuplications($filename);
 

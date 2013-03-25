@@ -2,11 +2,10 @@
 
 namespace Code\AnalyzerBundle\Writer;
 
-use Code\AnalyzerBundle\Model\NodeInterface;
-use Code\AnalyzerBundle\Model\ResultModel;
-use Code\AnalyzerBundle\Model\SmellModel;
+use Code\AnalyzerBundle\Result\Result;
+use Code\AnalyzerBundle\Result\Smell\SmellModel;
+use Code\AnalyzerBundle\Result\Source\Storage\FilesystemStorage;
 use Code\AnalyzerBundle\Serializer\SerializerInterface;
-use Code\AnalyzerBundle\Source\Storage\FilesystemStorage;
 
 class PharWriter implements WriterInterface
 {
@@ -26,7 +25,7 @@ class PharWriter implements WriterInterface
     /**
      * @inheritDoc
      */
-    public function write(ResultModel $result, $filename)
+    public function write(Result $result, $filename)
     {
         if (!\Phar::canWrite()) {
             $msg = 'PharWriter needs PHAR write support enabled. Set phar.readonly = Off in your php.ini';
@@ -40,15 +39,16 @@ class PharWriter implements WriterInterface
         $phar = new \Phar($filename);
         $phar->startBuffering();
 
+        // fix sources for phar inclusion
         foreach ($result->getSources() as $source) {
             $storage = $source->getStorage();
             $sourceFilename = 'source/' . $source->getHash() . '.txt';
             switch (get_class($storage)) {
-                case 'Code\AnalyzerBundle\Source\Storage\FilesystemStorage':
+                case 'Code\AnalyzerBundle\Result\Source\Storage\FilesystemStorage':
                     $phar->addFile($storage->getFilename(), $sourceFilename);
                     $storage->setFilename($sourceFilename);
                     break;
-                case 'Code\AnalyzerBundle\Source\Storage\StringStorage':
+                case 'Code\AnalyzerBundle\Result\Source\Storage\StringStorage':
                     $content = $source->getContent();
                     $phar->addFromString(
                         $sourceFilename,
@@ -58,20 +58,29 @@ class PharWriter implements WriterInterface
                     $source->setStorage($storage);
                     break;
                 default:
-                    throw new \Exception('Unknown storage.');
+                    throw new \Exception('Unknown storage ' . get_class($storage));
             }
         }
 
+        // add artifacts
         foreach ($result->getArtifacts() as $artifact) {
             $phar->addFile($artifact, 'artifact/' . basename($artifact));
         }
 
-        $data = $this->serializer->serialize($result);
+        // add log as artifact
+        $lines = array();
+        foreach ($result->getLog()->getItems() as $item) {
+            $lines[] = $item['line'];
+        }
+        $phar->addFromString('artifact/result.log', implode(PHP_EOL, $lines));
 
+        // serialize and add result data
+        $data = $this->serializer->serialize($result);
         $phar->addFromString('result.' . $this->serializer->getType(), $data);
 
         $phar->stopBuffering();
 
+        // compress phar, normalize filename
         if (\Phar::canCompress(\Phar::BZ2)) {
             $phar->compress(\Phar::BZ2);
             rename($filename . '.bz2', $filename);

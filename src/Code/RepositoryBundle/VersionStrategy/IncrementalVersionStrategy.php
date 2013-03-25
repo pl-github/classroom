@@ -11,7 +11,7 @@ class IncrementalVersionStrategy implements VersionStrategyInterface
      */
     public function determineVersion(DataDir $dataDir)
     {
-        $versionFilename = $dataDir->getBaseDirectory() . '/version';
+        $versionFilename = $dataDir->getFile('version');
 
         $version = 0;
         if (file_exists($versionFilename)) {

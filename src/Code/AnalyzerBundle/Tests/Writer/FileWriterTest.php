@@ -2,7 +2,7 @@
 
 namespace Code\AnalyzerBundle\Tests\Writer;
 
-use Code\AnalyzerBundle\Model\ResultModel;
+use Code\AnalyzerBundle\Result\Result;
 use Code\AnalyzerBundle\Writer\FileWriter;
 use org\bovigo\vfs\vfsStream;
 
@@ -17,10 +17,10 @@ class FileWriterTest extends \PHPUnit_Framework_TestCase
     {
         vfsStream::setup('root', 0777);
 
-        $serializerMock = $this->getMockBuilder('Code\AnalyzerBundle\Serializer\SerializerInterface')
+        $this->serializerMock = $this->getMockBuilder('Code\AnalyzerBundle\Serializer\SerializerInterface')
             ->getMock();
 
-        $this->writer = new FileWriter($serializerMock);
+        $this->writer = new FileWriter($this->serializerMock);
     }
 
     public function tearDown()
@@ -30,10 +30,22 @@ class FileWriterTest extends \PHPUnit_Framework_TestCase
 
     public function testWrite()
     {
-        $result = new ResultModel();
+        $result = new Result();
 
         $this->writer->write($result, vfsStream::url('root/test.out'));
 
         $this->assertTrue(file_exists(vfsStream::url('root/test.out')));
+    }
+
+    public function testSupports()
+    {
+        $this->serializerMock
+            ->expects($this->once())
+            ->method('getType')
+            ->will($this->returnValue('xml'));
+
+        $result = $this->writer->supports(vfsStream::url('root/test.xml'));
+
+        $this->assertTrue($result);
     }
 }

@@ -2,7 +2,6 @@
 
 namespace Code\AnalyzerBundle\Loader;
 
-use Code\AnalyzerBundle\Model\ResultModel;
 use Code\AnalyzerBundle\Serializer\SerializerInterface;
 
 class FileLoader implements LoaderInterface

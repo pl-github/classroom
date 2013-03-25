@@ -2,7 +2,7 @@
 
 namespace Code\PhpAnalyzerBundle\Tests\Phpcs;
 
-use Code\AnalyzerBundle\Model\ResultModel;
+use Code\AnalyzerBundle\Result\Result;
 use Code\PhpAnalyzerBundle\Node\PhpClassNode;
 use Code\PhpAnalyzerBundle\Node\PhpFileNode;
 use Code\PhpAnalyzerBundle\Phpcs\PhpcsProcessor;
@@ -29,23 +29,9 @@ EOL;
 
         vfsStream::setup('root', 0777, array('phpcs.xml' => $phpcsXml));
 
-        $reflectionServiceMock = $this->getMockBuilder('Code\AnalyzerBundle\ReflectionService')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $processor = new PhpcsProcessor();
 
-        $reflectionServiceMock
-            ->expects($this->any())
-            ->method('getClassnameForFile')
-            ->will($this->returnArgument(0));
-
-        $reflectionServiceMock
-            ->expects($this->any())
-            ->method('getSourceLines')
-            ->will($this->returnValue(array('A', 'B', 'C', 'D')));
-
-        $processor = new PhpcsProcessor($reflectionServiceMock);
-
-        $result = new ResultModel();
+        $result = new Result();
         $fileNode1 = new PhpFileNode('file1.php');
         $fileNode2 = new PhpFileNode('file2.php');
         $result->addNode($fileNode1);
@@ -60,9 +46,9 @@ EOL;
 
     /**
      * @depends testProcess
-     * @param ResultModel $result
+     * @param Result $result
      */
-    public function testClasses(ResultModel $result)
+    public function testClasses(Result $result)
     {
         $this->assertTrue($result->hasSmells());
     }

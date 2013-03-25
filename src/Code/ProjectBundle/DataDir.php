@@ -20,24 +20,27 @@ class DataDir
     }
 
     /**
-     * Return base dir
-     *
-     * @return string
-     */
-    public function getBaseDirectory()
-    {
-        return $this->baseDir;
-    }
-
-    /**
      * Return subdir
      *
      * @param string $suffix
      * @return string
      */
-    public function getDirectory($suffix)
+    public function getDirectory($suffix = null)
     {
-        return $this->ensureDirectoryWritable($this->getBaseDirectory() . '/' . $suffix);
+        return $this->ensureDirectoryWritable($this->getBaseDirectory() . $suffix);
+    }
+
+    /**
+     * Return file
+     *
+     * @param string $filename
+     * @return string
+     */
+    public function getFile($filename)
+    {
+        $directory = $this->getDirectory();
+
+        return $directory . '/' . $filename;
     }
 
     /**
@@ -51,6 +54,19 @@ class DataDir
     }
 
     /**
+     * Return wroking file
+     *
+     * @param string $filename
+     * @return string
+     */
+    public function getWorkingFile($filename)
+    {
+        $directory = $this->getWorkingDirectory();
+
+        return $directory . '/' . $filename;
+    }
+
+    /**
      * Return builds directory
      *
      * @return string
@@ -61,13 +77,49 @@ class DataDir
     }
 
     /**
+     * Return build file
+     *
+     * @param string $filename
+     * @return string
+     */
+    public function getBuildFile($filename)
+    {
+        $directory = $this->getBuildsDirectory();
+
+        return $directory . '/' . $filename;
+    }
+
+    /**
      * Return temp directory
      *
      * @return string
      */
-    public function getTempDirectory()
+    public function getTempDirectory($filename = null)
     {
         return $this->getDirectory('/temp');
+    }
+
+    /**
+     * Return temp file
+     *
+     * @param string $filename
+     * @return string
+     */
+    public function getTempFile($filename)
+    {
+        $directory = $this->getTempDirectory();
+
+        return $directory . '/' . $filename;
+    }
+
+    /**
+     * Return base dir
+     *
+     * @return string
+     */
+    private function getBaseDirectory()
+    {
+        return $this->baseDir;
     }
 
     /**

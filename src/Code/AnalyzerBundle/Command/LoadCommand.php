@@ -2,12 +2,9 @@
 
 namespace Code\AnalyzerBundle\Command;
 
-use Code\AnalyzerBundle\Analyzer\AnalyzerInterface;
-use Code\AnalyzerBundle\Grader\GpaCalculator;
+use Code\AnalyzerBundle\Grader\Gradable;
 use Code\AnalyzerBundle\Grader\GraderInterface;
-use Code\AnalyzerBundle\Model\ResultModel;
-use Code\AnalyzerBundle\Node\Gradable;
-use Code\PhpAnalyzerBundle\ResultBuilder;
+use Code\AnalyzerBundle\Result\Result;
 use Code\AnalyzerBundle\Loader\LoaderInterface;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputArgument;
@@ -65,30 +62,24 @@ class LoadCommand extends ContainerAwareCommand
         }
     }
 
-    private function showGpa(OutputInterface $output, ResultModel $result)
+    private function showGpa(OutputInterface $output, Result $result)
     {
-        $gpaCalculator = $this->getContainer()->get('code.analyzer.gpa_calculator');
-        /* @var $gpaCalculator GpaCalculator */
-
         $output->writeln('');
         $output->writeln('===========');
         $output->writeln(' Breakdown');
         $output->writeln('===========');
-        $gradeMap = $gpaCalculator->buildGradeMap($result);
-        foreach ($gradeMap as $grade => $count) {
+        foreach ($result->getBreakdown() as $grade => $count) {
             $output->writeln('  ' . $grade . ': ' . $count);
         }
 
-        $gpa = $gpaCalculator->calculate($result);
-
         $output->writeln('');
         $output->writeln('===========');
-        $output->writeln(' GPA: ' . number_format($gpa, 2));
+        $output->writeln(' GPA: ' . number_format($result->getGpa(), 2));
         $output->writeln('===========');
         $output->writeln('');
     }
 
-    private function showScore(OutputInterface $output, ResultModel $result)
+    private function showScore(OutputInterface $output, Result $result)
     {
         $grader = $this->getContainer()->get('code.analyzer.grader');
         /* @var $grader GraderInterface */
@@ -135,7 +126,7 @@ class LoadCommand extends ContainerAwareCommand
         }
     }
 
-    private function showSmells(OutputInterface $output, ResultModel $result, $showSource = false, $rule = null)
+    private function showSmells(OutputInterface $output, Result $result, $showSource = false, $rule = null)
     {
         foreach ($result->getSmells() as $smell) {
             /* @var $smell SmellModel */

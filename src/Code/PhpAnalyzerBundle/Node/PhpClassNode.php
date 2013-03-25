@@ -2,11 +2,11 @@
 
 namespace Code\PhpAnalyzerBundle\Node;
 
-use Code\AnalyzerBundle\Metric\Measurable;
-use Code\AnalyzerBundle\Metric\MetricInterface;
-use Code\AnalyzerBundle\Node\Gradable;
-use Code\AnalyzerBundle\Node\NodeInterface;
-use Code\AnalyzerBundle\Node\NodeReference;
+use Code\AnalyzerBundle\Grader\Gradable;
+use Code\AnalyzerBundle\Result\Metric\Measurable;
+use Code\AnalyzerBundle\Result\Metric\MetricInterface;
+use Code\AnalyzerBundle\Result\Node\NodeInterface;
+use Code\AnalyzerBundle\Result\Node\NodeReference;
 
 class PhpClassNode implements NodeInterface, Measurable, Gradable
 {

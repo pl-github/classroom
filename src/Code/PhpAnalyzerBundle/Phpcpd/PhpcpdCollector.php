@@ -2,13 +2,13 @@
 
 namespace Code\PhpAnalyzerBundle\Phpcpd;
 
-use Code\AnalyzerBundle\Analyzer\Collector\CollectorInterface;
+use Code\AnalyzerBundle\Log\Log;
 use Code\AnalyzerBundle\ProcessExecutor;
 use Symfony\Component\HttpKernel\Log\LoggerInterface;
 use Symfony\Component\Process\ProcessBuilder;
 use Symfony\Component\Process\Process;
 
-class PhpcpdCollector implements CollectorInterface
+class PhpcpdCollector
 {
     /**
      * @var ProcessExecutor
@@ -40,7 +40,7 @@ class PhpcpdCollector implements CollectorInterface
     /**
      * @inheritDoc
      */
-    public function collect($sourceDirectory, $workDirectory)
+    public function collect(Log $log, $sourceDirectory, $workDirectory)
     {
         $phpcpdFilename = $workDirectory . '/phpcpd.xml';
         #return $phpcpdFilename;
@@ -59,9 +59,13 @@ class PhpcpdCollector implements CollectorInterface
 
         $process = $processBuilder->getProcess();
 
+        $log->addCommand($process->getCommandLine());
         $this->logger->debug($process->getCommandLine());
 
         $this->processExecutor->execute($process, 1);
+
+        $log->addOutput($process->getOutput());
+        $log->addError($process->getErrorOutput());
 
         return $phpcpdFilename;
     }

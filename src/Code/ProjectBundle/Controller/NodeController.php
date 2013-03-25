@@ -2,7 +2,8 @@
 
 namespace Code\ProjectBundle\Controller;
 
-use Code\AnalyzerBundle\Model\ResultModel;
+use Code\AnalyzerBundle\Result\Result;
+use Code\ProjectBundle\DataDirFactory;
 use Code\ProjectBundle\Entity\Project;
 use Code\ProjectBundle\Entity\Revision;
 use Doctrine\ORM\EntityManager;
@@ -32,21 +33,30 @@ class NodeController extends Controller
         /* @var $entityManager EntityManager */
 
         $repository = $entityManager->getRepository('Code\ProjectBundle\Entity\Revision');
-        $revision = $repository->findOneBy(array('project' => $project));
+        $revision = $repository->findOneBy(
+            array(
+                'project' => $project,
+                'revision' => $project->getLatestBuildVersion()
+            )
+        );
 
         return $revision;
     }
 
     /**
      * @param Revision $revision
-     * @return ResultModel
+     * @return Result
      */
     private function getResultForRevision(Revision $revision)
     {
         $loader = $this->get('code.analyzer.loader');
         /* @var $loader LoaderInterface */
 
-        $result = $loader->load($revision->getResultFilename());
+        $dataDirFactory = $this->get('code.project.data_dir_factory');
+        /* @var $dataDirFactory DataDirFactory */
+
+        $dataDir = $dataDirFactory->factory($revision->getProject());
+        $result = $loader->load($dataDir->getBuildFile($revision->getResultFilename()));
 
         return $result;
     }
