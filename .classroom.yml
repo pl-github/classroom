@@ -1,0 +1,9 @@
+language: php
+
+target: src/Code
+
+extra:
+  phpcs: ~
+
+notifications:
+  hipchat: room@token
