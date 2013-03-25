@@ -2,6 +2,7 @@
 
 namespace Code\PhpAnalyzerBundle\Tests\Pdepend;
 
+use Code\AnalyzerBundle\Log\Log;
 use Code\AnalyzerBundle\Result\Result;
 use Code\PhpAnalyzerBundle\Node\PhpClassNode;
 use Code\PhpAnalyzerBundle\Pdepend\PdependProcessor;
@@ -37,13 +38,23 @@ EOL;
 
         vfsStream::setup('root', 0777, array('pdepend.xml' => $pdependXml));
 
-        $processor = new PdependProcessor();
+        $collectorMock = $this->getMockBuilder('Code\PhpAnalyzerBundle\Pdepend\PdependCollector')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $collectorMock
+            ->expects($this->once())
+            ->method('collect')
+            ->will($this->returnValue(vfsStream::url('root/pdepend.xml')));
+
+        $processor = new PdependProcessor($collectorMock);
 
         $result = new Result();
+        $result->setLog(new Log());
         $result->addNode(new PhpClassNode('package1\\class1'));
         $result->addNode(new PhpClassNode('package2\\class2'));
 
-        $processor->process($result, vfsStream::url('root/pdepend.xml'));
+        $processor->process($result);
 
         return $result;
     }

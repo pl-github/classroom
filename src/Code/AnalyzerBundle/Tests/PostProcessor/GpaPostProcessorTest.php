@@ -35,7 +35,7 @@ class GpaPostProcessorTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue(2.5));
 
         $gradePostProcessor = new GpaPostProcessor($gradeCounterMock, $gpaCalculatorMock);
-        $gradePostProcessor->postProcess($result);
+        $gradePostProcessor->process($result);
 
         $this->assertEquals(2.5, $result->getGpa());
         $this->assertEquals(array('A' => 1, 'B' => 0, 'C' => 1, 'D' => 0, 'F' => 1), $result->getBreakdown());

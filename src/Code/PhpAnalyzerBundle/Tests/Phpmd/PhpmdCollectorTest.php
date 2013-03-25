@@ -1,6 +1,6 @@
 <?php
 
-namespace Code\PhpAnalyzerBundle\Tests\Phpcs;
+namespace Code\PhpAnalyzerBundle\Tests\Phpmd;
 
 use Code\PhpAnalyzerBundle\Phpmd\PhpmdCollector;
 use org\bovigo\vfs\vfsStream;

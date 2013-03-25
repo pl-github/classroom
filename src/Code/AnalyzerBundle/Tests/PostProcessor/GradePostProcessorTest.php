@@ -28,7 +28,7 @@ class GradePostProcessorTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue('B'));
 
         $gradePostProcessor = new GradePostProcessor($graderMock);
-        $gradePostProcessor->postProcess($result);
+        $gradePostProcessor->process($result);
 
         $this->assertEquals('A', $result->getNode('class1')->getGrade());
         $this->assertEquals('B', $result->getNode('class2')->getGrade());

@@ -1,18 +1,33 @@
 <?php
 
-namespace Code\PhpAnalyzerBundle\Tests\Base;
+namespace Code\PhpAnalyzerBundle\Tests\PreProcessor;
 
+use Code\AnalyzerBundle\Log\Log;
 use Code\AnalyzerBundle\Result\Result;
-use Code\PhpAnalyzerBundle\Base\BaseProcessor;
+use Code\PhpAnalyzerBundle\PreProcessor\BasePreProcessor;
 use Code\PhpAnalyzerBundle\Node\PhpClassNode;
 use Code\PhpAnalyzerBundle\Pdepend\PdependProcessor;
 use org\bovigo\vfs\vfsStream;
 
-class BaseProcessorTest extends \PHPUnit_Framework_TestCase
+class BasePreProcessorTest extends \PHPUnit_Framework_TestCase
 {
     public function testProcess()
     {
         vfsStream::setup('root', 0777, array('file1.php' => 'class1', 'file2.php' => 'class2'));
+
+        $data = array(
+            vfsStream::url('root/file1.php'),
+            vfsStream::url('root/file2.php'),
+        );
+
+        $collectorMock = $this->getMockBuilder('Code\PhpAnalyzerBundle\PreProcessor\BaseCollector')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $collectorMock
+            ->expects($this->once())
+            ->method('collect')
+            ->will($this->returnValue($data));
 
         $reflectionServiceMock = $this->getMockBuilder('Code\PhpAnalyzerBundle\ReflectionService')
             ->disableOriginalConstructor()
@@ -23,14 +38,10 @@ class BaseProcessorTest extends \PHPUnit_Framework_TestCase
             ->method('getClassnameForFile')
             ->will($this->returnArgument(0));
 
-        $processor = new BaseProcessor($reflectionServiceMock);
+        $processor = new BasePreProcessor($collectorMock, $reflectionServiceMock);
 
         $result = new Result();
-
-        $data = array(
-            vfsStream::url('root/file1.php'),
-            vfsStream::url('root/file2.php'),
-        );
+        $result->setLog(new Log());
 
         $processor->process($result, $data);
 

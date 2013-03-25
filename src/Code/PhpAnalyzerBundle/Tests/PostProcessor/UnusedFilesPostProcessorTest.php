@@ -41,7 +41,7 @@ class UnusedFilesPostProcessorTest extends \PHPUnit_Framework_TestCase
         $result->addSource($source2, $fileNode2);
 
         $postProcessor = new UnusedFilesPostProcessor();
-        $postProcessor->postProcess($result);
+        $postProcessor->process($result);
 
         $this->assertFalse($result->hasNode('file1'));
         $this->assertTrue($result->hasNode('class1'));

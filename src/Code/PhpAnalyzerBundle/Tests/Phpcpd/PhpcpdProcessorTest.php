@@ -2,6 +2,7 @@
 
 namespace Code\PhpAnalyzerBundle\Tests\Phpcpd;
 
+use Code\AnalyzerBundle\Log\Log;
 use Code\AnalyzerBundle\Result\Result;
 use Code\PhpAnalyzerBundle\Node\PhpClassNode;
 use Code\PhpAnalyzerBundle\Node\PhpFileNode;
@@ -29,11 +30,21 @@ class PhpcpdParserTest extends \PHPUnit_Framework_TestCase
 </pmd-cpd>
 EOL;
 
-        vfsStream::setup('root', 0777, array('pmd-cpd.xml' => $pmdCpdXml));
+        vfsStream::setup('root', 0777, array('phpcpd.xml' => $pmdCpdXml));
 
-        $processor = new PhpcpdProcessor();
+        $collectorMock = $this->getMockBuilder('Code\PhpAnalyzerBundle\Phpcpd\PhpcpdCollector')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $collectorMock
+            ->expects($this->once())
+            ->method('collect')
+            ->will($this->returnValue(vfsStream::url('root/phpcpd.xml')));
+
+        $processor = new PhpcpdProcessor($collectorMock);
 
         $result = new Result();
+        $result->setLog(new Log());
         $fileNode1 = new PhpFileNode('file1.php');
         $fileNode2 = new PhpFileNode('file2.php');
         $fileNode3 = new PhpFileNode('file3.php');
@@ -50,7 +61,7 @@ EOL;
         $result->addNode(new PhpClassNode('class4'), $fileNode4);
         $result->addNode(new PhpClassNode('class5'), $fileNode5);
 
-        $processor->process($result, vfsStream::url('root/pmd-cpd.xml'));
+        $processor->process($result);
 
         return $result;
     }

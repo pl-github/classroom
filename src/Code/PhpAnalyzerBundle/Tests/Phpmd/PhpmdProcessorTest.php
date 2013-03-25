@@ -2,13 +2,14 @@
 
 namespace Code\PhpAnalyzerBundle\Tests\Phpmd;
 
+use Code\AnalyzerBundle\Log\Log;
 use Code\AnalyzerBundle\Result\Result;
 use Code\PhpAnalyzerBundle\Node\PhpClassNode;
 use Code\PhpAnalyzerBundle\Node\PhpFileNode;
 use Code\PhpAnalyzerBundle\Phpmd\PhpmdProcessor;
 use org\bovigo\vfs\vfsStream;
 
-class PhpcpdProcessorTest extends \PHPUnit_Framework_TestCase
+class PhpmdProcessorTest extends \PHPUnit_Framework_TestCase
 {
     public function testProcess()
     {
@@ -32,9 +33,19 @@ EOL;
 
         vfsStream::setup('root', 0777, array('phpmd.xml' => $phpmdXml));
 
-        $processor = new PhpmdProcessor();
+        $collectorMock = $this->getMockBuilder('Code\PhpAnalyzerBundle\Phpmd\PhpmdCollector')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $collectorMock
+            ->expects($this->once())
+            ->method('collect')
+            ->will($this->returnValue(vfsStream::url('root/phpmd.xml')));
+
+        $processor = new PhpmdProcessor($collectorMock);
 
         $result = new Result();
+        $result->setLog(new Log());
         $fileNode1 = new PhpFileNode('file1.php');
         $fileNode2 = new PhpFileNode('file2.php');
         $result->addNode($fileNode1);
@@ -42,7 +53,7 @@ EOL;
         $result->addNode(new PhpClassNode('class1'), $fileNode1);
         $result->addNode(new PhpClassNode('class2'), $fileNode2);
 
-        $processor->process($result, vfsStream::url('root/phpmd.xml'));
+        $processor->process($result);
 
         return $result;
     }

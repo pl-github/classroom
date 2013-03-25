@@ -2,7 +2,7 @@
 
 namespace Code\PhpAnalyzerBundle\Tests\Base;
 
-use Code\PhpAnalyzerBundle\Base\BaseCollector;
+use Code\PhpAnalyzerBundle\PreProcessor\BaseCollector;
 use org\bovigo\vfs\vfsStream;
 
 class BaseCollectorTest extends \PHPUnit_Framework_TestCase
