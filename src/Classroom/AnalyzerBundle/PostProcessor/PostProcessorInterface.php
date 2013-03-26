@@ -7,10 +7,4 @@ use Classroom\AnalyzerBundle\Result\Result;
 
 interface PostProcessorInterface extends ProcessorInterface
 {
-    /**
-     * Postprocess result
-     *
-     * @param Result $result
-     */
-    public function process(Result $result);
 }

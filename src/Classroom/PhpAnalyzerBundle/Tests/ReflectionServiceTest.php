@@ -49,6 +49,10 @@ class ReflectionServiceTest extends \PHPUnit_Framework_TestCase
 
     public function testGetClassNameForFileTrait()
     {
+        if (version_compare(PHP_VERSION, '5.4.0', '<')) {
+            $this->markTestSkipped('Traits are not available in PHP ' . PHP_VERSION);
+        }
+
         vfsStream::setup('root', 0777, array('test.php' => '<?php trait A_B_C_D {}'));
 
         $result = $this->service->getClassNameForFile(vfsStream::url('root/test.php'));
@@ -76,6 +80,10 @@ class ReflectionServiceTest extends \PHPUnit_Framework_TestCase
 
     public function testGetClassNameForFileNamespacedTrait()
     {
+        if (version_compare(PHP_VERSION, '5.4.0', '<')) {
+            $this->markTestSkipped('Traits are not available in PHP ' . PHP_VERSION);
+        }
+
         vfsStream::setup('root', 0777, array('test1.php' => '<?php namespace A\\B\\C; trait D {}'));
 
         $result = $this->service->getClassNameForFile(vfsStream::url('root/test1.php'));
