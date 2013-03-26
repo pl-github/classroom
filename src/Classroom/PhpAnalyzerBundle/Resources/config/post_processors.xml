@@ -1,0 +1,19 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+        <service id="classroom.php_analyzer.post_processor.unused_files" class="Classroom\PhpAnalyzerBundle\PostProcessor\UnusedFilesPostProcessor">
+        </service>
+
+        <service id="classroom.php_analyzer.post_processor" class="Classroom\AnalyzerBundle\PostProcessor\ChainPostProcessor">
+            <argument type="collection" >
+                <argument type="service" id="classroom.php_analyzer.post_processor.unused_files" />
+                <argument type="service" id="classroom.analyzer.post_processor.grade" />
+                <argument type="service" id="classroom.analyzer.post_processor.gpa" />
+            </argument>
+        </service>
+    </services>
+</container>

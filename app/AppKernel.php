@@ -19,10 +19,10 @@ class AppKernel extends Kernel
             new JMS\AopBundle\JMSAopBundle(),
             new JMS\DiExtraBundle\JMSDiExtraBundle($this),
             new JMS\SecurityExtraBundle\JMSSecurityExtraBundle(),
-            new Code\ProjectBundle\CodeProjectBundle(),
-            new Code\AnalyzerBundle\CodeAnalyzerBundle(),
-            new Code\RepositoryBundle\CodeRepositoryBundle(),
-            new Code\PhpAnalyzerBundle\CodePhpAnalyzerBundle(),
+            new Classroom\ProjectBundle\ClassroomProjectBundle(),
+            new Classroom\AnalyzerBundle\ClassroomAnalyzerBundle(),
+            new Classroom\RepositoryBundle\ClassroomRepositoryBundle(),
+            new Classroom\PhpAnalyzerBundle\ClassroomPhpAnalyzerBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {
