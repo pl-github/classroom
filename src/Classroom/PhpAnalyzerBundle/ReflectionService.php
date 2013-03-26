@@ -12,6 +12,11 @@ class ReflectionService
      */
     public function getClassNameForFile($fileName)
     {
+        if (!defined('T_TRAIT')) {
+            // fallback for php < 5.3
+            define('T_TRAIT', 't_trait');
+        }
+
         $tokens = token_get_all(file_get_contents($fileName));
 
         $namespaceParts = array();
