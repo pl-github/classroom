@@ -1,0 +1,23 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+        <service id="classroom.analyzer.serializer.xml" class="Classroom\AnalyzerBundle\Serializer\XmlSerializer">
+        </service>
+
+        <service id="classroom.analyzer.process_executor" class="Classroom\AnalyzerBundle\ProcessExecutor">
+        </service>
+
+        <service id="classroom.analyzer.grade_counter" class="Classroom\AnalyzerBundle\Grader\GradeCounter">
+        </service>
+
+        <service id="classroom.analyzer.gpa_calculator" class="Classroom\AnalyzerBundle\Gpa\GpaCalculator">
+        </service>
+
+        <service id="classroom.analyzer.grader" class="Classroom\AnalyzerBundle\Grader\Grader">
+        </service>
+    </services>
+</container>

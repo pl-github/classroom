@@ -1,0 +1,33 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+        <service id="classroom.project.merge.classes_merge" class="Classroom\ProjectBundle\Merger\ClassesMerger">
+        </service>
+
+        <service id="classroom.project.data_dir_factory" class="Classroom\ProjectBundle\DataDirFactory">
+            <argument>%kernel.root_dir%</argument>
+        </service>
+
+        <service id="classroom.project.builder" class="Classroom\ProjectBundle\Builder">
+            <argument type="service" id="classroom.php_analyzer.result_builder" />
+            <argument type="service" id="classroom.analyzer.writer" />
+            <argument type="service" id="classroom.repository.factory" />
+            <argument type="service" id="classroom.project.data_dir_factory" />
+        </service>
+
+        <service id="classroom.project.change.loader" class="Classroom\ProjectBundle\Change\Loader\SerializeLoader">
+            <argument>%kernel.root_dir%</argument>
+        </service>
+
+        <service id="classroom.project.change.writer" class="Classroom\ProjectBundle\Change\Writer\SerializeWriter">
+            <argument>%kernel.root_dir%</argument>
+        </service>
+
+        <service id="classroom.project.comparer" class="Classroom\ProjectBundle\Comparer\Comparer">
+        </service>
+    </services>
+</container>

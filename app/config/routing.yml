@@ -1,11 +1,11 @@
 code_index:
-    resource: "@CodeProjectBundle/Controller/IndexController.php"
+    resource: "@ClassroomProjectBundle/Controller/IndexController.php"
     type: annotation
 
 code_project:
-    resource: "@CodeProjectBundle/Controller/ProjectController.php"
+    resource: "@ClassroomProjectBundle/Controller/ProjectController.php"
     type: annotation
 
 code_class:
-    resource: "@CodeProjectBundle/Controller/NodeController.php"
+    resource: "@ClassroomProjectBundle/Controller/NodeController.php"
     type: annotation

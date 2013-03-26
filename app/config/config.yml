@@ -64,18 +64,7 @@ swiftmailer:
     password:  %mailer_password%
     spool:     { type: memory }
 
-code_php_analyzer:
+classroom_php_analyzer:
     phpcpd:
         executable: /opt/local/php/bin/phpcpd.phar
 
-#code_code_style:
-#    phpcs:
-#        executable: phpcs
-
-#code_mess_detection:
-#    phpmd:
-#        executable: phpmd
-
-#code_metrics:
-#    pdepend:
-#        executable: pdepend

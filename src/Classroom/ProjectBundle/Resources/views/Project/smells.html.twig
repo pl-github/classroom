@@ -1,0 +1,22 @@
+<div class="well">
+    <span class="badge badge-Mess">Mess</span>
+    <span class="badge badge-Duplication">Duplication</span>
+    <span class="badge badge-CodeStyle">CodeStyle</span>
+</div>
+
+<table class="table table-striped table-hover table-condensed">
+    <tr>
+        <th>Origin</th>
+        <th>Rule</th>
+        {# <th>Text</th> #}
+        <th>Class</th>
+    </tr>
+{% for smell in smells %}
+    <tr>
+        <td><span class="badge badge-{{ smell.origin }}">{{ smell.origin }}</span></td>
+        <td>{{ smell.rule }}</td>
+        {# <td>{{ smell.text }}</td> #}
+        <td><a href="{{ url("classroom_node", {projectKey: project.key, nodeName: smell.nodeName}) }}">{{ smell.nodeName }}</a></td>
+    </tr>
+{% endfor %}
+</table>
