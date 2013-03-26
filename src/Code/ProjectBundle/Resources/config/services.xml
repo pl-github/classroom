@@ -8,29 +8,15 @@
         <service id="code.project.merge.classes_merge" class="Code\ProjectBundle\Merger\ClassesMerger">
         </service>
 
-        <service id="code.project.loader" class="Code\ProjectBundle\Loader\SerializeLoader">
+        <service id="code.project.data_dir_factory" class="Code\ProjectBundle\DataDirFactory">
             <argument>%kernel.root_dir%</argument>
         </service>
 
-        <service id="code.project.writer" class="Code\ProjectBundle\Writer\SerializeWriter">
-            <argument>%kernel.root_dir%</argument>
-        </service>
-
-        <service id="code.project.build.builder" class="Code\ProjectBundle\Build\Builder">
-            <argument type="service" id="code.analyzer.chain_analyzer" />
+        <service id="code.project.builder" class="Code\ProjectBundle\Builder">
+            <argument type="service" id="code.php_analyzer.result_builder" />
+            <argument type="service" id="code.analyzer.writer" />
             <argument type="service" id="code.repository.factory" />
-            <argument>%kernel.root_dir%</argument>
-        </service>
-
-        <service id="code.project.build.loader" class="Code\ProjectBundle\Build\Loader\SerializeLoader">
-            <argument>%kernel.root_dir%</argument>
-        </service>
-
-        <service id="code.project.build.writer" class="Code\ProjectBundle\Build\Writer\SerializeWriter">
-            <argument>%kernel.root_dir%</argument>
-        </service>
-
-        <service id="code.project.build.comparer" class="Code\ProjectBundle\Build\Comparer\Comparer">
+            <argument type="service" id="code.project.data_dir_factory" />
         </service>
 
         <service id="code.project.change.loader" class="Code\ProjectBundle\Change\Loader\SerializeLoader">
@@ -41,5 +27,7 @@
             <argument>%kernel.root_dir%</argument>
         </service>
 
+        <service id="code.project.comparer" class="Code\ProjectBundle\Comparer\Comparer">
+        </service>
     </services>
 </container>

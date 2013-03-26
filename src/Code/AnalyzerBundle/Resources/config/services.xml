@@ -5,26 +5,19 @@
     xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <services>
-        <service id="code.analyzer.tokenreflection.broker.backend.memory" class="TokenReflection\Broker\Backend\Memory">
-        </service>
-
-        <service id="code.analyzer.tokenreflection.broker" class="TokenReflection\Broker">
-            <argument type="service" id="code.analyzer.tokenreflection.broker.backend.memory" />
-        </service>
-
-        <service id="code.analyzer.reflection_service" class="Code\AnalyzerBundle\ReflectionService">
-            <argument type="service" id="code.analyzer.tokenreflection.broker" />
+        <service id="code.analyzer.serializer.xml" class="Code\AnalyzerBundle\Serializer\XmlSerializer">
         </service>
 
         <service id="code.analyzer.process_executor" class="Code\AnalyzerBundle\ProcessExecutor">
         </service>
 
-        <service id="code.analyzer.merger.classes_merger" class="Code\AnalyzerBundle\Merger\ClassesMerger">
+        <service id="code.analyzer.grade_counter" class="Code\AnalyzerBundle\Grader\GradeCounter">
         </service>
 
-        <service id="code.analyzer.chain_analyzer" class="Code\AnalyzerBundle\Analyzer\ChainAnalyzer">
-            <argument type="service" id="code.analyzer.merger.classes_merger" />
-            <argument type="collection" />
+        <service id="code.analyzer.gpa_calculator" class="Code\AnalyzerBundle\Gpa\GpaCalculator">
+        </service>
+
+        <service id="code.analyzer.grader" class="Code\AnalyzerBundle\Grader\Grader">
         </service>
     </services>
 </container>

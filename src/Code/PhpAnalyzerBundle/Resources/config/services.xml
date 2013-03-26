@@ -1,0 +1,28 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+
+        <service id="code.php_analyzer.reflection_service" class="Code\PhpAnalyzerBundle\ReflectionService">
+        </service>
+
+        <service id="code.php_analyzer.processor" class="Code\AnalyzerBundle\Processor\ChainProcessor">
+            <argument type="collection">
+                <argument type="service" id="code.php_analyzer.phpcpd.processor" />
+                <argument type="service" id="code.php_analyzer.phpcs.processor" />
+                <argument type="service" id="code.php_analyzer.phpmd.processor" />
+                <argument type="service" id="code.php_analyzer.pdepend.processor" />
+            </argument>
+        </service>
+
+        <service id="code.php_analyzer.result_builder" class="Code\AnalyzerBundle\ResultBuilder">
+            <argument type="service" id="code.php_analyzer.pre_processor" />
+            <argument type="service" id="code.php_analyzer.processor" />
+            <argument type="service" id="code.php_analyzer.post_processor" />
+        </service>
+
+    </services>
+</container>

@@ -1,10 +1,12 @@
 language: php
 
 php:
-  - 5.3.3
-  - 5.3
   - 5.4
 
-before_script: composer install
+before_script: composer install --dev
 
 script: phpunit -c app
+
+notifications:
+  hipchat:
+    secure: "ml3nIiWRpoGjia+Q7t1Zd5KO7BR4lDtLRZOamQseFBxyzpM014/uq+tSPl3U\ndawtiKw1lCGyR8QQ0ZrhVS/0XhWoUUafibgO7db76yaNXm6tjiKF6x/y0AzQ\nWudMnthDWMwv0SKHWehTJJkkxKlb+0igGEPXnoNlBMEPPAWnVlI="

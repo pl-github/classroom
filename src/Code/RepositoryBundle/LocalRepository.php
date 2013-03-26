@@ -2,7 +2,10 @@
 
 namespace Code\RepositoryBundle;
 
+use Code\ProjectBundle\DataDir;
+use Code\RepositoryBundle\Entity\RepositoryConfig;
 use Code\RepositoryBundle\VersionStrategy\IncrementalVersionStrategy;
+use Code\RepositoryBundle\VersionStrategy\VersionStrategyInterface;
 
 class LocalRepository implements RepositoryInterface
 {
@@ -12,18 +15,25 @@ class LocalRepository implements RepositoryInterface
     private $sourceDirectory;
 
     /**
-     * @var string
+     * @var VersionStrategyInterface
      */
-    private $projectDirectory;
+    private $versionStrategy;
+
+    /**
+     * @var DataDir
+     */
+    private $dataDir;
 
     /**
      * @param RepositoryConfig $repositoryConfig
-     * @param string           $projectDirectory
+     * @param DataDir          $dataDir
      */
-    public function __construct(RepositoryConfig $repositoryConfig, $projectDirectory)
+    public function __construct(RepositoryConfig $repositoryConfig, DataDir $dataDir)
     {
         $this->sourceDirectory = $repositoryConfig->getUrl();
-        $this->projectDirectory = $projectDirectory;
+        $this->dataDir = $dataDir;
+
+        $this->versionStrategy = new IncrementalVersionStrategy();
     }
 
     /**
@@ -37,8 +47,16 @@ class LocalRepository implements RepositoryInterface
     /**
      * @inheritDoc
      */
-    public function getVersionStrategy()
+    public function determineVersion()
     {
-        return new IncrementalVersionStrategy($this->projectDirectory);
+        return $this->versionStrategy->determineVersion($this->dataDir);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function determineBranch()
+    {
+        return 'master';
     }
 }

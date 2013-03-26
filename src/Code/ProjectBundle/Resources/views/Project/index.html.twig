@@ -2,22 +2,21 @@
 
 {% block body %}
 
-        <h1>Project {{ project.name }}</h1>
+    <h1>Project {{ project.name }} #{{ revision.revision }}</h1>
 
     <ul class="nav nav-tabs" id="projectTabs">
-        <li class="active"><a href="#feed" data-toggle="tab">Feed</a></li>
-        <li><a href="#classes" data-toggle="tab">Classes</a></li>
+        <li class="active"><a href="#overview" data-toggle="tab">Overview</a></li>
+        <li><a href="#nodes" data-toggle="tab">Classes</a></li>
         <li><a href="#smells" data-toggle="tab">Smells</a></li>
     </ul>
 
     </h2>
 
     <div class="tab-content">
-        <div class="tab-pane active" id="feed">{% render url("code_project_feed", {projectId: project.id}) %}</div>
-        <div class="tab-pane" id="classes">{% render url("code_project_classes", {projectId: project.id}) %}</div>
-        <div class="tab-pane" id="smells">{% render url("code_project_smells", {projectId: project.id}) %}</div>
+        <div class="tab-pane active" id="overview">{% render url("code_project_overview", {projectKey: project.key}) %}</div>
+        <div class="tab-pane" id="nodes">{% render url("code_project_nodes", {projectKey: project.key}) %}</div>
+        <div class="tab-pane" id="smells">{% render url("code_project_smells", {projectKey: project.key}) %}</div>
     </div>
-
 
 {% endblock %}
 

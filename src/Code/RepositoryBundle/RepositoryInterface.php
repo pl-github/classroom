@@ -12,9 +12,16 @@ interface RepositoryInterface
     public function getSourceDirectory();
 
     /**
-     * Return version strategy
+     * Determine version
      *
-     * @return IncrementalVersionStrategy
+     * @return mixed
      */
-    public function getVersionStrategy();
+    public function determineVersion();
+
+    /**
+     * Determine branch
+     *
+     * @return mixed
+     */
+    public function determineBranch();
 }

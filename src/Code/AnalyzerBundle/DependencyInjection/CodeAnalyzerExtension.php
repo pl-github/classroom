@@ -20,5 +20,8 @@ class CodeAnalyzerExtension extends Extension
         $loader = new XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
 
         $loader->load('services.xml');
+        $loader->load('loaders.xml');
+        $loader->load('writers.xml');
+        $loader->load('post_processors.xml');
     }
 }

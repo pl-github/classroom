@@ -4,6 +4,7 @@ namespace Code\ProjectBundle\Controller;
 
 use Code\ProjectBundle\Build\Loader\SerializeLoader;
 use Code\ProjectBundle\Project;
+use Doctrine\ORM\EntityManager;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -17,16 +18,12 @@ class IndexController extends Controller
      */
     public function indexAction(Request $request)
     {
-        $rootDir = $this->container->getParameter('kernel.root_dir');
-        $projectLoader = $this->container->get('code.project.loader');
+        $entityManager = $this->get('doctrine.orm.entity_manager');
+        /* @var $entityManager EntityManager */
 
-        $projectFiles = glob($rootDir . '/data/*/project.serialized');
-        $projects = array();
-        foreach ($projectFiles as $projectFile) {
-            preg_match('#/([^/]+)/project\.serialized$#', $projectFile, $match);
-            $projectId = $match[1];
-            $projects[] = $projectLoader->load($projectId);
-        }
+        $repository = $entityManager->getRepository('Code\ProjectBundle\Entity\Project');
+
+        $projects = $repository->findAll();
 
         return array('projects' => $projects);
     }

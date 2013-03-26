@@ -2,7 +2,8 @@
 
 namespace Code\RepositoryBundle;
 
-use Code\RepositoryBundle\Driver\GitDriver;
+use Code\ProjectBundle\DataDir;
+use Code\RepositoryBundle\Entity\RepositoryConfig;
 
 class RepositoryFactory
 {
@@ -14,24 +15,16 @@ class RepositoryFactory
      * @return RepositoryInterface
      * @throws \RuntimeException
      */
-    public function factory(RepositoryConfig $repositoryConfig, $projectDirectory)
+    public function factory(RepositoryConfig $repositoryConfig, DataDir $dataDir)
     {
         $type = $repositoryConfig->getType();
 
         switch ($type) {
             case 'local':
-                $repository = new LocalRepository($repositoryConfig, $projectDirectory);
+                $repository = new LocalRepository($repositoryConfig, $dataDir);
                 break;
             case 'git':
-                switch ($type) {
-                    case 'git':
-                        $driver = new GitDriver($repositoryConfig);
-                        break;
-                    default:
-                        throw new \RuntimeException('Unknown driver type ' . $type);
-                }
-
-                $repository = new VcsRepository($repositoryConfig, $driver, $projectDirectory);
+                $repository = new GitRepository($repositoryConfig, $dataDir);
                 break;
             default:
                 throw new \RuntimeException('Unknown repository type ' . $type);

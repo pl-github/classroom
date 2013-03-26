@@ -1,0 +1,27 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+        <service id="code.analyzer.writer.phar" class="Code\AnalyzerBundle\Writer\PharWriter">
+            <argument type="service" id="code.analyzer.serializer.xml" />
+        </service>
+
+        <service id="code.analyzer.writer.xml" class="Code\AnalyzerBundle\Writer\FileWriter">
+            <argument type="service" id="code.analyzer.serializer.xml" />
+        </service>
+
+        <service id="code.analyzer.writer.resolver" class="Code\AnalyzerBundle\Writer\WriterResolver">
+            <argument type="collection">
+                <argument type="service" id="code.analyzer.writer.phar" />
+                <argument type="service" id="code.analyzer.writer.xml" />
+            </argument>
+        </service>
+
+        <service id="code.analyzer.writer" class="Code\AnalyzerBundle\Writer\DelegatingWriter">
+            <argument type="service" id="code.analyzer.writer.resolver" />
+        </service>
+    </services>
+</container>

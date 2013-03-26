@@ -11,16 +11,12 @@
         {# <th>Text</th> #}
         <th>Class</th>
     </tr>
-{% for class in classes.classes %}
-    {% if class.hasSmells() %}
-        {% for smell in class.smells %}
-            <tr>
-                <td><span class="badge badge-{{ smell.origin }}">{{ smell.origin }}</span></td>
-                <td>{{ smell.rule }}</td>
-                {# <td>{{ smell.text }}</td> #}
-                <td><a href="{{ url("code_class", {projectId: project.id, className: class.fullQualifiedName}) }}">{{ class.fullQualifiedName }}</a></td>
-            </tr>
-        {% endfor %}
-    {% endif %}
+{% for smell in smells %}
+    <tr>
+        <td><span class="badge badge-{{ smell.origin }}">{{ smell.origin }}</span></td>
+        <td>{{ smell.rule }}</td>
+        {# <td>{{ smell.text }}</td> #}
+        <td><a href="{{ url("code_node", {projectKey: project.key, nodeName: smell.nodeName}) }}">{{ smell.nodeName }}</a></td>
+    </tr>
 {% endfor %}
 </table>
