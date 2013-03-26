@@ -1,5 +1,7 @@
 (function($) {
 
+    "use strict";
+
     /**
      * jQuery UI widget for displaying a breakdown donut chart. This
      * widget is based on the d3 library.
@@ -75,6 +77,15 @@
             this._drawSegments();
         },
         
+        _arcTween: function(self, a) {
+            var interpolate = d3.interpolate(this._current, a);
+            this._current = interpolate(0);
+
+            return function(t) {
+                return self._getArc(interpolate(t));
+            };
+        },
+        
         /**
          * Setup the root elements like `svg` and `.text`. Will be called once
          * by creating a new widget
@@ -108,7 +119,7 @@
          */
         _drawSegments: function() {
         
-            var g, link, path,
+            var g, path,
                 self = this,
                 svg  = this._svgElement;
     
@@ -124,14 +135,20 @@
                 .append('a')
                     .attr('xlink:href', function(d, index) { return '?score=' + index; })
                     .append("path")
-                        .style("stroke", "white");    
-            
-            g.selectAll("path")
-                .attr("d", self._getArc)
-                .style("fill", function(d, ka, index) { console.info("fill", d); return self._getColor(index); });
-                
+                        .attr("d", this._getArc)
+                        .style("stroke", "white");
+                        
             // Remove overhead
             g.exit().remove();
+            
+            path = svg.selectAll("path")
+                .each(function(d) { this._current = d; })
+                .data(this._pieData)
+                .style("fill", function(d, index) { return self._getColor(index); })
+           
+            path.transition()
+                .duration(1000)
+                .attrTween("d", $.proxy(this._arcTween, null, this));
         },
         
         /**
