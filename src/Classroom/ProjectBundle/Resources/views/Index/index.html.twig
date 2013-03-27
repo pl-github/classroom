@@ -1,0 +1,15 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+
+{% if app.user is not empty %}
+Logged in as: {{ app.user.username }}
+{% endif %}
+
+<h1>Projects</h1>
+
+{% for project in projects %}
+    <div><a href="{{ url("classroom_project", {projectKey: project.key}) }}">{{ project.name }}</a> ({{ project.repositoryConfig.type }})</div>
+{% endfor %}
+
+{% endblock %}

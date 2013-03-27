@@ -41,7 +41,7 @@ security:
                 oauth_user_provider:
                      #this is my custom user provider, created from FOSUBUserProvider - will manage the
                      #automatic user registration on your site, with data from the provider (facebook. google, etc.)
-                    service: code_user.security.core.user.fos_user_provider
+                    service: classroom_user.security.core.user.fos_user_provider
 
     access_control:
         - { path: ^/login$, role: IS_AUTHENTICATED_ANONYMOUSLY }

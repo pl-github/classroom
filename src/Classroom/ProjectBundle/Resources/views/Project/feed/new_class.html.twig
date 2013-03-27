@@ -1,0 +1,4 @@
+<div>
+    <span style="font-size: 10px;">{{ change.date.format('Y-m-d H:i:s') }}</span>
+    New class <a href="{{ url("classroom_class", {projectId: project.id, className: change.className}) }}"><span style="color: blue; font-weight: bold;">{{ change.className }}</span></a> <span class="badge badge-score-{{ change.score }}">{{ change.score }}</span>
+</div>

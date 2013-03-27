@@ -50,7 +50,7 @@ doctrine:
         charset:  UTF8
         # if using pdo_sqlite as your database driver, add the path in parameters.yml
         # e.g. database_path: %kernel.root_dir%/data/data.db3
-        # path:     %database_path%
+        path:     %database_path%
 
     orm:
         auto_generate_proxy_classes: %kernel.debug%
@@ -67,7 +67,7 @@ swiftmailer:
 fos_user:
     db_driver: orm
     firewall_name: main
-    user_class: Code\UserBundle\Entity\User
+    user_class: Classroom\UserBundle\Entity\User
 
 hwi_oauth:
     connect: ~
@@ -80,6 +80,11 @@ hwi_oauth:
     resource_owners:
         github:
             type:          github
-            client_id:     "8359f252ef384107cf55"
-            client_secret: "4767ff8b6ccbb47ba9270cdea42d37e5be81cdf7"
+            client_id:     "849a67c2d1dc1f90583f"
+            client_secret: "74f96095403b8b100d4a5b3ee9c569a289157a59"
             scope:         "user,repo"
+
+classroom_php_analyzer:
+    phpcpd:
+        executable: /opt/local/php/bin/phpcpd.phar
+

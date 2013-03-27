@@ -1,8 +1,0 @@
-cpd
-
-{% for duplication in duplications.classes %}
-    <h3>{{ duplication.name }}</h3>
-    {% for file in duplication.payload %}
-        <div>{{ file.path }}:{{ file.lineNo }}</div>
-    {% endfor %}
-{% endfor %}

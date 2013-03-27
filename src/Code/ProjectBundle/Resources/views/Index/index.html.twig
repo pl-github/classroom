@@ -1,5 +1,0 @@
-<h1>Projects</h1>
-
-{% for project in projects %}
-    <div><a href="{{ url("code_project", {projectId: project.id}) }}">{{ project.name }}</a></div>
-{% endfor %}

@@ -1,19 +1,12 @@
-code_user:
-    resource: "@CodeUserBundle/Controller/"
+classroom_user:
+    resource: "@ClassroomUserBundle/Controller/"
     type:     annotation
     prefix:   /
 
-code_index:
-    resource: "@CodeProjectBundle/Controller/IndexController.php"
+classroom_project:
+    resource: "@ClassroomProjectBundle/Controller/"
     type: annotation
-
-code_project:
-    resource: "@CodeProjectBundle/Controller/ProjectController.php"
-    type: annotation
-
-code_class:
-    resource: "@CodeProjectBundle/Controller/ClassController.php"
-    type: annotation
+    prefix:   /
 
 fos_user_security:
     resource: "@FOSUserBundle/Resources/config/routing/security.xml"

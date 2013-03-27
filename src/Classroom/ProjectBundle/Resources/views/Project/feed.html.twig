@@ -1,0 +1,21 @@
+{% if 0 %}
+    <div style="float: right;">
+    <div class="well">
+        <div><i class="icon-align-left"></i> Breakdown</div>
+        {% for score, count in build.getBreakdown %}
+            <div><span class="badge badge-score-{{ score }}">{{ score }}</span> {{ count }}</div>
+        {% endfor %}
+    </div>
+
+    <div class="well">
+        <div><i class="icon-fire"></i> Hotspots</div>
+        {% for hotspot in build.getHotspots %}
+            <div><span class="badge badge-score-{{ hotspot.score }}">{{ hotspot.score }}</span> <a href="{{ url("classroom_class", {projectId: project.id, className: hotspot.fullQualifiedName}) }}">{{ hotspot.name }}</a></div>
+        {% endfor %}
+    </div>
+    </div>
+{% endif %}
+
+{% for change in changes %}
+    {% include "ClassroomProjectBundle:Project:feed/" ~ change.type ~ ".html.twig" with {change: change} %}
+{% endfor %}

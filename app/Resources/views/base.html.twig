@@ -3,11 +3,51 @@
     <head>
         <meta charset="UTF-8" />
         <title>{% block title %}Welcome!{% endblock %}</title>
-        {% block stylesheets %}{% endblock %}
+
+        {% block stylesheets %}
+            {% include "::styles.html.twig" %}
+            <style>
+                .classname {
+                    color: #0088cc;
+                }
+                .with-badge {
+                    margin-left: 30px;
+                }
+                .badge-Mess {
+                    background-color: orangered;
+                }
+                .badge-Duplication {
+                    background-color: indianred;
+                }
+                .badge-CodeStyle {
+                    background-color: palevioletred;
+                }
+                .badge-grade-A {
+                    background-color: #00AA00;
+                }
+                .badge-grade-B {
+                    background-color: #80CC00;
+                }
+                .badge-grade-C {
+                    background-color: #FFEE00;
+                }
+                .badge-grade-D {
+                    background-color: #F77700;
+                }
+                .badge-grade-F {
+                    background-color: #EE0000;
+                }
+            </style>
+        {% endblock %}
+
         <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
     </head>
     <body>
-        {% block body %}{% endblock %}
-        {% block javascripts %}{% endblock %}
+        <div class="container">
+            {% block body %}{% endblock %}
+        </div>
+        {% block javascripts %}
+            {% include "::scripts.html.twig" %}
+        {% endblock %}
     </body>
 </html>

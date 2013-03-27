@@ -1,0 +1,17 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+        <service id="classroom.analyzer.post_processor.grade" class="Classroom\AnalyzerBundle\PostProcessor\GradePostProcessor">
+            <argument type="service" id="classroom.analyzer.grader" />
+        </service>
+
+        <service id="classroom.analyzer.post_processor.gpa" class="Classroom\AnalyzerBundle\PostProcessor\GpaPostProcessor">
+            <argument type="service" id="classroom.analyzer.grade_counter" />
+            <argument type="service" id="classroom.analyzer.gpa_calculator" />
+        </service>
+    </services>
+</container>
