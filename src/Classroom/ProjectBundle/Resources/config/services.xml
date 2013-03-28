@@ -29,5 +29,10 @@
 
         <service id="classroom.project.comparer" class="Classroom\ProjectBundle\Comparer\Comparer">
         </service>
+        
+        <service id="classroom.project.extension.breakdownchart" class="Classroom\ProjectBundle\Extension\Twig\BreakdownChartExtension">
+            <argument type="service" id="router" />
+            <tag name="twig.extension" />
+        </service>
     </services>
 </container>
