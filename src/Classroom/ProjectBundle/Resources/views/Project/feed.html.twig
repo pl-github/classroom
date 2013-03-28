@@ -2,7 +2,6 @@
     <div style="float: right;">
         <div class="well">
             <div><i class="icon-align-left"></i> Breakdown</div>
-            <div class="graph-breakdown"></div>
             {% for score, count in build.getBreakdown %}
                 <div><span class="badge badge-score-{{ score }}">{{ score }}</span> {{ count }}</div>
             {% endfor %}
@@ -14,23 +13,7 @@
                 <div><span class="badge badge-score-{{ hotspot.score }}">{{ hotspot.score }}</span> <a href="{{ url("code_class", {projectId: project.id, className: hotspot.fullQualifiedName}) }}">{{ hotspot.name }}</a></div>
             {% endfor %}
         </div>
-    </div>    
-    <script>
-        $(function() {
-            var data = [73,10,8,5,1], //{{ build.getBreakdown|json_encode }},
-                baseLink = '{{ url("code_project_classes", {projectId: project.id}) }}';
-
-// 1xA = 4
-// 3xA + 1xC = 3.5
-// 1xC = 2.0
-
-            $('.graph-breakdown').breakdown({
-                data: data,
-                gpa: 4.2
-            });
-        });
-    </script>
-    
+    </div>
 {% endif %}
 
 {% for change in changes %}
