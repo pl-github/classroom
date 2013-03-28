@@ -6,6 +6,23 @@
      * jQuery UI widget for displaying a breakdown donut chart. This
      * widget is based on the d3 library.
      *
+     *     $('.graph-breakdown').breakdown({
+     *         gpa: 3.47,
+     *         data: [{
+     *             count: 118,
+     *             label: "A-Grade",
+     *             link: "/link/to/details?grade=a"
+     *         }, {
+     *             count: 78,
+     *             label: "B-Grade",
+     *             link: "/link/to/details?grade=b"
+     *         },{
+     *             count: 10,
+     *             label: "D-Grade",
+     *             link: "/link/to/details?grade=d"
+     *         }],
+     *     });
+     *
      * Dependencies:
      * - jquery.ui.widget
      * - d3
@@ -17,7 +34,7 @@
          *
          * @property {Object} options
          * @property {Number} options.gpa Grade Point Average to display
-         * @property {Array}  options.data Array with data
+         * @property {Object[]}  options.data Array with data objects
          * @property {Object} options.colors Array with color values
          */
         options: {
@@ -45,10 +62,10 @@
                 
             this._container = d3.select(elem[0]);
             
-            this._total    = d3.sum(this.options.data);
             this._getColor = d3.scale.ordinal().range(opt.colors);
             this._pieData  = this._toPie(opt.data);
             
+            this._setTotal(opt.data);
             this._initElements();
             this._initArcs();
             
@@ -99,9 +116,16 @@
                 width     = elem.width(),
                 height    = elem.height();
             
-            this._textElement = container.append('span')
+            this._textElement = $('<span><span class="value"></span> <span class="type"></span></span>')
                 .attr('class', 'text')
-                .text(this.options.gpa);
+                .find('.value')
+                    .text(this.options.gpa)
+                    .end()
+                .find('.type')
+                    .text('GPA')
+                    .end();
+                    
+            this._textElement.appendTo(elem);
                 
             this._svgElement = container.append("svg")
                 .attr("width", width)
@@ -133,7 +157,7 @@
                 .on("mouseover", $.proxy(this._onSegmentMouseOver, null, this))
                 .on("mouseout", $.proxy(this._onSegmentMouseOut, null, this))
                 .append('a')
-                    .attr('xlink:href', function(d, index) { return '?score=' + index; })
+                    .attr('xlink:href', function(d, i) { console.info(d, i); return d.data.link; })
                     .append("path")
                         .attr("d", this._getArc)
                         .style("stroke", "white");
@@ -158,7 +182,7 @@
          *
          * @private
          */
-        _onSegmentMouseOver: function(self, data) {
+        _onSegmentMouseOver: function(self, data, index) {
         
             var text = self._toPercentage(data.value/self._total)
                            .replace(/\.0+%$/, "%");
@@ -167,7 +191,13 @@
                .duration(350)
                .attr("d", self._getArcOver);
                
-           self._textElement.text(text);
+           self._textElement
+               .find('.value')
+                   .text(text)
+                   .end()
+               .find('.type')
+                   .css('color', self._getColor(index))
+                   .text(data.data.label);
         },
         
         /**
@@ -183,7 +213,13 @@
                .duration(350)
                .attr("d", self._getArc);
                
-           self._textElement.text(self.options.gpa);
+            self._textElement
+                .find('.value')
+                    .text(self.options.gpa)
+                    .end()
+                .find('.type')
+                    .css('color', "")
+                    .text("GPA");
         },
         
         /**
@@ -193,7 +229,7 @@
          * @param {Array} data array
          * @private
          */
-        _toPie: d3.layout.pie().sort(null).value(function(d) { return d; }),
+        _toPie: d3.layout.pie().sort(null).value(function(d) { return d.count; }),
         
         /**
          * Converts float number to percentage value
@@ -201,6 +237,17 @@
          * @private
          */
         _toPercentage: d3.format('.1%'),
+        
+        /**
+         * Sets the total count of classes. This method will be triggered on
+         * initialization and when new data is set to the widget.
+         *
+         * @param {Object[]} data Array with data objects
+         * @private
+         */
+        _setTotal: function(data) {
+            this._total = d3.sum(data, function(d) {return d.count});
+        },
         
         /**
          * Overrides the default `setOption()` method of the jquery ui widget
@@ -216,7 +263,7 @@
                     this._drawSegments();
                     break;
                 case "data":
-                    this._total   = d3.sum(value);
+                    this._total   = this._setTotal(value);
                     this._pieData = this._toPie(value);
                     this._drawSegments();
                     break;

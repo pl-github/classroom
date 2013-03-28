@@ -6,14 +6,22 @@
 
 .graph-breakdown .text {
     position: absolute;
-    top: 20px;
-    left:  20px;
-    width: 216px;
-    height: 216px;
+    top: 50%;
+    left: 0;
+    margin-top: -23px;
+    width: 100%;
     text-align:center;
-    line-height: 216px;
-    font-size: 30px;
     color:  #666;
+}
+.graph-breakdown .text .value {
+    display:block;
+    font-size: 30px;
+    padding: 0 30px;
+}
+.graph-breakdown .text .type {
+    display:block;
+    margin: 5px 0 0;
+    padding: 0 30px;
 }
 
 .graph-breakdown svg {
