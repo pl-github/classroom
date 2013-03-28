@@ -21,7 +21,9 @@
         "jms/job-queue-bundle": "dev-master",
         "phpmd/phpmd": "1.4.*",
         "squizlabs/php_codesniffer": "1.4.*",
-        "pdepend/pdepend": "1.1.*"
+        "pdepend/pdepend": "1.1.*",
+        "friendsofsymfony/user-bundle": "dev-master",
+        "hwi/oauth-bundle": "dev-master"
     },
     "require-dev": {
         "mikey179/vfsStream": "1.1.*"

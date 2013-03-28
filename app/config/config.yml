@@ -4,7 +4,7 @@ imports:
 
 framework:
     #esi:             ~
-    #translator:      { fallback: %locale% }
+    translator:      { fallback: %locale% }
     secret:          %secret%
     router:
         resource: "%kernel.root_dir%/config/routing.yml"
@@ -63,6 +63,26 @@ swiftmailer:
     username:  %mailer_user%
     password:  %mailer_password%
     spool:     { type: memory }
+
+fos_user:
+    db_driver: orm
+    firewall_name: main
+    user_class: Classroom\UserBundle\Entity\User
+
+hwi_oauth:
+    connect: ~
+    firewall_name: main
+    fosub:
+        username_iterations: 30
+        properties:
+            # these properties will be used/redefined later in the custom FOSUBUserProvider service.
+            github: githubId
+    resource_owners:
+        github:
+            type:          github
+            client_id:     "849a67c2d1dc1f90583f"
+            client_secret: "74f96095403b8b100d4a5b3ee9c569a289157a59"
+            scope:         "user,repo"
 
 classroom_php_analyzer:
     phpcpd:

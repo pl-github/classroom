@@ -17,5 +17,5 @@
 {% endif %}
 
 {% for change in changes %}
-    {% include "CodeProjectBundle:Project:feed/" ~ change.type ~ ".html.twig" with {change: change} %}
+    {% include "ClassroomProjectBundle:Project:feed/" ~ change.type ~ ".html.twig" with {change: change} %}
 {% endfor %}
