@@ -1,8 +1,12 @@
 /web/bundles/
+/web/js/compiled/
+/web/css/compiled/
+
 /app/bootstrap.php.cache
 /app/cache/*
 /app/data/*
 /app/logs/*
+
 /build/
 /vendor/
 /bin/

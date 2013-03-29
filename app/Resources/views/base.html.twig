@@ -39,6 +39,10 @@
                 }
             </style>
         {% endblock %}
+        
+        {% block javascripts %}
+            {% include "::scripts.html.twig" %}
+        {% endblock %}
 
         <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
     </head>
@@ -46,8 +50,5 @@
         <div class="container">
             {% block body %}{% endblock %}
         </div>
-        {% block javascripts %}
-            {% include "::scripts.html.twig" %}
-        {% endblock %}
     </body>
 </html>
