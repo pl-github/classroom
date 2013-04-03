@@ -1,16 +1,15 @@
 <?php
 
-namespace Classroom\ProjectBundle\Tests\Extension\Twig;
+namespace Classroom\FrontendBundle\Tests\Extension\Twig;
 
+use Classroom\FrontendBundle\Extension\Twig\BreakdownChartExtension;
 use Classroom\ProjectBundle\Entity\Revision;
 use Classroom\ProjectBundle\Entity\Project;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Classroom\ProjectBundle\Extension\Twig\BreakdownChartExtension;
 use PHPUnit_Framework_MockObject_MockObject as MockObject;
 
 class BreakdownChartExtensionTest extends \PHPUnit_Framework_TestCase
 {
-
     /**
      *  @var UrlGeneratorInterface|MockObject
      */
