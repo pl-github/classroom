@@ -1,9 +1,7 @@
 <?php
 
-namespace Classroom\ProjectBundle\Controller;
+namespace Classroom\FrontendBundle\Controller;
 
-use Classroom\ProjectBundle\Build\Loader\SerializeLoader;
-use Classroom\ProjectBundle\Project;
 use Doctrine\ORM\EntityManager;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;

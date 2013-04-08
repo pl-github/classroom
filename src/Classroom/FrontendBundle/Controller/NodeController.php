@@ -1,6 +1,6 @@
 <?php
 
-namespace Classroom\ProjectBundle\Controller;
+namespace Classroom\FrontendBundle\Controller;
 
 use Classroom\AnalyzerBundle\Result\Result;
 use Classroom\ProjectBundle\DataDirFactory;

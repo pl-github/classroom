@@ -1,6 +1,6 @@
 <?php 
 
-namespace Classroom\ProjectBundle\Extension\Twig;
+namespace Classroom\FrontendBundle\Extension\Twig;
 
 use Classroom\ProjectBundle\Entity\Revision;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
