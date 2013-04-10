@@ -7,6 +7,7 @@ use Classroom\AnalyzerBundle\ReflectionService;
 use Classroom\AnalyzerBundle\Result\Result;
 use Classroom\AnalyzerBundle\Result\Smell\Smell;
 use Classroom\AnalyzerBundle\Result\Source\SourceRange;
+use Classroom\PhpAnalyzerBundle\Node\PhpFileNode;
 
 class PhpmdProcessor implements ProcessorInterface
 {
@@ -44,7 +45,7 @@ class PhpmdProcessor implements ProcessorInterface
             $fileAttributes = $xmlFileNode->attributes();
             $fileName = (string)$fileAttributes['name'];
 
-            $fileNode = $result->getNode($fileName);
+            $fileNode = $result->getNode(new PhpFileNode($fileName));
             $classNode = $result->getNode(current($result->getReference('node', 'children', $fileNode)));
 
             foreach ($xmlFileNode->violation as $xmlViolationNode) {
