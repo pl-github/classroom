@@ -83,13 +83,15 @@ class PharWriter implements WriterInterface
         // compress phar, normalize filename
         if (\Phar::canCompress(\Phar::BZ2)) {
             $phar->compress(\Phar::BZ2);
+            unset($phar);
             rename($filename . '.bz2', $filename);
         } elseif (\Phar::canCompress(\Phar::GZ)) {
             $phar->compress(\Phar::GZ);
+            unset($phar);
             rename($filename . '.gz', $filename);
+        } else {
+            unset($phar);
         }
-
-        unset($phar);
 
         return $filename;
     }
