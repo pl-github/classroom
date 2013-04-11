@@ -95,8 +95,6 @@ class Builder
             ->setRunTime($runTime)
             ->setBuiltAt($result->getBuiltAt());
 
-        $project->setLatestBuildVersion($version);
-
         return $resultFilename;
     }
 }

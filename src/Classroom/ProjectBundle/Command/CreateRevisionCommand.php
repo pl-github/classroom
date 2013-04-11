@@ -62,8 +62,9 @@ class CreateRevisionCommand extends ContainerAwareCommand
 
         if (!$now) {
             $job = new Job('classroom:project:build', array($revision->getId()));
+            
             $entityManager->persist($job);
-            $entityManager->flush($job);
+            $entityManager->flush();
 
             $output->writeln('<info>Build queued.</info>');
         } else {
@@ -88,8 +89,10 @@ class CreateRevisionCommand extends ContainerAwareCommand
                 }
             });
 
+            $project->setLatestBuildVersion($version);
+
             $entityManager->persist($revision);
-            $entityManager->flush($revision);
+            $entityManager->flush();
 
             $project->setLatestBuildVersion($revision->getRevision());
 
