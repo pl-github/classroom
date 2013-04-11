@@ -27,6 +27,7 @@ class AppKernel extends Kernel
             new Classroom\RepositoryBundle\ClassroomRepositoryBundle(),
             new Classroom\PhpAnalyzerBundle\ClassroomPhpAnalyzerBundle(),
             new Classroom\UserBundle\ClassroomUserBundle(),
+            new JMS\JobQueueBundle\JMSJobQueueBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {

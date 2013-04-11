@@ -3,6 +3,7 @@
 /web/css/compiled/
 
 /app/bootstrap.php.cache
+/app/config/parameters.yml
 /app/cache/*
 /app/data/*
 /app/logs/*
@@ -12,3 +13,4 @@
 /bin/
 /composer.phar
 /.idea/*
+/atlassian-ide-plugin.xml
