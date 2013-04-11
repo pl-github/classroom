@@ -7,6 +7,7 @@ use Classroom\AnalyzerBundle\ReflectionService;
 use Classroom\AnalyzerBundle\Result\Result;
 use Classroom\AnalyzerBundle\Result\Smell\Smell;
 use Classroom\AnalyzerBundle\Result\Source\SourceRange;
+use Classroom\PhpAnalyzerBundle\Node\PhpFileNode;
 
 class PhpcsProcessor implements ProcessorInterface
 {
@@ -43,7 +44,7 @@ class PhpcsProcessor implements ProcessorInterface
             //$errors = (string)$fileAttributes['errors'];
             //$warning = (string)$fileAttributes['warnings'];
 
-            $fileNode = $result->getNode($name);
+            $fileNode = $result->getNode(new PhpFileNode($name));
             $classNode = $result->getNode(current($result->getReference('node', 'children', $fileNode)));
 
             if (isset($xmlFileNode->warning)) {

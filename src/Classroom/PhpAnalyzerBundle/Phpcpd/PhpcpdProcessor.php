@@ -8,6 +8,7 @@ use Classroom\AnalyzerBundle\Result\Metric\Metric;
 use Classroom\AnalyzerBundle\Result\Result;
 use Classroom\AnalyzerBundle\Result\Smell\Smell;
 use Classroom\AnalyzerBundle\Result\Source\SourceRange;
+use Classroom\PhpAnalyzerBundle\Node\PhpFileNode;
 
 class PhpcpdProcessor implements ProcessorInterface
 {
@@ -52,7 +53,7 @@ class PhpcpdProcessor implements ProcessorInterface
             }
 
             foreach ($duplication['files'] as $path => $line) {
-                $fileNode = $result->getNode($path);
+                $fileNode = $result->getNode(new PhpFileNode($path));
                 $classNode = $result->getNode(current($result->getReference('node', 'children', $fileNode)));
 
                 $metric = new Metric('duplication', $lines);
