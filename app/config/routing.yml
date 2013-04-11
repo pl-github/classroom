@@ -41,3 +41,8 @@ hwi_oauth_login:
 
 github_login:
     pattern: /login/check-github
+
+JMSJobQueueBundle:
+    resource: "@JMSJobQueueBundle/Controller/"
+    type:     annotation
+    prefix:   /jobs

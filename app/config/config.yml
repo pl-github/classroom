@@ -83,3 +83,7 @@ hwi_oauth:
             client_id:     "849a67c2d1dc1f90583f"
             client_secret: "74f96095403b8b100d4a5b3ee9c569a289157a59"
             scope:         "user,repo"
+
+jms_job_queue:
+    statistics: false
+
