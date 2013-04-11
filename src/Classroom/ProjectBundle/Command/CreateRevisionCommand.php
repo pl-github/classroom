@@ -89,8 +89,6 @@ class CreateRevisionCommand extends ContainerAwareCommand
                 }
             });
 
-            $project->setLatestBuildVersion($version);
-
             $entityManager->persist($revision);
             $entityManager->flush();
 
