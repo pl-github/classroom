@@ -7,7 +7,7 @@ trait MeasurableTrait
     /**
      * @var MetricInterface[]
      */
-    private $metrics = [];
+    private $metrics = array();
 
     /**
      * Return metrics
